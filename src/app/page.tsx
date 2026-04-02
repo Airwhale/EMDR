@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
+import LearnContent from "@/components/shared/LearnContent";
 import EmdrDot from "@/components/EmdrDot";
 import TranceSession from "@/components/TranceSession";
 import EmdrSession, { EmdrSummaryData } from "@/components/emdr/EmdrSession";
@@ -22,7 +22,7 @@ import {
   setSafetyAcknowledged,
 } from "@/lib/sessionPersistence";
 
-type AppState = "entry" | "safety" | "mode-select" | "session" | "end-summary";
+type AppState = "entry" | "learn" | "safety" | "mode-select" | "session" | "end-summary";
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
@@ -203,14 +203,14 @@ export default function App() {
                   >
                     I&apos;m ready
                   </button>
-                  <Link
-                    href="/learn"
+                  <button
+                    onClick={() => setAppState("learn")}
                     className="px-6 py-4 border border-[#e8e0d4]/25 rounded-full text-[#e8e0d4]/50
                                hover:border-[#e8e0d4]/45 hover:text-[#e8e0d4]/80
                                transition-all duration-700 ui-text tracking-widest"
                   >
                     What is this?
-                  </Link>
+                  </button>
                 </div>
                 <button
                   onClick={() => {
@@ -228,6 +228,23 @@ export default function App() {
                 </button>
               </motion.div>
             </div>
+          </motion.main>
+        )}
+
+        {/* =================== LEARN =================== */}
+        {appState === "learn" && (
+          <motion.main
+            key="learn"
+            className="w-full h-full overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <LearnContent
+              onBack={() => setAppState("entry")}
+              onReady={handleReady}
+            />
           </motion.main>
         )}
 
