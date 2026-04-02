@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import EmdrDot from "@/components/EmdrDot";
@@ -190,14 +191,24 @@ export default function App() {
                     transition={{ duration: 2 }}
                     className="flex flex-col items-center gap-5"
                   >
-                    <button
-                      onClick={handleReady}
-                      className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
-                                 hover:border-gold/70 hover:text-gold transition-all duration-1000
-                                 ui-text tracking-widest"
-                    >
-                      I&apos;m ready
-                    </button>
+                    <div className="flex gap-4 items-center">
+                      <button
+                        onClick={handleReady}
+                        className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
+                                   hover:border-gold/70 hover:text-gold transition-all duration-1000
+                                   ui-text tracking-widest"
+                      >
+                        I&apos;m ready
+                      </button>
+                      <Link
+                        href="/learn"
+                        className="px-6 py-4 border border-[#e8e0d4]/25 rounded-full text-[#e8e0d4]/50
+                                   hover:border-[#e8e0d4]/45 hover:text-[#e8e0d4]/80
+                                   transition-all duration-700 ui-text tracking-widest"
+                      >
+                        What is this?
+                      </Link>
+                    </div>
                     <button
                       onClick={() => {
                         if (document.fullscreenElement) {
