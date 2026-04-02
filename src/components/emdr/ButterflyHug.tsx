@@ -13,11 +13,11 @@ interface ButterflyHugProps {
 }
 
 const narration = [
-  { text: "Cross your arms over your chest, hands resting on opposite shoulders...", delay: 0, duration: 8000 },
-  { text: "Now alternate tapping — left, right, left, right — gently and steadily...", delay: 9000, duration: 8000 },
-  { text: "Continue tapping... focus on the rhythm... let it soothe you...", delay: 9000, duration: 8000 },
+  { text: "Cross your arms over your chest, placing each hand on the opposite shoulder...", delay: 0, duration: 9000 },
+  { text: "Now use your fingertips to gently tap your shoulders — alternating left, right, left, right...", delay: 10000, duration: 9000 },
+  { text: "Keep tapping your shoulders with your fingertips... gently and steadily...", delay: 10000, duration: 8000 },
   { text: "Notice any sensations in your body as you tap... just observe them...", delay: 9000, duration: 8000 },
-  { text: "Continue for a few more moments... feeling calmer with each tap...", delay: 9000, duration: 8000 },
+  { text: "Continue tapping for a few more moments... feeling calmer with each tap...", delay: 9000, duration: 8000 },
 ];
 
 export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugProps) {

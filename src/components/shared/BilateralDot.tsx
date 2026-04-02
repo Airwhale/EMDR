@@ -137,20 +137,26 @@ export default function BilateralDot({
         />
       </div>
 
-      {/* Continue button */}
+      {/* Continue button + helper text */}
       {showContinue && onContinue && (
-        <motion.button
+        <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          whileHover={{ opacity: 0.8 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
-          onClick={onContinue}
-          className="px-8 py-3 border border-gold/35 rounded-full text-gold/75
-                     hover:border-gold/70 hover:text-gold transition-all duration-700
-                     ui-text pointer-events-auto"
+          className="flex flex-col items-center gap-3 pointer-events-auto"
         >
-          continue
-        </motion.button>
+          <button
+            onClick={onContinue}
+            className="px-8 py-3 border border-gold/50 rounded-full text-gold/90
+                       hover:border-gold hover:text-gold hover:bg-gold/5
+                       transition-all duration-500 ui-text"
+          >
+            continue
+          </button>
+          <span className="text-[11px] text-[#e8e0d4]/35 font-light">
+            Press continue when you&apos;re ready to move on
+          </span>
+        </motion.div>
       )}
     </div>
   );
