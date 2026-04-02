@@ -204,8 +204,8 @@ export const sessionScript: PhaseConfig[] = [
     id: "staircase",
     narration: [
       {
-        text: "Imagine a staircase descending gently into a comfortable place...",
-        spoken: "Now imagine... a staircase... descending gently... into the most comfortable place you've ever known...",
+        text: "In your mind, imagine a staircase descending gently into a comfortable place...",
+        spoken: "In your mind... imagine a staircase... descending gently... into the most comfortable place you've ever known...",
         delay: 2000,
         duration: 8000,
       },

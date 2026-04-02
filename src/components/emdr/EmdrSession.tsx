@@ -4,7 +4,6 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import { TranceVoice } from "@/lib/TranceVoice";
-import { useSpeed } from "@/lib/SpeedContext";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
@@ -46,13 +45,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   const [showBlsContinue, setShowBlsContinue] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
-  const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
-
-  useEffect(() => {
-    if (voiceRef.current) voiceRef.current.speedMultiplier = speed;
-  }, [speed]);
 
   useEffect(() => {
     const audio = new TranceAudioEngine();
@@ -102,11 +96,11 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "safe-place") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think of a place where you feel completely safe and at peace...", 8000,
-      "Think of a place... where you feel completely safe... and at peace..."));
+    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace...", 8000,
+      "In your mind... think of a place... where you feel completely safe... and at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("Notice the colors, sounds, and temperature of this place...", 8000,
-        "Notice the colors... the sounds... and the temperature of this place...");
+      showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 8000,
+        "Notice the colors... the sounds... and the temperature of this place... in your mind...");
     }, 10000));
     timers.push(setTimeout(() => {
       showNarr("Choose a single word that represents this place...", 7000,
@@ -146,8 +140,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "container") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Imagine a strong container — a box, a vault, anything that locks securely...", 8000,
-      "Imagine a strong container... a box... a vault... anything that locks securely..."));
+    timers.push(showNarr("In your mind, imagine a strong container — a box, a vault, anything that locks securely...", 8000,
+      "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."));
     timers.push(setTimeout(() => {
       showNarr("Place anything that's been bothering you inside... close the lid firmly...", 8000,
         "Place anything that's been bothering you inside... close the lid firmly...");
@@ -182,11 +176,11 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "resource") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think of a time you felt strong, capable, or deeply at peace...", 8000,
-      "Think of a time... you felt strong... capable... or deeply at peace..."));
+    timers.push(showNarr("In your mind, think of a time you felt strong, capable, or deeply at peace...", 8000,
+      "In your mind... think of a time... you felt strong... capable... or deeply at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("Step into that memory... feel it in your body...", 7000,
-        "Step into that memory... feel it... in your body...");
+      showNarr("In your mind, step into that memory... feel it in your body...", 7000,
+        "In your mind... step into that memory... feel it... in your body...");
     }, 10000));
     timers.push(setTimeout(() => {
       showNarr("Where do you feel this strength? Let it grow...", 7000,

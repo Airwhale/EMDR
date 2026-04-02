@@ -4,7 +4,6 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import { TranceVoice } from "@/lib/TranceVoice";
-import { useSpeed } from "@/lib/SpeedContext";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
@@ -51,13 +50,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   const [showSudFinal, setShowSudFinal] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
-  const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
-
-  useEffect(() => {
-    if (voiceRef.current) voiceRef.current.speedMultiplier = speed;
-  }, [speed]);
 
   useEffect(() => {
     const audio = new TranceAudioEngine();
@@ -103,8 +97,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
       "Think of something mildly stressful. You don't need to describe it — just bring it to mind...", 8000,
       "Think of something mildly stressful... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
-      showNarr("See it like a scene in a movie... notice the details...", 7000,
-        "See it like a scene in a movie... notice the details...");
+      showNarr("See it like a scene in a movie in your mind... notice the details...", 7000,
+        "See it like a scene in a movie... in your mind... notice the details...");
     }, 10000));
     timers.push(setTimeout(() => setPhase("sud-initial"), 20000));
     return () => timers.forEach(clearTimeout);
@@ -176,8 +170,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Now — replace that scene with any image you choose...", 7000,
-      "Now... replace that scene... with any image you choose..."));
+    timers.push(showNarr("Now — in your mind, replace that scene with any image you choose...", 7000,
+      "Now... in your mind... replace that scene... with any image you choose..."));
     timers.push(setTimeout(() => {
       showNarr("It can be peaceful, funny, powerful — anything you want. Make the swap...", 7000,
         "It can be peaceful... funny... powerful... anything you want. Make the swap...");

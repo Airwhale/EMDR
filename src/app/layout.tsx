@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { SpeedProvider } from "@/lib/SpeedContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-trance-dark text-foreground min-h-screen overflow-hidden">
-        <SpeedProvider>{children}</SpeedProvider>
+        {children}
       </body>
     </html>
   );
