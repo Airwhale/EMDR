@@ -13,23 +13,23 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
   {
     id: "emdr",
     title: "EMDR",
-    subtitle: "Resource building & calm",
+    subtitle: "Build calm & inner resources",
     description:
-      "Safe place visualization, bilateral stimulation, butterfly hug, and grounding. Based on EMDR Phase 2 stabilization resources.",
+      "Best if you want to feel more grounded and relaxed. Guided exercises help you create a mental safe place, practice self-soothing through the butterfly hug, and strengthen positive inner resources — all using gentle bilateral eye movements.",
   },
   {
     id: "art",
     title: "ART",
-    subtitle: "Scene processing & rescripting",
+    subtitle: "Process & rescript a stressful memory",
     description:
-      "Guided eye movements, voluntary image replacement, and body awareness. Based on Accelerated Resolution Therapy protocol.",
+      "Best if you have a specific mildly stressful memory you'd like to take the edge off. Fast-paced eye movements help you process the scene, then you'll be guided to change it in your mind — reshaping it into something that feels better. You won't need to describe or share anything.",
   },
   {
     id: "trance",
     title: "TRANCE",
-    subtitle: "Guided hypnotic relaxation & experiences",
+    subtitle: "Deep relaxation & hypnotic exploration",
     description:
-      "Deep breathing, progressive relaxation, and suggestibility experiments. A full guided self-hypnosis session with interactive demonstrations of hypnotic phenomena.",
+      "Best if you want to deeply unwind. A full guided self-hypnosis session with breathing synchronization, progressive relaxation, and interactive experiments that demonstrate what your mind can do in a relaxed state.",
   },
 ];
 
