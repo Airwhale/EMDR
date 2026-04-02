@@ -31,6 +31,7 @@ export default function TranceExperience() {
   const [results, setResults] = useState<ExperimentResult[]>([]);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [breathSlowdown, setBreathSlowdown] = useState(1.0);
 
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
@@ -116,13 +117,28 @@ export default function TranceExperience() {
     if (phase !== "fixation") return;
 
     setVignetteIntensity(0.2);
+    setBreathSlowdown(1.0);
 
     const cleanup = schedulePhaseNarration("fixation", () => {
       setCurrentNarration(null);
       setPhase("deepening");
     });
 
-    return cleanup;
+    // Progressive breath slowdown synced to narration cues:
+    // Cue 0 (2s): "Follow the dot" — 1.0x (normal)
+    // Cue 2 (~38s): "breathing is beginning to slow" — start slowing
+    // Cue 4 (~74s): "space between thoughts" — slower
+    // Cue 6 (~110s): "nothing you need to do" — slowest in fixation
+    const slowTimers = [
+      setTimeout(() => setBreathSlowdown(1.1), 38000),
+      setTimeout(() => setBreathSlowdown(1.2), 74000),
+      setTimeout(() => setBreathSlowdown(1.35), 110000),
+    ];
+
+    return () => {
+      cleanup?.();
+      slowTimers.forEach(clearTimeout);
+    };
   }, [phase, schedulePhaseNarration]);
 
   // ---- DEEPENING ----
@@ -133,13 +149,24 @@ export default function TranceExperience() {
     audioRef.current?.setMasterVolume(0.6, 8);
     audioRef.current?.setDepth(0.4);
     setVignetteIntensity(0.45);
+    setBreathSlowdown(1.4); // Slower from the start of deepening
 
     const cleanup = schedulePhaseNarration("deepening", () => {
       setCurrentNarration(null);
       setPhase("staircase");
     });
 
-    return cleanup;
+    // Continue slowing through deepening — body scan invites deeper relaxation
+    const slowTimers = [
+      setTimeout(() => setBreathSlowdown(1.5), 30000),
+      setTimeout(() => setBreathSlowdown(1.6), 60000),
+      setTimeout(() => setBreathSlowdown(1.7), 85000),
+    ];
+
+    return () => {
+      cleanup?.();
+      slowTimers.forEach(clearTimeout);
+    };
   }, [phase, schedulePhaseNarration]);
 
   // ---- STAIRCASE ----
@@ -163,6 +190,7 @@ export default function TranceExperience() {
     audioRef.current?.setMasterVolume(0.65, 6);
     audioRef.current?.setDepth(0.5);
     setVignetteIntensity(0.55);
+    setBreathSlowdown(1.75); // Slowest breathing during staircase
 
     const cleanup = schedulePhaseNarration("staircase");
     return cleanup;
@@ -339,7 +367,7 @@ export default function TranceExperience() {
               {showSpiral && (
                 <HypnoticSpiral opacity={0.05} speed={12} size={450} />
               )}
-              <BreathingGuide isActive={true} size="full" showSpiral={true} />
+              <BreathingGuide isActive={true} size="full" showSpiral={true} slowdown={breathSlowdown} />
               {/* EMDR dot passes through the center of the breathing circle */}
               <EmdrDot cycleDuration={4} size={10} range={160} />
             </div>
@@ -359,7 +387,7 @@ export default function TranceExperience() {
             transition={{ duration: 3 }}
           >
             <div className="absolute top-12">
-              <BreathingGuide isActive={true} size="small" />
+              <BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} />
             </div>
 
             {showSpiral && (
@@ -385,7 +413,7 @@ export default function TranceExperience() {
             transition={{ duration: 3 }}
           >
             <div className="absolute top-12">
-              <BreathingGuide isActive={true} size="small" />
+              <BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} />
             </div>
             <div className="absolute top-32 z-10">
               <NarrationDisplay text={currentNarration} />

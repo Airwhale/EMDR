@@ -1,68 +1,102 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 interface BreathingGuideProps {
   isActive: boolean;
   size?: "full" | "small";
   showSpiral?: boolean;
+  /** Multiplier for cycle speed. 1.0 = default (14s), 1.3 = 30% slower (18.2s), etc. */
+  slowdown?: number;
 }
 
 type BreathPhase = "inhale" | "hold" | "exhale";
 
-const INHALE_MS = 4000;
-const HOLD_MS = 4000;
-const EXHALE_MS = 6000;
-const TOTAL_CYCLE = INHALE_MS + HOLD_MS + EXHALE_MS; // 14s
+const BASE_INHALE = 4000;
+const BASE_HOLD = 4000;
+const BASE_EXHALE = 6000;
 
 /**
- * Uses a single continuous Framer Motion keyframe animation for the entire
- * breath cycle instead of swapping duration/scale per phase. This avoids
- * animation interruption on state changes.
+ * Breathing guide with dynamic pacing. The `slowdown` prop stretches the
+ * entire cycle — when narration says "your breathing is slowing," the
+ * parent increases slowdown and the circle actually slows.
  *
- * The breathPhase state is only used for the label text — it does NOT
- * drive the motion animation.
+ * Uses imperative animation controls so we can restart the cycle with a
+ * new duration smoothly (the current cycle finishes, then the next one
+ * picks up the new speed).
  */
 export default function BreathingGuide({
   isActive,
   size = "full",
   showSpiral = false,
+  slowdown = 1,
 }: BreathingGuideProps) {
   const [breathPhase, setBreathPhase] = useState<BreathPhase>("inhale");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const slowdownRef = useRef(slowdown);
+  slowdownRef.current = slowdown;
 
-  // Label-only state cycle (does not drive animation)
-  useEffect(() => {
-    if (!isActive) return;
-
-    const cycle = () => {
-      setBreathPhase("inhale");
-      timerRef.current = setTimeout(() => {
-        setBreathPhase("hold");
-        timerRef.current = setTimeout(() => {
-          setBreathPhase("exhale");
-          timerRef.current = setTimeout(cycle, EXHALE_MS);
-        }, HOLD_MS);
-      }, INHALE_MS);
-    };
-
-    cycle();
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [isActive]);
+  const controls = useAnimation();
+  const glowControls = useAnimation();
+  const dotControls = useAnimation();
 
   const baseSize = size === "full" ? 200 : 60;
 
-  // Keyframe stops: inhale peak at 4/14 ≈ 0.286, hold ends at 8/14 ≈ 0.571
-  const inhaleStop = INHALE_MS / TOTAL_CYCLE;
-  const holdStop = (INHALE_MS + HOLD_MS) / TOTAL_CYCLE;
+  const runCycle = useCallback(async () => {
+    if (!isActive) return;
 
-  // Scale keyframes: 0.8 → 1.4 (inhale) → 1.4 (hold) → 0.8 (exhale)
-  const scaleKeys = [0.8, 1.4, 1.4, 0.8];
-  const opacityKeys = [0.5, 0.9, 0.9, 0.5];
-  const times = [0, inhaleStop, holdStop, 1];
+    const s = slowdownRef.current;
+    const inhaleMs = BASE_INHALE * s;
+    const holdMs = BASE_HOLD * s;
+    const exhaleMs = BASE_EXHALE * s;
+    const totalS = (inhaleMs + holdMs + exhaleMs) / 1000;
+    const inhaleStop = inhaleMs / (inhaleMs + holdMs + exhaleMs);
+    const holdStop = (inhaleMs + holdMs) / (inhaleMs + holdMs + exhaleMs);
+
+    const times = [0, inhaleStop, holdStop, 1];
+    const scaleKeys = [0.8, 1.4, 1.4, 0.8];
+    const opacityKeys = [0.5, 0.9, 0.9, 0.5];
+
+    // Start all three layers in parallel — no awaits between them
+    controls.start({
+      scale: scaleKeys,
+      opacity: opacityKeys,
+      transition: { duration: totalS, times, ease: "easeInOut" },
+    });
+    glowControls.start({
+      scale: scaleKeys,
+      opacity: opacityKeys.map((o) => o * 0.5),
+      transition: { duration: totalS, times, ease: "easeInOut" },
+    });
+    dotControls.start({
+      scale: scaleKeys.map((sc) => sc * 0.8),
+      opacity: opacityKeys,
+      transition: { duration: totalS, times, ease: "easeInOut" },
+    });
+
+    // Label phase tracking
+    setBreathPhase("inhale");
+    timerRef.current = setTimeout(() => {
+      setBreathPhase("hold");
+      timerRef.current = setTimeout(() => {
+        setBreathPhase("exhale");
+        timerRef.current = setTimeout(() => {
+          // Next cycle — picks up latest slowdown
+          runCycle();
+        }, exhaleMs);
+      }, holdMs);
+    }, inhaleMs);
+  }, [isActive, controls, glowControls, dotControls]);
+
+  useEffect(() => {
+    if (isActive) {
+      runCycle();
+    }
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [isActive, runCycle]);
 
   return (
     <div
@@ -79,13 +113,7 @@ export default function BreathingGuide({
             "radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%)",
           willChange: "transform, opacity",
         }}
-        animate={isActive ? { scale: scaleKeys, opacity: opacityKeys.map((o) => o * 0.5) } : {}}
-        transition={{
-          duration: TOTAL_CYCLE / 1000,
-          times,
-          ease: "easeInOut",
-          repeat: Infinity,
-        }}
+        animate={glowControls}
       />
 
       {/* Main breathing ring */}
@@ -99,13 +127,7 @@ export default function BreathingGuide({
             "0 0 30px rgba(201, 169, 110, 0.1), inset 0 0 30px rgba(201, 169, 110, 0.05)",
           willChange: "transform, opacity",
         }}
-        animate={isActive ? { scale: scaleKeys, opacity: opacityKeys } : {}}
-        transition={{
-          duration: TOTAL_CYCLE / 1000,
-          times,
-          ease: "easeInOut",
-          repeat: Infinity,
-        }}
+        animate={controls}
       />
 
       {/* Inner warm dot */}
@@ -118,17 +140,7 @@ export default function BreathingGuide({
             "radial-gradient(circle, rgba(201, 169, 110, 0.8) 0%, rgba(201, 169, 110, 0.2) 70%)",
           willChange: "transform, opacity",
         }}
-        animate={
-          isActive
-            ? { scale: scaleKeys.map((s) => s * 0.8), opacity: opacityKeys }
-            : {}
-        }
-        transition={{
-          duration: TOTAL_CYCLE / 1000,
-          times,
-          ease: "easeInOut",
-          repeat: Infinity,
-        }}
+        animate={dotControls}
       />
 
       {/* Spiral texture overlay — always mounted, opacity-toggled */}
