@@ -32,7 +32,7 @@ export const sessionScript: PhaseConfig[] = [
     id: "entry",
     narration: [
       {
-        text: "Find a comfortable position. This session works best with headphones.",
+        text: "Find a comfortable position. Put on headphones for the full experience.",
         delay: 3000,
         duration: 6000,
       },
@@ -46,9 +46,15 @@ export const sessionScript: PhaseConfig[] = [
     id: "fixation",
     narration: [
       {
-        text: "Follow the light with your eyes...",
-        spoken: "Follow the light... with your eyes... just let them track it naturally...",
+        text: "Follow the dot as it moves... let your eyes track it gently...",
+        spoken: "Follow the dot as it moves... let your eyes track it gently... back and forth... naturally...",
         delay: 2000,
+        duration: BREATH_CYCLE,
+      },
+      {
+        text: "Let the ring in the center guide your breathing...",
+        spoken: "Let the ring in the center guide your breathing... expanding as you breathe in... contracting as you breathe out...",
+        delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
@@ -88,12 +94,12 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
       {
-        text: "Just this light... and the sound of my voice...",
-        spoken: "Just this light... and the sound of my voice... let everything else fade away... sleep...",
+        text: "Just this gentle movement... and the sound of these words...",
+        spoken: "Just this gentle movement... and the sound of my voice... let everything else fade away...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
-      // Confusion technique — paradoxical statements to bypass critical mind
+      // Confusion technique
       {
         text: "You might wonder whether you're relaxing... or whether relaxation is finding you...",
         spoken: "You might wonder whether you're relaxing... or whether relaxation is finding you... and it doesn't matter which... because either way... you go deeper...",
@@ -107,11 +113,11 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
     ],
-    minDuration: 150000,
+    minDuration: 165000,
     requiresInteraction: false,
   },
 
-  // Phase 2: Progressive Relaxation & Deepening (body scan + catalepsy suggestions)
+  // Phase 2: Progressive Relaxation & Deepening (body scan)
   {
     id: "deepening",
     narration: [
@@ -122,8 +128,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "And that feeling can drift upward, at whatever pace feels right...",
-        spoken: "And that feeling... can drift upward... at whatever pace feels right for you... there is no hurry...",
+        text: "That feeling can drift upward, at whatever pace feels right...",
+        spoken: "That feeling... can drift upward... at whatever pace feels right for you... there is no hurry...",
         delay: 7000,
         duration: 8000,
       },
@@ -140,8 +146,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "Your hands may feel pleasantly heavy on your lap... or floating...",
-        spoken: "Your hands may feel pleasantly heavy on your lap... or floating... so heavy they couldn't move... or so light they might drift upward...",
+        text: "Your hands may feel pleasantly heavy... or as if they're floating...",
+        spoken: "Your hands may feel pleasantly heavy... or as if they're floating... so heavy they couldn't move... or so light they might drift upward...",
         delay: 7000,
         duration: 8000,
       },
@@ -158,8 +164,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "Your neck... releasing any tension it was holding without you knowing...",
-        spoken: "Your neck... releasing any tension... it was holding without you knowing... and isn't it interesting... how much tension we hold... without realizing...",
+        text: "Your neck... releasing tension it was holding without you knowing...",
+        spoken: "Your neck... releasing tension... it was holding without you knowing... and isn't it interesting... how much tension we carry... without realizing...",
         delay: 7000,
         duration: 8000,
       },
@@ -177,14 +183,14 @@ export const sessionScript: PhaseConfig[] = [
       },
       {
         text: "A wave of calm washing over your scalp... dissolving everything...",
-        spoken: "A wave of calm washing over your scalp... dissolving everything... every thought... every worry... just dissolving... into deep... peaceful... stillness...",
+        spoken: "A wave of calm washing over your scalp... dissolving everything... every thought... every worry... dissolving... into deep... peaceful... stillness...",
         delay: 7000,
         duration: 8000,
       },
-      // Anchoring — associate relaxation with a physical touch
+      // Anchoring
       {
-        text: "Gently press your thumb and forefinger together... let this touch become your anchor...",
-        spoken: "Now... gently press your thumb and forefinger together... and let this touch become your anchor... whenever you press them together in the future... this feeling of deep relaxation can return instantly...",
+        text: "Gently press your thumb and forefinger together... let this become your anchor...",
+        spoken: "Now... gently press your thumb and forefinger together... and let this touch become your anchor... whenever you press them together in the future... this deep relaxation can return instantly...",
         delay: 7000,
         duration: 10000,
       },
@@ -209,16 +215,16 @@ export const sessionScript: PhaseConfig[] = [
         delay: 7000,
         duration: 8000,
       },
-      // Fractionation — brief "wake up" then deeper re-induction
+      // Fractionation
       {
-        text: "And now... become slightly more aware for a moment...",
-        spoken: "And now... become slightly more aware... for just a moment... notice the sounds around you... feel the surface beneath you...",
+        text: "Now... become slightly more aware for a moment...",
+        spoken: "Now... become slightly more aware... for just a moment... notice the sounds around you... feel the surface beneath you...",
         delay: 7000,
         duration: 6000,
       },
       {
-        text: "...and now let yourself drop twice as deep...",
-        spoken: "...and now... let yourself drop... twice as deep as before... that's right... deeper and deeper... the fractionation makes every return... so much more profound...",
+        text: "...and let yourself drop twice as deep as before...",
+        spoken: "...and now... let yourself drop... twice as deep as before... that's right... deeper and deeper... every time you come back... you go so much further down...",
         delay: 5000,
         duration: 8000,
       },
@@ -232,8 +238,8 @@ export const sessionScript: PhaseConfig[] = [
     id: "experiments",
     narration: [
       {
-        text: "You're now in a deeply relaxed state. Let's explore what your mind can do...",
-        spoken: "You're now in a deeply relaxed state... and from this place of deep comfort... let's explore... what your mind can do...",
+        text: "You're now deeply relaxed. Let's explore what your mind can do...",
+        spoken: "You're now deeply relaxed... and from this place of deep comfort... let's explore... what your mind can do...",
         delay: 2000,
         duration: 6000,
       },
@@ -247,7 +253,7 @@ export const sessionScript: PhaseConfig[] = [
     id: "emergence",
     narration: [
       {
-        text: "In a moment, I'll count from 1 to 5. With each number, you'll feel more alert, more present...",
+        text: "In a moment, I'll count from 1 to 5. With each number, you'll feel more alert...",
         spoken: "In a moment... I'll count from 1 to 5. With each number... you'll feel more alert... more present... more refreshed...",
         delay: 2000,
         duration: 8000,
@@ -272,31 +278,31 @@ export const emergenceNumbers = [1, 2, 3, 4, 5];
 
 export const emergenceNarration: NarrationCue[] = [
   {
-    text: "1 — beginning to rise, a gentle stirring...",
+    text: "1 — a gentle stirring of awareness...",
     spoken: "One... beginning to rise... a gentle stirring of awareness...",
     delay: 0,
     duration: 6000,
   },
   {
-    text: "2 — more aware of your surroundings...",
+    text: "2 — becoming more aware of your surroundings...",
     spoken: "Two... becoming more aware... of your surroundings... the sounds in the room...",
     delay: 7000,
     duration: 6000,
   },
   {
-    text: "3 — feeling energy returning to your body...",
+    text: "3 — energy returning to your body...",
     spoken: "Three... feeling energy returning to your body... your fingers and toes beginning to move...",
     delay: 7000,
     duration: 6000,
   },
   {
-    text: "4 — almost there, taking a deep breath...",
+    text: "4 — almost there... take a deep breath...",
     spoken: "Four... almost there... take a deep breath in... feeling refreshed and clear...",
     delay: 7000,
     duration: 6000,
   },
   {
-    text: "5 — eyes open, fully alert, feeling refreshed and clear.",
+    text: "5 — eyes open, fully alert, feeling refreshed.",
     spoken: "Five... eyes open... wide awake... fully alert... feeling wonderful... refreshed... and clear.",
     delay: 7000,
     duration: 8000,

@@ -33,10 +33,6 @@ export class TranceAudioEngine {
   private heartbeatLfo: OscillatorNode | null = null;
   private heartbeatLfoGain: GainNode | null = null;
 
-  // Photic driving — amplitude pulse for visual sync
-  private photicGain: GainNode | null = null;
-  private photicLfo: OscillatorNode | null = null;
-
   private isRunning = false;
   private baseFreq = 100;
   private binauralBeat = 4; // Hz difference between L/R
@@ -72,16 +68,15 @@ export class TranceAudioEngine {
     this.droneOscL.type = "sine";
     this.droneOscL.frequency.value = this.baseFreq;
     this.panL = this.ctx.createStereoPanner();
-    this.panL.pan.value = -1; // Full left
+    this.panL.pan.value = -1;
 
     // Right ear — base + binaural beat offset
     this.droneOscR = this.ctx.createOscillator();
     this.droneOscR.type = "sine";
     this.droneOscR.frequency.value = this.baseFreq + this.binauralBeat;
     this.panR = this.ctx.createStereoPanner();
-    this.panR.pan.value = 1; // Full right
+    this.panR.pan.value = 1;
 
-    // Route: osc → pan → filter → gain → master
     this.droneOscL.connect(this.panL);
     this.panL.connect(this.droneFilter);
     this.droneOscR.connect(this.panR);
@@ -143,7 +138,7 @@ export class TranceAudioEngine {
 
     this.lfo = this.ctx.createOscillator();
     this.lfo.type = "sine";
-    this.lfo.frequency.value = 6; // Theta
+    this.lfo.frequency.value = 6;
 
     this.lfoGain = this.ctx.createGain();
     this.lfoGain.gain.value = 0.12;
@@ -161,15 +156,13 @@ export class TranceAudioEngine {
   private setupHeartbeat(): void {
     if (!this.ctx || !this.masterGain) return;
 
-    // Sub-bass oscillator for heartbeat-like throb
     this.heartbeatOsc = this.ctx.createOscillator();
     this.heartbeatOsc.type = "sine";
-    this.heartbeatOsc.frequency.value = 40; // Sub-bass
+    this.heartbeatOsc.frequency.value = 40;
 
     this.heartbeatGain = this.ctx.createGain();
     this.heartbeatGain.gain.value = 0;
 
-    // LFO at ~1Hz (60bpm resting heart rate)
     this.heartbeatLfo = this.ctx.createOscillator();
     this.heartbeatLfo.type = "sine";
     this.heartbeatLfo.frequency.value = 1;
@@ -187,16 +180,24 @@ export class TranceAudioEngine {
     this.heartbeatLfo.start();
   }
 
-  fadeIn(duration: number = 20): void {
+  /** Fade master volume in to a target level */
+  fadeIn(duration: number = 20, target: number = 0.5): void {
     if (!this.ctx || !this.masterGain) return;
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
-    this.masterGain.gain.linearRampToValueAtTime(0.7, this.ctx.currentTime + duration);
+    this.masterGain.gain.linearRampToValueAtTime(target, this.ctx.currentTime + duration);
   }
 
   fadeOut(duration: number = 10): void {
     if (!this.ctx || !this.masterGain) return;
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
     this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + duration);
+  }
+
+  /** Smoothly change master volume */
+  setMasterVolume(target: number, duration: number = 4): void {
+    if (!this.ctx || !this.masterGain) return;
+    this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
+    this.masterGain.gain.linearRampToValueAtTime(target, this.ctx.currentTime + duration);
   }
 
   /** Shift binaural base frequency. Both L/R track with the beat offset preserved. */
@@ -240,19 +241,16 @@ export class TranceAudioEngine {
       this.droneFilter.frequency.linearRampToValueAtTime(300 - depth * 100, now + 2);
     }
 
-    // Heartbeat gets louder deeper in trance
     if (this.heartbeatLfoGain) {
       this.heartbeatLfoGain.gain.setValueAtTime(this.heartbeatLfoGain.gain.value, now);
       this.heartbeatLfoGain.gain.linearRampToValueAtTime(0.05 + depth * 0.12, now + 2);
     }
 
-    // Slow heartbeat as trance deepens (60bpm → 50bpm)
     if (this.heartbeatLfo) {
       this.heartbeatLfo.frequency.setValueAtTime(this.heartbeatLfo.frequency.value, now);
       this.heartbeatLfo.frequency.linearRampToValueAtTime(1 - depth * 0.17, now + 4);
     }
 
-    // Shift binaural beat deeper into theta as depth increases (4Hz → 3Hz)
     this.setBinauralBeat(4 - depth * 1, 3);
   }
 
@@ -260,13 +258,12 @@ export class TranceAudioEngine {
   emerge(duration: number = 10): void {
     if (!this.ctx) return;
     this.shiftPitch(this.baseFreq + 20, duration);
-    this.setBinauralBeat(10, duration); // Shift to alpha for alertness
+    this.setBinauralBeat(10, duration);
     if (this.droneFilter) {
       const now = this.ctx.currentTime;
       this.droneFilter.frequency.setValueAtTime(this.droneFilter.frequency.value, now);
       this.droneFilter.frequency.linearRampToValueAtTime(600, now + duration);
     }
-    // Speed heartbeat back up
     if (this.heartbeatLfo) {
       const now = this.ctx.currentTime;
       this.heartbeatLfo.frequency.setValueAtTime(this.heartbeatLfo.frequency.value, now);

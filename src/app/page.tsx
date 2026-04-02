@@ -56,10 +56,7 @@ export default function TranceExperience() {
 
   // Helper: schedule narration cues for a phase with voice
   const schedulePhaseNarration = useCallback(
-    (
-      phaseId: PhaseId,
-      onComplete?: () => void
-    ) => {
+    (phaseId: PhaseId, onComplete?: () => void) => {
       const script = sessionScript.find((p) => p.id === phaseId)!;
       let cumulative = 0;
       const timers: ReturnType<typeof setTimeout>[] = [];
@@ -102,13 +99,12 @@ export default function TranceExperience() {
   const handleReady = useCallback(() => {
     setPhase("fixation");
     requestAnimationFrame(() => {
-      // Audio
       const audio = new TranceAudioEngine();
       audio.init();
-      audio.fadeIn(20);
+      // Gentle fade in — start quiet during fixation
+      audio.fadeIn(20, 0.45);
       audioRef.current = audio;
 
-      // Voice
       const voice = new TranceVoice();
       voice.init();
       voiceRef.current = voice;
@@ -119,7 +115,7 @@ export default function TranceExperience() {
   useEffect(() => {
     if (phase !== "fixation") return;
 
-    setVignetteIntensity(0.3);
+    setVignetteIntensity(0.2);
 
     const cleanup = schedulePhaseNarration("fixation", () => {
       setCurrentNarration(null);
@@ -133,8 +129,10 @@ export default function TranceExperience() {
   useEffect(() => {
     if (phase !== "deepening") return;
 
+    // Audio intensifies — louder, deeper tone
+    audioRef.current?.setMasterVolume(0.6, 8);
     audioRef.current?.setDepth(0.4);
-    setVignetteIntensity(0.5);
+    setVignetteIntensity(0.45);
 
     const cleanup = schedulePhaseNarration("deepening", () => {
       setCurrentNarration(null);
@@ -148,8 +146,10 @@ export default function TranceExperience() {
   const handleStaircaseStep = useCallback((step: number) => {
     const pitchOffset = (10 - step) * 2;
     audioRef.current?.shiftPitch(100 - pitchOffset, 3);
-    audioRef.current?.setDepth(0.4 + (10 - step) * 0.06);
-    setVignetteIntensity(0.5 + (10 - step) * 0.04);
+    audioRef.current?.setDepth(0.5 + (10 - step) * 0.05);
+    // Progressive volume increase per step
+    audioRef.current?.setMasterVolume(0.65 + (10 - step) * 0.012, 3);
+    setVignetteIntensity(0.55 + (10 - step) * 0.035);
   }, []);
 
   const handleStaircaseComplete = useCallback(() => {
@@ -159,8 +159,10 @@ export default function TranceExperience() {
   useEffect(() => {
     if (phase !== "staircase") return;
 
+    // Staircase starts louder and deeper than deepening
+    audioRef.current?.setMasterVolume(0.65, 6);
     audioRef.current?.setDepth(0.5);
-    setVignetteIntensity(0.6);
+    setVignetteIntensity(0.55);
 
     const cleanup = schedulePhaseNarration("staircase");
     return cleanup;
@@ -170,7 +172,10 @@ export default function TranceExperience() {
   useEffect(() => {
     if (phase !== "experiments") return;
 
-    setVignetteIntensity(0.3);
+    // Pull audio back — lighter for interactive phase
+    audioRef.current?.setMasterVolume(0.35, 6);
+    audioRef.current?.setDepth(0.25);
+    setVignetteIntensity(0.2);
 
     const script = sessionScript.find((p) => p.id === "experiments")!;
     if (script.narration.length > 0) {
@@ -204,9 +209,18 @@ export default function TranceExperience() {
   );
 
   // ---- EMERGENCE ----
+  useEffect(() => {
+    if (phase !== "emergence") return;
+
+    // Start emergence audio shift — brighten, alpha binaural
+    audioRef.current?.setMasterVolume(0.5, 4);
+    audioRef.current?.emerge(30);
+  }, [phase]);
+
   const handleEmergenceStep = useCallback((step: number) => {
-    audioRef.current?.shiftPitch(80 + step * 8, 3);
-    setVignetteIntensity(Math.max(0, 0.3 - step * 0.06));
+    // Gradually raise volume and reduce vignette with each count
+    audioRef.current?.setMasterVolume(0.5 - step * 0.08, 3);
+    setVignetteIntensity(Math.max(0, 0.2 - step * 0.04));
   }, []);
 
   const handleEmergenceComplete = useCallback(() => {
@@ -224,7 +238,7 @@ export default function TranceExperience() {
     if (!audioRef.current) {
       const audio = new TranceAudioEngine();
       audio.init();
-      audio.fadeIn(5);
+      audio.fadeIn(5, 0.35);
       audioRef.current = audio;
     }
     if (!voiceRef.current) {
@@ -271,8 +285,10 @@ export default function TranceExperience() {
             exit={{ opacity: 0 }}
             transition={{ duration: 2 }}
           >
-            {/* EMDR-style moving dot */}
-            <EmdrDot cycleDuration={5} size={12} showTrace={true} />
+            {/* Slow EMDR dot on entry — just the dot, no circle yet */}
+            <div className="relative" style={{ width: 300, height: 56 }}>
+              <EmdrDot cycleDuration={5} size={10} range={130} />
+            </div>
 
             {/* Entry text */}
             <AnimatePresence>
@@ -283,8 +299,8 @@ export default function TranceExperience() {
                   transition={{ duration: 3 }}
                   className="narration-text text-xl md:text-2xl text-center max-w-lg text-[#e8e0d4]/70"
                 >
-                  Find a comfortable position. This session works best with
-                  headphones.
+                  Find a comfortable position. Put on headphones for the full
+                  experience.
                 </motion.p>
               )}
             </AnimatePresence>
@@ -318,17 +334,14 @@ export default function TranceExperience() {
             exit={{ opacity: 0 }}
             transition={{ duration: 3 }}
           >
-            {/* EMDR dot at top */}
-            <div className="absolute top-[15%] w-full">
-              <EmdrDot cycleDuration={4} size={14} showTrace={true} />
-            </div>
-
-            {/* Breathing guide + spiral in center */}
+            {/* Breathing guide + spiral + EMDR dot layered together */}
             <div className="relative flex items-center justify-center">
               {showSpiral && (
                 <HypnoticSpiral opacity={0.05} speed={12} size={450} />
               )}
               <BreathingGuide isActive={true} size="full" showSpiral={true} />
+              {/* EMDR dot passes through the center of the breathing circle */}
+              <EmdrDot cycleDuration={4} size={10} range={160} />
             </div>
 
             <NarrationDisplay text={currentNarration} />
@@ -345,12 +358,10 @@ export default function TranceExperience() {
             exit={{ opacity: 0 }}
             transition={{ duration: 3 }}
           >
-            {/* Small breathing guide at top */}
             <div className="absolute top-12">
               <BreathingGuide isActive={true} size="small" />
             </div>
 
-            {/* Spiral behind narration */}
             {showSpiral && (
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <HypnoticSpiral opacity={0.04} speed={8} size={600} />
@@ -505,7 +516,6 @@ export default function TranceExperience() {
           </motion.button>
         )}
 
-        {/* Spacer */}
         <div />
 
         {/* Skip to playground */}
