@@ -20,7 +20,7 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
   {
     id: "art",
     title: "ART",
-    subtitle: "Scene processing & replacement",
+    subtitle: "Scene processing & rescripting",
     description:
       "Guided eye movements, voluntary image replacement, and body awareness. Based on Accelerated Resolution Therapy protocol.",
   },

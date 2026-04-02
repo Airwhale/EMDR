@@ -109,7 +109,7 @@ export default function SessionEndSummary({
         >
           {mode === "emdr"
             ? "These stabilization resources strengthen over time. The safe place and butterfly hug can be practiced anytime you need grounding."
-            : "With ART, the original memory remains but the emotional charge often diminishes. The new image you chose can continue to replace the old one when the memory arises."}
+            : "With ART, the original memory remains but the emotional charge often diminishes. The changed version of the scene you created can become the image your mind returns to when the memory arises."}
         </motion.p>
 
         {history.length > 1 && (

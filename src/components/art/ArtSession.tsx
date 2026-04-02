@@ -171,24 +171,24 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Now — in your mind, replace that scene with any image you choose...", 7000,
-      "Now... in your mind... replace that scene... with any image you choose..."));
+    timers.push(showNarr("Now — in your mind, change the scene. You're in control of this image...", 7000,
+      "Now... in your mind... change the scene. You're in control of this image..."));
     timers.push(setTimeout(() => {
-      showNarr("It can be peaceful, funny, powerful — anything you want. Make the swap...", 7000,
-        "It can be peaceful... funny... powerful... anything you want. Make the swap...");
+      showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 8000,
+        "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
     }, 9000));
     timers.push(setTimeout(() => setPhase("vir-bls"), 18000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
-  // ---- VIR BLS (40 passes to install new image, then continue) ----
+  // ---- VIR BLS (40 passes to install the changed scene, then continue) ----
   useEffect(() => {
     if (phase !== "vir-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
 
-    showNarr("Hold the new image... follow the dot... let it settle in...", 6000,
-      "Hold the new image... follow the dot... let it settle in...");
+    showNarr("Hold the changed scene in mind... follow the dot... let it settle in...", 6000,
+      "Hold the changed scene in mind... follow the dot... let it settle in...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
