@@ -82,11 +82,14 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "centering") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Take a deep breath... settle into this moment...", 7000));
+    // Small delay to let voice engine initialize before first spoken cue
+    timers.push(setTimeout(() => {
+      showNarr("Take a deep breath... settle into this moment...", 7000);
+    }, 1500));
     timers.push(setTimeout(() => {
       showNarr("Let your body relax... feel the ground beneath you...", 7000);
-    }, 9000));
-    timers.push(setTimeout(() => setPhase("scene-select"), 20000));
+    }, 10500));
+    timers.push(setTimeout(() => setPhase("scene-select"), 21500));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 

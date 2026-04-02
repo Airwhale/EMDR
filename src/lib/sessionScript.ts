@@ -48,7 +48,7 @@ export const sessionScript: PhaseConfig[] = [
       {
         text: "Follow the dot as it moves... let your eyes track it gently...",
         spoken: "Follow the dot as it moves... let your eyes track it gently... back and forth... naturally...",
-        delay: 2000,
+        delay: 3000,
         duration: BREATH_CYCLE,
       },
       {

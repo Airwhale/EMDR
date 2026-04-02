@@ -70,8 +70,8 @@ export default function App() {
   // Entry timing
   useEffect(() => {
     if (appState !== "entry") return;
-    const t1 = setTimeout(() => setEntryTextVisible(true), 3000);
-    const t2 = setTimeout(() => setShowReady(true), 8000);
+    const t1 = setTimeout(() => setEntryTextVisible(true), 2000);
+    const t2 = setTimeout(() => setShowReady(true), 4000);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);

@@ -82,13 +82,16 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "centering") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Take a slow, deep breath... let your body settle...", 7000,
-      "Take a slow... deep breath... let your body settle..."));
+    // Small delay to ensure voice engine is ready
+    timers.push(setTimeout(() => {
+      showNarr("Take a slow, deep breath... let your body settle...", 7000,
+        "Take a slow... deep breath... let your body settle...");
+    }, 1500));
     timers.push(setTimeout(() => {
       showNarr("Feel the surface beneath you... notice the air on your skin...", 7000,
         "Feel the surface beneath you... notice the air on your skin...");
-    }, 9000));
-    timers.push(setTimeout(() => setPhase("safe-place"), 20000));
+    }, 10500));
+    timers.push(setTimeout(() => setPhase("safe-place"), 21500));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -159,8 +162,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     if (phase !== "container-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot to seal the container...", 5000,
-      "Follow the dot... to seal the container...");
+    showNarr("Imagine the container sealing as you follow the dot... feeling it become more and more secure...", 7000,
+      "Imagine the container sealing... as you follow the dot... feeling it become more and more secure... with each movement of your eyes...");
     // Container: minimum 15s (~15 slow passes)
     const t = setTimeout(() => setShowBlsContinue(true), 15000);
     return () => clearTimeout(t);

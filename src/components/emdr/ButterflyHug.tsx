@@ -22,6 +22,7 @@ const narration = [
 
 export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugProps) {
   const [currentText, setCurrentText] = useState<string | null>(null);
+  const [showPose, setShowPose] = useState(true);
   const [tapping, setTapping] = useState(false);
   const [tapSide, setTapSide] = useState<"left" | "right">("left");
   const tapIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -42,8 +43,11 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
       cumulative = hide;
     });
 
-    // Start tapping animation after first cue
-    timers.push(setTimeout(() => setTapping(true), 9000));
+    // Show pose image during first cue, then switch to tapping animation
+    timers.push(setTimeout(() => {
+      setShowPose(false);
+      setTapping(true);
+    }, 9000));
     timers.push(setTimeout(() => {
       setTapping(false);
       onComplete();
@@ -75,51 +79,151 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 px-4">
-      {/* Butterfly hug visual */}
-      {tapping && (
+      {/* Crossed-arms pose illustration (shown during first cue) */}
+      {showPose && !tapping && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
           className="relative flex items-center justify-center"
-          style={{ width: 160, height: 120 }}
+          style={{ width: 280, height: 220 }}
         >
-          {/* Body outline */}
+          {/* Body/torso */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: 70,
+              height: 100,
+              border: "1.5px solid rgba(201, 169, 110, 0.35)",
+              top: 55,
+            }}
+          />
+          {/* Head */}
           <div
             className="absolute rounded-full"
             style={{
               width: 40,
-              height: 60,
-              border: "1px solid rgba(201, 169, 110, 0.15)",
-              top: 20,
+              height: 40,
+              border: "1.5px solid rgba(201, 169, 110, 0.35)",
+              top: 10,
             }}
           />
-          {/* Left hand */}
+          {/* Left arm crossing to right shoulder */}
+          <div
+            className="absolute"
+            style={{
+              width: 90,
+              height: 2,
+              background: "rgba(201, 169, 110, 0.4)",
+              top: 85,
+              left: 55,
+              transform: "rotate(-35deg)",
+              transformOrigin: "right center",
+              borderRadius: 1,
+            }}
+          />
+          {/* Right arm crossing to left shoulder */}
+          <div
+            className="absolute"
+            style={{
+              width: 90,
+              height: 2,
+              background: "rgba(201, 169, 110, 0.4)",
+              top: 85,
+              right: 55,
+              transform: "rotate(35deg)",
+              transformOrigin: "left center",
+              borderRadius: 1,
+            }}
+          />
+          {/* Left hand on right shoulder */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: 14,
+              height: 14,
+              background: "rgba(201, 169, 110, 0.5)",
+              top: 62,
+              right: 88,
+            }}
+          />
+          {/* Right hand on left shoulder */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: 14,
+              height: 14,
+              background: "rgba(201, 169, 110, 0.5)",
+              top: 62,
+              left: 88,
+            }}
+          />
+        </motion.div>
+      )}
+
+      {/* Alternating tapping animation (shown during tapping cues) */}
+      {tapping && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative flex items-center justify-center"
+          style={{ width: 280, height: 200 }}
+        >
+          {/* Body/torso — brighter */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: 70,
+              height: 100,
+              border: "1.5px solid rgba(201, 169, 110, 0.45)",
+              top: 40,
+              boxShadow: "0 0 15px rgba(201, 169, 110, 0.08)",
+            }}
+          />
+          {/* Head */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: 40,
+              height: 40,
+              border: "1.5px solid rgba(201, 169, 110, 0.35)",
+              top: -5,
+            }}
+          />
+          {/* Left hand/tap indicator */}
           <motion.div
             className="absolute rounded-full"
             style={{
-              width: 16,
-              height: 16,
+              width: 28,
+              height: 28,
               background: tapSide === "left"
-                ? "rgba(201, 169, 110, 0.5)"
-                : "rgba(201, 169, 110, 0.15)",
-              left: 45,
-              top: 18,
+                ? "rgba(201, 169, 110, 0.7)"
+                : "rgba(201, 169, 110, 0.2)",
+              boxShadow: tapSide === "left"
+                ? "0 0 20px rgba(201, 169, 110, 0.4)"
+                : "none",
+              left: 68,
+              top: 40,
             }}
             animate={{ scale: tapSide === "left" ? [1, 1.3, 1] : 1 }}
             transition={{ duration: 0.3 }}
           />
-          {/* Right hand */}
+          {/* Right hand/tap indicator */}
           <motion.div
             className="absolute rounded-full"
             style={{
-              width: 16,
-              height: 16,
+              width: 28,
+              height: 28,
               background: tapSide === "right"
-                ? "rgba(201, 169, 110, 0.5)"
-                : "rgba(201, 169, 110, 0.15)",
-              right: 45,
-              top: 18,
+                ? "rgba(201, 169, 110, 0.7)"
+                : "rgba(201, 169, 110, 0.2)",
+              boxShadow: tapSide === "right"
+                ? "0 0 20px rgba(201, 169, 110, 0.4)"
+                : "none",
+              right: 68,
+              top: 40,
             }}
             animate={{ scale: tapSide === "right" ? [1, 1.3, 1] : 1 }}
             transition={{ duration: 0.3 }}
