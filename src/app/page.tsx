@@ -78,8 +78,8 @@ export default function App() {
           >
             <div className="flex flex-col items-center gap-12 z-10">
               {/* Slow dot on entry */}
-              <div className="relative" style={{ width: 300, height: 56 }}>
-                <EmdrDot cycleDuration={5} size={10} range={130} />
+              <div className="relative w-full" style={{ height: 56 }}>
+                <EmdrDot cycleDuration={5} size={12} rangeVw={30} />
               </div>
 
               <AnimatePresence>

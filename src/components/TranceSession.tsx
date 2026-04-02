@@ -237,7 +237,7 @@ export default function TranceSession() {
             <div className="relative flex items-center justify-center">
               {showSpiral && <HypnoticSpiral opacity={0.05} speed={12} size={450} />}
               <BreathingGuide isActive={true} size="full" showSpiral={true} slowdown={breathSlowdown} />
-              <EmdrDot cycleDuration={4} size={10} range={160} />
+              <EmdrDot cycleDuration={4} size={12} rangeVw={35} />
             </div>
             <NarrationDisplay text={currentNarration} />
           </motion.div>

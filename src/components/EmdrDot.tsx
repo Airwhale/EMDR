@@ -5,18 +5,23 @@ import { motion } from "framer-motion";
 interface EmdrDotProps {
   cycleDuration?: number;
   size?: number;
-  range?: number;
+  /** Travel range as vw (e.g. 35 = -35vw to +35vw = 70vw total) */
+  rangeVw?: number;
 }
 
 /**
- * EMDR-style dot — smooth horizontal movement through container center.
- * Uses GPU-accelerated transforms with will-change hints.
+ * EMDR-style dot for the trance mode — smooth horizontal movement
+ * using viewport-width units for wide screen coverage.
  */
 export default function EmdrDot({
   cycleDuration = 4,
-  size = 10,
-  range = 120,
+  size = 12,
+  rangeVw = 35,
 }: EmdrDotProps) {
+  // Framer Motion animates x as a string with vw units
+  const left = `${-rangeVw}vw`;
+  const right = `${rangeVw}vw`;
+
   return (
     <div
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -31,11 +36,11 @@ export default function EmdrDot({
           background:
             "radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(220, 210, 190, 0.3))",
           boxShadow:
-            "0 0 12px rgba(255, 255, 255, 0.3), 0 0 40px rgba(201, 169, 110, 0.1)",
+            "0 0 14px rgba(255, 255, 255, 0.35), 0 0 50px rgba(201, 169, 110, 0.1)",
           willChange: "transform",
         }}
         animate={{
-          x: [-range, range, -range],
+          x: [left, right, left],
         }}
         transition={{
           duration: cycleDuration,
@@ -44,7 +49,7 @@ export default function EmdrDot({
         }}
       />
 
-      {/* Subtle afterimage trail */}
+      {/* Afterimage trail */}
       <motion.div
         className="absolute rounded-full"
         style={{
@@ -52,11 +57,11 @@ export default function EmdrDot({
           height: size * 0.6,
           background:
             "radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent)",
-          filter: "blur(3px)",
+          filter: "blur(4px)",
           willChange: "transform",
         }}
         animate={{
-          x: [-range, range, -range],
+          x: [left, right, left],
         }}
         transition={{
           duration: cycleDuration,
