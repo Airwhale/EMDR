@@ -300,10 +300,9 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
           </motion.div>
         )}
 
-        {/* Narration — positioned below dot during BLS */}
-        {narration && !showSudRecheck && !showSudFinal && (
-          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}
-            className={isBls ? "absolute bottom-[18%]" : ""}>
+        {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
+        {narration && !showSudRecheck && !showSudFinal && !isBls && (
+          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}>
             <NarrationDisplay text={narration} size="large" />
           </motion.div>
         )}

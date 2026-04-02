@@ -298,11 +298,10 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
           </motion.div>
         )}
 
-        {/* Narration — show below the dot during BLS, centered otherwise */}
+        {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {!["disclaimer", "sud-check", "grounding", "butterfly-hug"].includes(phase) &&
-          sudEnd === null && narration && (
-          <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}
-            className={blsActive ? "absolute bottom-[20%]" : ""}>
+          sudEnd === null && narration && !blsActive && (
+          <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}>
             <NarrationDisplay text={narration} size="large" />
           </motion.div>
         )}
