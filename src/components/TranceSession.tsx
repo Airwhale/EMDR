@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import { TranceVoice } from "@/lib/TranceVoice";
+import { useSpeed } from "@/lib/SpeedContext";
 import { sessionScript, PhaseId, ExperimentResult } from "@/lib/sessionScript";
 import BreathingGuide from "@/components/BreathingGuide";
 import NarrationDisplay from "@/components/NarrationDisplay";
@@ -33,8 +34,14 @@ export default function TranceSession() {
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [breathSlowdown, setBreathSlowdown] = useState(1.0);
 
+  const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
+
+  // Sync speed to voice
+  useEffect(() => {
+    if (voiceRef.current) voiceRef.current.speedMultiplier = speed;
+  }, [speed]);
 
   const bgColors: Record<string, string> = {
     fixation: "#0a0a14",

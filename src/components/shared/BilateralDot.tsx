@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
+import { useSpeed } from "@/lib/SpeedContext";
 
 interface BilateralDotProps {
   /** Seconds for one full L→R pass (half-cycle). EMDR ≈ 0.5s, ART ≈ 0.35s */
@@ -30,6 +31,9 @@ export default function BilateralDot({
   onContinue,
   showContinue = false,
 }: BilateralDotProps) {
+  const speed = useSpeed();
+  const speedRef = useRef(speed);
+  speedRef.current = speed;
   const dotRef = useRef<HTMLDivElement>(null);
   const trailRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
@@ -54,12 +58,16 @@ export default function BilateralDot({
     if (!dotRef.current || !active) return;
 
     const fullCycle = halfCycleSec * 2;
-    const startTime = performance.now();
+    let phase = 0; // accumulated phase 0-1
+    let lastTime = performance.now();
 
     const tick = (now: number) => {
       if (!dotRef.current) return;
-      const elapsed = ((now - startTime) / 1000) % fullCycle;
-      const t = elapsed / fullCycle;
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      // Accumulate phase, scaled by speed multiplier
+      phase = (phase + (dt * speedRef.current) / fullCycle) % 1;
+      const t = phase;
 
       // Use percentage of viewport for full-width travel
       // sin produces -1 to 1, we map to -42vw to 42vw (84% of viewport)

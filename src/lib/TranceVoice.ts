@@ -117,14 +117,21 @@ export class TranceVoice {
     }
   }
 
+  /** Global speed multiplier (set externally for demo fast-forward) */
+  speedMultiplier = 1;
+
   speak(text: string, options?: { rate?: number; pitch?: number }): void {
     if (!this.synth || !this.ready || !this.enabled) return;
 
     this.synth.cancel();
 
+    const baseRate = options?.rate ?? this.tuning.rate;
+    // Clamp rate to Web Speech API max of 10, but practically cap at ~3x
+    const scaledRate = Math.min(baseRate * this.speedMultiplier, 3);
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.voice = this.voice;
-    utterance.rate = options?.rate ?? this.tuning.rate;
+    utterance.rate = scaledRate;
     utterance.pitch = options?.pitch ?? this.tuning.pitch;
     utterance.volume = this.tuning.volume;
     this.currentUtterance = utterance;

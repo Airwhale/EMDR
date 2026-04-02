@@ -2,6 +2,7 @@
 
 import { motion, useAnimation } from "framer-motion";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useSpeed } from "@/lib/SpeedContext";
 
 interface BreathingGuideProps {
   isActive: boolean;
@@ -32,10 +33,13 @@ export default function BreathingGuide({
   showSpiral = false,
   slowdown = 1,
 }: BreathingGuideProps) {
+  const speed = useSpeed();
   const [breathPhase, setBreathPhase] = useState<BreathPhase>("inhale");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const slowdownRef = useRef(slowdown);
   slowdownRef.current = slowdown;
+  const speedRef = useRef(speed);
+  speedRef.current = speed;
 
   const controls = useAnimation();
   const glowControls = useAnimation();
@@ -47,9 +51,10 @@ export default function BreathingGuide({
     if (!isActive) return;
 
     const s = slowdownRef.current;
-    const inhaleMs = BASE_INHALE * s;
-    const holdMs = BASE_HOLD * s;
-    const exhaleMs = BASE_EXHALE * s;
+    const sp = speedRef.current;
+    const inhaleMs = (BASE_INHALE * s) / sp;
+    const holdMs = (BASE_HOLD * s) / sp;
+    const exhaleMs = (BASE_EXHALE * s) / sp;
     const totalS = (inhaleMs + holdMs + exhaleMs) / 1000;
     const inhaleStop = inhaleMs / (inhaleMs + holdMs + exhaleMs);
     const holdStop = (inhaleMs + holdMs) / (inhaleMs + holdMs + exhaleMs);

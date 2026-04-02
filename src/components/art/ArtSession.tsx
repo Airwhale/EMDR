@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import { TranceVoice } from "@/lib/TranceVoice";
+import { useSpeed } from "@/lib/SpeedContext";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
@@ -50,8 +51,13 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   const [showSudRecheck, setShowSudRecheck] = useState(false);
   const [showSudFinal, setShowSudFinal] = useState(false);
 
+  const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
+
+  useEffect(() => {
+    if (voiceRef.current) voiceRef.current.speedMultiplier = speed;
+  }, [speed]);
 
   useEffect(() => {
     const audio = new TranceAudioEngine();
