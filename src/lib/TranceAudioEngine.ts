@@ -1,9 +1,11 @@
 /**
  * TranceAudioEngine — Pure Web Audio API synthesis engine.
  * True binaural tones (separate L/R channels), pink noise, isochronic pulses,
- * and a sub-bass heartbeat layer.
+ * sub-bass heartbeat, and bilateral ping tones for EMDR/ART modes.
  * No audio files. No fetch calls. All generative.
  */
+
+export type AudioMode = "trance" | "emdr" | "art";
 
 export class TranceAudioEngine {
   private ctx: AudioContext | null = null;
@@ -35,21 +37,79 @@ export class TranceAudioEngine {
 
   private isRunning = false;
   private baseFreq = 100;
-  private binauralBeat = 4; // Hz difference between L/R
+  private binauralBeat = 4;
+  private mode: AudioMode = "trance";
 
-  init(): void {
+  getContext(): AudioContext | null {
+    return this.ctx;
+  }
+
+  init(mode: AudioMode = "trance"): void {
     if (this.ctx) return;
 
+    this.mode = mode;
     this.ctx = new AudioContext();
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0;
     this.masterGain.connect(this.ctx.destination);
 
+    // Set mode-specific binaural frequency
+    if (mode === "emdr") {
+      this.baseFreq = 90;
+      this.binauralBeat = 5; // Theta (calming)
+    } else if (mode === "art") {
+      this.baseFreq = 110;
+      this.binauralBeat = 10; // Alpha (alert processing)
+    }
+
     this.setupBinauralDrone();
-    this.setupPinkNoise();
-    this.setupIsochronicPulse();
-    this.setupHeartbeat();
+
+    if (mode === "trance") {
+      this.setupPinkNoise();
+      this.setupIsochronicPulse();
+      this.setupHeartbeat();
+    } else {
+      // EMDR/ART: lighter ambient — just pink noise at lower level
+      this.setupPinkNoise();
+      if (this.pinkGain) {
+        this.pinkGain.gain.value = mode === "emdr" ? 0.06 : 0.04;
+      }
+    }
+
     this.isRunning = true;
+  }
+
+  /** Play a bilateral ping/tap sound panned to one side. */
+  playPing(side: "left" | "right"): void {
+    if (!this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+
+    // Short sine burst — soft woodblock-like tap
+    const osc = this.ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = this.mode === "art" ? 880 : 660;
+
+    const env = this.ctx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.25, now + 0.005); // Fast attack
+    env.gain.exponentialRampToValueAtTime(0.001, now + 0.12); // Quick decay
+
+    const pan = this.ctx.createStereoPanner();
+    pan.pan.value = side === "left" ? -0.85 : 0.85;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = this.mode === "art" ? 900 : 700;
+    filter.Q.value = 2;
+
+    osc.connect(filter);
+    filter.connect(env);
+    env.connect(pan);
+    pan.connect(this.masterGain);
+
+    osc.start(now);
+    osc.stop(now + 0.15);
   }
 
   private setupBinauralDrone(): void {
@@ -57,20 +117,18 @@ export class TranceAudioEngine {
 
     this.droneFilter = this.ctx.createBiquadFilter();
     this.droneFilter.type = "lowpass";
-    this.droneFilter.frequency.value = 300;
+    this.droneFilter.frequency.value = this.mode === "art" ? 400 : 300;
     this.droneFilter.Q.value = 1;
 
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = 0.3;
+    this.droneGain.gain.value = this.mode === "trance" ? 0.3 : 0.2;
 
-    // Left ear — base frequency
     this.droneOscL = this.ctx.createOscillator();
     this.droneOscL.type = "sine";
     this.droneOscL.frequency.value = this.baseFreq;
     this.panL = this.ctx.createStereoPanner();
     this.panL.pan.value = -1;
 
-    // Right ear — base + binaural beat offset
     this.droneOscR = this.ctx.createOscillator();
     this.droneOscR.type = "sine";
     this.droneOscR.frequency.value = this.baseFreq + this.binauralBeat;
@@ -180,7 +238,6 @@ export class TranceAudioEngine {
     this.heartbeatLfo.start();
   }
 
-  /** Fade master volume in to a target level */
   fadeIn(duration: number = 20, target: number = 0.5): void {
     if (!this.ctx || !this.masterGain) return;
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
@@ -193,14 +250,12 @@ export class TranceAudioEngine {
     this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + duration);
   }
 
-  /** Smoothly change master volume */
   setMasterVolume(target: number, duration: number = 4): void {
     if (!this.ctx || !this.masterGain) return;
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
     this.masterGain.gain.linearRampToValueAtTime(target, this.ctx.currentTime + duration);
   }
 
-  /** Shift binaural base frequency. Both L/R track with the beat offset preserved. */
   shiftPitch(targetHz: number, duration: number = 2): void {
     if (!this.ctx || !this.droneOscL || !this.droneOscR) return;
     const now = this.ctx.currentTime;
@@ -211,7 +266,6 @@ export class TranceAudioEngine {
     this.baseFreq = targetHz;
   }
 
-  /** Change the binaural beat frequency (e.g. 4Hz theta → 10Hz alpha) */
   setBinauralBeat(beatHz: number, duration: number = 4): void {
     if (!this.ctx || !this.droneOscR) return;
     this.binauralBeat = beatHz;
@@ -220,7 +274,6 @@ export class TranceAudioEngine {
     this.droneOscR.frequency.linearRampToValueAtTime(this.baseFreq + beatHz, now + duration);
   }
 
-  /** Crossfade between lighter (0) and deeper (1) audio states */
   setDepth(depth: number): void {
     if (!this.ctx || !this.droneGain || !this.pinkGain || !this.lfoGain) return;
     const now = this.ctx.currentTime;
@@ -254,7 +307,6 @@ export class TranceAudioEngine {
     this.setBinauralBeat(4 - depth * 1, 3);
   }
 
-  /** Raise pitch and brighten for emergence */
   emerge(duration: number = 10): void {
     if (!this.ctx) return;
     this.shiftPitch(this.baseFreq + 20, duration);
