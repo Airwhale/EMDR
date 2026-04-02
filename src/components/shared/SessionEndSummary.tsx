@@ -2,12 +2,16 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { EndSummary, loadSummaryHistory } from "@/lib/sessionPersistence";
 
 interface SessionEndSummaryProps {
   mode: "emdr" | "art";
   sudStart: number | null;
   sudEnd: number | null;
   details: string[];
+  completedAt?: string;
+  onStartNewSession: () => void;
 }
 
 export default function SessionEndSummary({
@@ -15,9 +19,19 @@ export default function SessionEndSummary({
   sudStart,
   sudEnd,
   details,
+  completedAt,
+  onStartNewSession,
 }: SessionEndSummaryProps) {
+  const [history, setHistory] = useState<EndSummary[]>([]);
   const sudImproved = sudStart !== null && sudEnd !== null && sudEnd < sudStart;
   const modeLabel = mode === "emdr" ? "EMDR" : "ART";
+  const completedLabel = completedAt
+    ? new Date(completedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })
+    : null;
+
+  useEffect(() => {
+    setHistory(loadSummaryHistory().slice(0, 5));
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-16 px-6 overflow-y-auto">
@@ -30,11 +44,15 @@ export default function SessionEndSummary({
         <h1 className="narration-text text-3xl text-gold/80 text-center mb-2">
           {modeLabel} Session Complete
         </h1>
-        <p className="ui-text text-center text-[#e8e0d4]/40 mb-10">
+        <p className="ui-text text-center text-[#e8e0d4]/40 mb-2">
           Here&apos;s a summary of your session
         </p>
+        {completedLabel && (
+          <p className="ui-text text-center text-[#e8e0d4]/35 mb-8 text-xs">
+            Completed {completedLabel}
+          </p>
+        )}
 
-        {/* SUD change */}
         {sudStart !== null && sudEnd !== null && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -63,7 +81,6 @@ export default function SessionEndSummary({
           </motion.div>
         )}
 
-        {/* Details */}
         {details.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -83,7 +100,6 @@ export default function SessionEndSummary({
           </motion.div>
         )}
 
-        {/* Explanation */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -95,6 +111,28 @@ export default function SessionEndSummary({
             : "With ART, the original memory remains but the emotional charge often diminishes. The new image you chose can continue to replace the old one when the memory arises."}
         </motion.p>
 
+        {history.length > 1 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.8, duration: 1.5 }}
+            className="border border-[#e8e0d4]/15 rounded-2xl p-6 mb-6"
+          >
+            <p className="ui-text text-[#e8e0d4]/45 mb-3">recent sessions</p>
+            <ul className="space-y-2">
+              {history.slice(1).map((item, i) => (
+                <li key={`${item.completedAt}-${i}`} className="text-xs text-[#e8e0d4]/45 font-light flex justify-between gap-3">
+                  <span>{item.mode.toUpperCase()}</span>
+                  <span>
+                    {item.sudStart ?? "?"} → {item.sudEnd ?? "?"}
+                  </span>
+                  <span>{new Date(item.completedAt).toLocaleDateString()}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -102,14 +140,14 @@ export default function SessionEndSummary({
           className="flex gap-6 justify-center"
         >
           <button
-            onClick={() => window.location.reload()}
+            onClick={onStartNewSession}
             className="px-8 py-3 border border-gold/35 rounded-full text-gold/80
                        hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text"
           >
             New session
           </button>
           <Link
-            href="/about"
+            href="/about?return=summary"
             className="px-8 py-3 border border-[#e8e0d4]/10 rounded-full text-[#e8e0d4]/40
                        hover:border-[#e8e0d4]/20 hover:text-[#e8e0d4]/60 transition-all duration-700 ui-text"
           >
