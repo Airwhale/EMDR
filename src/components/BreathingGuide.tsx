@@ -165,7 +165,7 @@ export default function BreathingGuide({
       {/* Breath phase label */}
       {size === "full" && (
         <motion.span
-          className="absolute ui-text text-gold/40"
+          className="absolute ui-text text-gold/80"
           style={{ bottom: -30 }}
           animate={{ opacity: breathPhase === "hold" ? 0.2 : 0.5 }}
           transition={{ duration: 1 }}

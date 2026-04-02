@@ -87,7 +87,7 @@ export default function AboutPage() {
         >
           <Link
             href="/"
-            className="ui-text text-gold/40 hover:text-gold/70 transition-colors duration-500 mb-12 inline-block"
+            className="ui-text text-gold/80 hover:text-gold transition-colors duration-500 mb-12 inline-block"
           >
             ← Back to experience
           </Link>
@@ -108,7 +108,7 @@ export default function AboutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1, duration: 1 }}
             >
-              <h2 className="narration-text text-2xl text-gold/60 mb-3">
+              <h2 className="narration-text text-2xl text-gold/80 mb-3">
                 {section.title}
               </h2>
               <p className="text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
@@ -122,12 +122,12 @@ export default function AboutPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 1.5 }}
-          className="mt-20 pt-8 border-t border-gold/10 text-center"
+          className="mt-20 pt-8 border-t border-gold/25 text-center"
         >
           <Link
             href="/"
-            className="px-10 py-4 border border-gold/20 rounded-full text-gold/60
-                       hover:border-gold/40 hover:text-gold/80 transition-all duration-700
+            className="px-10 py-4 border border-gold/35 rounded-full text-gold/80
+                       hover:border-gold/70 hover:text-gold transition-all duration-700
                        ui-text inline-block"
           >
             Begin a session

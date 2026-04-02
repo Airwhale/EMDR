@@ -55,12 +55,12 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 + i * 0.2, duration: 1 }}
             onClick={() => onSelect(mode.id)}
-            className="text-left px-6 py-5 border border-gold/15 rounded-2xl
-                       hover:border-gold/35 hover:bg-gold/[0.02] transition-all duration-700
+            className="text-left px-6 py-5 border border-gold/40 rounded-2xl
+                       hover:border-gold/60 hover:bg-gold/[0.02] transition-all duration-700
                        group"
           >
             <div className="flex items-baseline gap-3">
-              <span className="ui-text text-sm text-gold/70 group-hover:text-gold transition-colors duration-500">
+              <span className="ui-text text-sm text-gold/80 group-hover:text-gold transition-colors duration-500">
                 {mode.title}
               </span>
               <span className="narration-text text-sm text-[#e8e0d4]/40">
@@ -94,7 +94,7 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
           >
             {modes.map((mode) => (
               <div key={mode.id} className="px-4">
-                <span className="ui-text text-xs text-gold/50">{mode.title}</span>
+                <span className="ui-text text-xs text-gold/75">{mode.title}</span>
                 <p className="text-xs text-[#e8e0d4]/40 mt-1 font-light leading-relaxed">
                   {mode.description}
                 </p>

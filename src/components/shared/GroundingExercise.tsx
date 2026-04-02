@@ -79,7 +79,7 @@ export default function GroundingExercise({ voice, onComplete }: GroundingExerci
             transition={{ duration: 1.5 }}
             className="flex flex-col items-center gap-4"
           >
-            <span className="narration-text text-5xl text-gold/60">{steps[stepIndex].count}</span>
+            <span className="narration-text text-5xl text-gold/80">{steps[stepIndex].count}</span>
             <p className="narration-text text-xl text-[#e8e0d4]/70 text-center max-w-md">
               {steps[stepIndex].prompt}
             </p>

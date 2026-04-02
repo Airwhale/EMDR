@@ -40,7 +40,7 @@ export default function SessionEndSummary({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1.5 }}
-            className="border border-gold/10 rounded-2xl p-6 mb-6"
+            className="border border-gold/40 rounded-2xl p-6 mb-6"
             style={{ background: "rgba(201, 169, 110, 0.02)" }}
           >
             <p className="ui-text text-[#e8e0d4]/50 mb-3">distress level</p>
@@ -51,12 +51,12 @@ export default function SessionEndSummary({
               </div>
               <span className="text-gold/30">→</span>
               <div className="text-center">
-                <span className="narration-text text-3xl text-gold/70">{sudEnd}</span>
+                <span className="narration-text text-3xl text-gold/80">{sudEnd}</span>
                 <p className="ui-text text-[10px] text-[#e8e0d4]/30 mt-1">after</p>
               </div>
             </div>
             {sudImproved && (
-              <p className="narration-text text-sm text-gold/50 text-center mt-3">
+              <p className="narration-text text-sm text-gold/75 text-center mt-3">
                 {sudStart - sudEnd} point{sudStart - sudEnd > 1 ? "s" : ""} of improvement
               </p>
             )}
@@ -69,7 +69,7 @@ export default function SessionEndSummary({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 1.5 }}
-            className="border border-gold/10 rounded-2xl p-6 mb-6"
+            className="border border-gold/40 rounded-2xl p-6 mb-6"
             style={{ background: "rgba(201, 169, 110, 0.02)" }}
           >
             <p className="ui-text text-[#e8e0d4]/50 mb-3">
@@ -103,8 +103,8 @@ export default function SessionEndSummary({
         >
           <button
             onClick={() => window.location.reload()}
-            className="px-8 py-3 border border-gold/20 rounded-full text-gold/60
-                       hover:border-gold/40 hover:text-gold/80 transition-all duration-700 ui-text"
+            className="px-8 py-3 border border-gold/35 rounded-full text-gold/80
+                       hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text"
           >
             New session
           </button>

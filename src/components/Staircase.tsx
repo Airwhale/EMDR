@@ -82,7 +82,7 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
             transition={{ duration: 2, ease: "easeInOut" }}
           >
             <span
-              className="narration-text text-gold/50 font-light"
+              className="narration-text text-gold/75 font-light"
               style={{ fontSize: "8rem" }}
             >
               {staircaseNumbers[currentIndex]}

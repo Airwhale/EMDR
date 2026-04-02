@@ -30,8 +30,8 @@ export default function SudCheck({
           <button
             key={i}
             onClick={() => onRate(i)}
-            className="w-10 h-10 rounded-full border border-gold/20 text-gold/50 text-sm
-                       hover:border-gold/50 hover:text-gold hover:bg-gold/5
+            className="w-10 h-10 rounded-full border border-gold/35 text-gold/75 text-sm
+                       hover:border-gold/70 hover:text-gold hover:bg-gold/5
                        transition-all duration-300 flex items-center justify-center"
           >
             {i}

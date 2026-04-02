@@ -55,8 +55,8 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
             animate={{ opacity: 1 }}
             transition={{ delay: 4, duration: 1.5 }}
             onClick={startTimer}
-            className="px-8 py-3 border border-gold/20 rounded-full text-gold/60
-                       hover:border-gold/40 hover:text-gold/80 transition-all duration-700
+            className="px-8 py-3 border border-gold/35 rounded-full text-gold/80
+                       hover:border-gold/70 hover:text-gold transition-all duration-700
                        ui-text"
           >
             Close my eyes now
@@ -80,8 +80,8 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
             animate={{ opacity: 0.5 }}
             transition={{ delay: 5, duration: 2 }}
             onClick={stopTimer}
-            className="px-8 py-3 border border-gold/10 rounded-full text-gold/40
-                       hover:border-gold/30 hover:text-gold/60 transition-all duration-700
+            className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
+                       hover:border-gold/60 hover:text-gold transition-all duration-700
                        ui-text"
           >
             I think a minute has passed
@@ -98,7 +98,7 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
         >
           <NarrationDisplay text="Interesting, isn't it? In trance, time becomes more flexible..." />
           <div className="flex flex-col items-center gap-2 mt-4">
-            <span className="narration-text text-4xl text-gold/70">
+            <span className="narration-text text-4xl text-gold/80">
               {elapsed.toFixed(1)}s
             </span>
             <span className="ui-text text-[#e8e0d4]/40">actual elapsed time</span>
@@ -115,8 +115,8 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
             animate={{ opacity: 1 }}
             transition={{ delay: 3, duration: 1.5 }}
             onClick={handleContinue}
-            className="mt-4 px-8 py-3 border border-gold/20 rounded-full text-gold/60
-                       hover:border-gold/40 hover:text-gold/80 transition-all duration-700
+            className="mt-4 px-8 py-3 border border-gold/35 rounded-full text-gold/80
+                       hover:border-gold/70 hover:text-gold transition-all duration-700
                        ui-text"
           >
             Continue

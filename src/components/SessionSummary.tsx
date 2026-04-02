@@ -31,10 +31,10 @@ export default function SessionSummary({ results }: SessionSummaryProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 + index * 0.3, duration: 1.5 }}
-              className="border border-gold/10 rounded-2xl p-6"
+              className="border border-gold/40 rounded-2xl p-6"
               style={{ background: "rgba(201, 169, 110, 0.02)" }}
             >
-              <h3 className="narration-text text-xl text-gold/70 mb-1">
+              <h3 className="narration-text text-xl text-gold/80 mb-1">
                 {result.title}
               </h3>
               <p className="ui-text text-[#e8e0d4]/50 mb-3">
@@ -66,8 +66,8 @@ export default function SessionSummary({ results }: SessionSummaryProps) {
           <div className="flex gap-6 justify-center">
             <button
               onClick={() => window.location.reload()}
-              className="px-8 py-3 border border-gold/20 rounded-full text-gold/60
-                         hover:border-gold/40 hover:text-gold/80 transition-all duration-700
+              className="px-8 py-3 border border-gold/35 rounded-full text-gold/80
+                         hover:border-gold/70 hover:text-gold transition-all duration-700
                          ui-text"
             >
               Begin again

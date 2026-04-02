@@ -124,8 +124,8 @@ export default function ChevreuPendulum({ isActive, onComplete }: ChevreuPendulu
                 <button
                   key={option}
                   onClick={() => handleResponse(option)}
-                  className="px-5 py-3 border border-gold/20 rounded-full text-gold/60
-                             hover:border-gold/40 hover:text-gold/80 transition-all duration-700
+                  className="px-5 py-3 border border-gold/35 rounded-full text-gold/80
+                             hover:border-gold/70 hover:text-gold transition-all duration-700
                              ui-text text-xs"
                 >
                   {option}

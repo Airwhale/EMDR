@@ -279,8 +279,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
               If you are working through trauma, please do so with a trained EMDR clinician.
             </p>
             <button onClick={handleDisclaimerAccept}
-              className="px-8 py-3 border border-gold/25 rounded-full text-gold/60
-                         hover:border-gold/45 hover:text-gold/80 transition-all duration-700 ui-text">
+              className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
+                         hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text">
               I understand
             </button>
           </motion.div>

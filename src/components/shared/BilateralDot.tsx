@@ -137,8 +137,8 @@ export default function BilateralDot({
           whileHover={{ opacity: 0.8 }}
           transition={{ duration: 1.5 }}
           onClick={onContinue}
-          className="px-8 py-3 border border-gold/20 rounded-full text-gold/50
-                     hover:border-gold/40 hover:text-gold/70 transition-all duration-700
+          className="px-8 py-3 border border-gold/35 rounded-full text-gold/75
+                     hover:border-gold/70 hover:text-gold transition-all duration-700
                      ui-text pointer-events-auto"
         >
           continue

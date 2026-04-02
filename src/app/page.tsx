@@ -103,8 +103,8 @@ export default function App() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 2 }}
                     onClick={handleReady}
-                    className="px-10 py-4 border border-gold/30 rounded-full text-gold/70
-                               hover:border-gold/50 hover:text-gold transition-all duration-1000
+                    className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
+                               hover:border-gold/70 hover:text-gold transition-all duration-1000
                                ui-text tracking-widest"
                   >
                     I&apos;m ready
