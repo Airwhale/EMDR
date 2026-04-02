@@ -75,7 +75,7 @@ export default function ArmLevitation({ isActive, onComplete }: ArmLevitationPro
           className="relative"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
+          transition={{ duration: 0.8 }}
         >
           <motion.div
             className="flex flex-col items-center"

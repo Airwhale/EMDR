@@ -15,7 +15,7 @@ export default function SafetyGate({ onContinue, onBack }: SafetyGateProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1.2 }}
+      transition={{ duration: 0.8 }}
     >
       <div className="w-full max-w-xl border border-gold/30 rounded-2xl p-8 bg-gold/[0.02]">
         <h1 className="narration-text text-3xl text-gold/85 mb-4 text-center">Safety check</h1>

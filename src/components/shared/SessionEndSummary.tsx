@@ -39,7 +39,7 @@ export default function SessionEndSummary({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 2 }}
+        transition={{ duration: 0.8 }}
         className="max-w-lg w-full"
       >
         <h1 className="narration-text text-3xl text-gold/80 text-center mb-2">

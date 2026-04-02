@@ -241,7 +241,7 @@ export default function TranceSession() {
 
       <AnimatePresence mode="wait">
         {phase === "fixation" && (
-          <motion.div key="fixation" className="flex flex-col items-center gap-8 z-10 w-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 3 }}>
+          <motion.div key="fixation" className="flex flex-col items-center gap-8 z-10 w-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <div className="relative flex items-center justify-center">
               {showSpiral && <HypnoticSpiral opacity={0.05} speed={12} size={450} />}
               <BreathingGuide isActive={true} size="full" showSpiral={true} slowdown={breathSlowdown} />
@@ -252,7 +252,7 @@ export default function TranceSession() {
         )}
 
         {phase === "deepening" && (
-          <motion.div key="deepening" className="flex flex-col items-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 3 }}>
+          <motion.div key="deepening" className="flex flex-col items-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
             {showSpiral && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><HypnoticSpiral opacity={0.04} speed={8} size={600} /></div>}
             <div className="flex-1 flex items-center justify-center"><NarrationDisplay text={currentNarration} size="large" /></div>
@@ -260,7 +260,7 @@ export default function TranceSession() {
         )}
 
         {phase === "staircase" && (
-          <motion.div key="staircase" className="w-full h-full flex flex-col items-center z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 3 }}>
+          <motion.div key="staircase" className="w-full h-full flex flex-col items-center z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
             <div className="absolute top-32 z-10"><NarrationDisplay text={currentNarration} /></div>
             <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
@@ -268,27 +268,27 @@ export default function TranceSession() {
         )}
 
         {phase === "experiments" && (
-          <motion.div key="experiments" className="w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 2 }}>
+          <motion.div key="experiments" className="w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             {currentNarration && experimentIndex === 0 && (
               <div className="absolute top-1/3 left-0 right-0 z-10"><NarrationDisplay text={currentNarration} size="large" /></div>
             )}
             <AnimatePresence mode="wait">
-              {currentExperiment === "arm" && <motion.div key="arm" exit={{ opacity: 0 }} transition={{ duration: 1.5 }}><ArmLevitation isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
-              {currentExperiment === "time" && <motion.div key="time" exit={{ opacity: 0 }} transition={{ duration: 1.5 }}><TimeDistortion isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
-              {currentExperiment === "sensory" && <motion.div key="sensory" exit={{ opacity: 0 }} transition={{ duration: 1.5 }}><SensoryAmplification isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
-              {currentExperiment === "pendulum" && <motion.div key="pendulum" exit={{ opacity: 0 }} transition={{ duration: 1.5 }}><ChevreuPendulum isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
+              {currentExperiment === "arm" && <motion.div key="arm" exit={{ opacity: 0 }} transition={{ duration: 0.8 }}><ArmLevitation isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
+              {currentExperiment === "time" && <motion.div key="time" exit={{ opacity: 0 }} transition={{ duration: 0.8 }}><TimeDistortion isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
+              {currentExperiment === "sensory" && <motion.div key="sensory" exit={{ opacity: 0 }} transition={{ duration: 0.8 }}><SensoryAmplification isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
+              {currentExperiment === "pendulum" && <motion.div key="pendulum" exit={{ opacity: 0 }} transition={{ duration: 0.8 }}><ChevreuPendulum isActive={true} onComplete={handleExperimentComplete} /></motion.div>}
             </AnimatePresence>
           </motion.div>
         )}
 
         {phase === "emergence" && (
-          <motion.div key="emergence" className="w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 2 }}>
+          <motion.div key="emergence" className="w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <EmergenceSequence isActive={true} onComplete={handleEmergenceComplete} onStep={handleEmergenceStep} />
           </motion.div>
         )}
 
         {phase === "summary" && (
-          <motion.div key="summary" className="w-full h-full overflow-y-auto z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 3 }}>
+          <motion.div key="summary" className="w-full h-full overflow-y-auto z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
             <SessionSummary results={results} />
           </motion.div>
         )}

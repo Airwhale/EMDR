@@ -46,7 +46,7 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
+          transition={{ duration: 0.8 }}
           className="flex flex-col items-center gap-8"
         >
           <NarrationDisplay text="Close your eyes for what feels like one minute. Open them when you think a minute has passed." />
@@ -78,7 +78,7 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
-            transition={{ delay: 5, duration: 2 }}
+            transition={{ delay: 5, duration: 0.8 }}
             onClick={stopTimer}
             className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
                        hover:border-gold/60 hover:text-gold transition-all duration-700
@@ -93,7 +93,7 @@ export default function TimeDistortion({ isActive, onComplete }: TimeDistortionP
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
+          transition={{ duration: 0.8 }}
           className="flex flex-col items-center gap-6"
         >
           <NarrationDisplay text="Interesting, isn't it? In trance, time becomes more flexible..." />

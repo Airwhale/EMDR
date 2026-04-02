@@ -40,7 +40,7 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 2 }}
+      transition={{ duration: 0.8 }}
       className="flex flex-col items-center gap-10 px-4"
     >
       <p className="narration-text text-xl text-[#e8e0d4]/50">
