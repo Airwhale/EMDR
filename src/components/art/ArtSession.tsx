@@ -50,6 +50,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   const [showBlsContinue, setShowBlsContinue] = useState(false);
   const [showSudRecheck, setShowSudRecheck] = useState(false);
   const [showSudFinal, setShowSudFinal] = useState(false);
+  const [voiceAvailable, setVoiceAvailable] = useState(true);
 
   const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
@@ -68,6 +69,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
     const voice = new TranceVoice();
     voice.init();
     voiceRef.current = voice;
+    setVoiceAvailable(voice.isSupported());
 
     return () => { audio.stop(); voice.stop(); };
   }, []);
@@ -325,6 +327,12 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {!voiceAvailable && (
+        <div className="fixed top-4 left-4 z-50 text-[11px] ui-text px-3 py-2 rounded-full border border-[#e8e0d4]/20 text-[#e8e0d4]/55">
+          Voice unavailable in this browser — text guidance only
+        </div>
+      )}
     </div>
   );
 }

@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TRANCE
 
-## Getting Started
+TRANCE is a browser-based guided self-regulation experience built with Next.js. It includes:
 
-First, run the development server:
+- **TRANCE mode** (guided hypnotic relaxation + suggestibility experiments)
+- **EMDR-inspired stabilization mode** (resource-focused, non-trauma reprocessing)
+- **ART-inspired processing mode** (mild-stress scene processing and replacement)
+
+> This project is educational/wellness-oriented and not a substitute for clinical care.
+
+## Safety first
+
+- Use this app only when you can sit/lie down safely.
+- If distress increases, stop and ground.
+- For urgent emotional crisis support in the US, call or text **988**.
+
+## Tech stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Web Audio API (generative audio)
+- Web Speech API (narration, with text fallback)
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` — local dev server
+- `npm run build` — production build
+- `npm run start` — run production build
+- `npm run lint` — Next.js lint
+- `npm run test` — run lightweight Node-based project checks
 
-## Learn More
+## Architecture notes
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/page.tsx` orchestrates global app state and mode routing.
+- `src/components/TranceSession.tsx` handles the trance flow and experiments.
+- `src/components/emdr/EmdrSession.tsx` and `src/components/art/ArtSession.tsx` manage session-specific state machines.
+- `src/lib/TranceAudioEngine.ts` generates immersive audio entirely in-browser.
+- `src/lib/TranceVoice.ts` wraps speech synthesis and handles voice selection.
+- `src/lib/sessionPersistence.ts` stores snapshots, summaries, and user preferences.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Persistence behavior
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app stores lightweight local data in `localStorage`:
 
-## Deploy on Vercel
+- latest summary + summary history
+- app snapshot (for resuming)
+- simple user preferences (e.g., voice on/off)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+No backend storage is required for these features.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing
+
+Tests use Node's built-in test runner. Start with:
+
+```bash
+npm run test
+```
