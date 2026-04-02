@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { EndSummary, loadSummaryHistory } from "@/lib/sessionPersistence";
+import { EndSummary, loadSummaryHistory, clearAllSessionHistory } from "@/lib/sessionPersistence";
 
 interface SessionEndSummaryProps {
   mode: "emdr" | "art";
@@ -23,6 +23,7 @@ export default function SessionEndSummary({
   onStartNewSession,
 }: SessionEndSummaryProps) {
   const [history, setHistory] = useState<EndSummary[]>([]);
+  const [historyCleared, setHistoryCleared] = useState(false);
   const sudImproved = sudStart !== null && sudEnd !== null && sudEnd < sudStart;
   const modeLabel = mode === "emdr" ? "EMDR" : "ART";
   const completedLabel = completedAt

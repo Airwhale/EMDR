@@ -301,7 +301,7 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
       </AnimatePresence>
 
       {!voiceAvailable && (
-        <div className="fixed top-4 left-4 z-50 text-[11px] ui-text px-3 py-2 rounded-full border border-[#e8e0d4]/20 text-[#e8e0d4]/55">
+        <div className="fixed bottom-4 left-4 z-50 text-[11px] ui-text px-3 py-2 rounded-full border border-[#e8e0d4]/20 text-[#e8e0d4]/55">
           Voice unavailable in this browser — text guidance only
         </div>
       )}

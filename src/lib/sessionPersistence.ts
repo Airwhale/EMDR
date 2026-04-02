@@ -16,7 +16,7 @@ export interface EndSummary {
 
 export interface AppSnapshot {
   version?: number;
-  appState: "entry" | "safety" | "mode-select" | "session" | "end-summary";
+  appState: "entry" | "learn" | "safety" | "mode-select" | "session" | "end-summary";
   selectedMode: "trance" | "emdr" | "art" | null;
   endSummary: EndSummary | null;
   updatedAt: string;
@@ -101,4 +101,11 @@ export function hasAcknowledgedSafety(): boolean {
 export function saveSafetyAcknowledged(): void {
   if (!hasStorage()) return;
   window.localStorage.setItem(SAFETY_ACK_KEY, "true");
+}
+
+export function clearAllSessionHistory(): void {
+  if (!hasStorage()) return;
+  window.localStorage.removeItem(APP_SNAPSHOT_KEY);
+  window.localStorage.removeItem(END_SUMMARY_KEY);
+  window.localStorage.removeItem(END_SUMMARY_HISTORY_KEY);
 }

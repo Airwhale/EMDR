@@ -14,15 +14,13 @@ import {
   appendSummaryToHistory,
   clearAppSnapshot,
   EndSummary,
-  hasAcknowledgedSafety,
   loadAppSnapshot,
   loadLatestEndSummary,
   saveAppSnapshot,
-  saveSafetyAcknowledged,
   saveLatestEndSummary,
 } from "@/lib/sessionPersistence";
 
-type AppState = "entry" | "safety" | "mode-select" | "session" | "end-summary";
+type AppState = "entry" | "learn" | "safety" | "mode-select" | "session" | "end-summary";
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
@@ -51,10 +49,10 @@ export default function App() {
     }
 
     const saved = loadAppSnapshot();
-    if (saved) {
+    if (saved && saved.appState === "end-summary" && saved.endSummary) {
       setSelectedMode(saved.selectedMode);
-      if (saved.endSummary) setEndSummary(saved.endSummary);
-      setAppState(saved.appState);
+      setEndSummary(saved.endSummary);
+      setAppState("end-summary");
     }
     setIsHydrated(true);
   }, []);
@@ -81,15 +79,10 @@ export default function App() {
   }, [appState]);
 
   const handleReady = useCallback(() => {
-    if (hasAcknowledgedSafety()) {
-      setAppState("mode-select");
-      return;
-    }
     setAppState("safety");
   }, []);
 
   const handleSafetyContinue = useCallback(() => {
-    saveSafetyAcknowledged();
     setAppState("mode-select");
   }, []);
 
