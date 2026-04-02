@@ -66,31 +66,29 @@ export function SpeedProvider({ children }: SpeedProviderProps) {
     };
   }, [speed]);
 
-  const handlePointerDown = useCallback(() => setSpeed(4), []);
+  const handlePointerDown = useCallback(() => setSpeed(3), []);
   const handlePointerUp = useCallback(() => setSpeed(1), []);
-
-  // Also reset on pointer leave (if finger/mouse leaves the button)
   const handlePointerLeave = useCallback(() => setSpeed(1), []);
 
   return (
     <SpeedContext.Provider value={{ speed }}>
       {children}
 
-      {/* Speed-up button — fixed position, always visible */}
+      {/* Speed-up button — fixed position, always visible, high z-index */}
       <button
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerLeave}
         onContextMenu={(e) => e.preventDefault()}
-        className={`fixed top-4 right-4 z-[100] px-3 py-1.5 rounded-full
-                    ui-text text-[10px] select-none touch-none
+        style={{ zIndex: 9999, position: "fixed", top: 16, right: 16 }}
+        className={`px-3 py-1.5 rounded-full ui-text text-[11px] select-none touch-none
                     transition-all duration-200
                     ${speed > 1
-                      ? "border border-gold/60 text-gold/90 bg-gold/10"
-                      : "border border-[#e8e0d4]/15 text-[#e8e0d4]/25 hover:text-[#e8e0d4]/50 hover:border-[#e8e0d4]/30"
+                      ? "border border-gold/70 text-gold bg-gold/10"
+                      : "border border-[#e8e0d4]/30 text-[#e8e0d4]/45 hover:text-[#e8e0d4]/70 hover:border-[#e8e0d4]/50"
                     }`}
       >
-        {speed > 1 ? "4× ▶▶" : "4×"}
+        {speed > 1 ? "3× ▶▶" : "3×"}
       </button>
     </SpeedContext.Provider>
   );
