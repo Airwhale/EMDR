@@ -38,7 +38,7 @@ export default function SessionEndSummary({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 2 }}
+        transition={{ duration: 0.8 }}
         className="max-w-lg w-full"
       >
         <h1 className="narration-text text-3xl text-gold/80 text-center mb-2">
@@ -108,7 +108,7 @@ export default function SessionEndSummary({
         >
           {mode === "emdr"
             ? "These stabilization resources strengthen over time. The safe place and butterfly hug can be practiced anytime you need grounding."
-            : "With ART, the original memory remains but the emotional charge often diminishes. The new image you chose can continue to replace the old one when the memory arises."}
+            : "With ART, the original memory remains but the emotional charge often diminishes. The changed version of the scene you created can become the image your mind returns to when the memory arises."}
         </motion.p>
 
         {history.length > 1 && (
@@ -156,6 +156,29 @@ export default function SessionEndSummary({
           >
             How it works
           </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 1.5 }}
+          className="mt-8 text-center"
+        >
+          {historyCleared ? (
+            <span className="text-[11px] text-[#e8e0d4]/30 font-light">Session history cleared</span>
+          ) : (
+            <button
+              onClick={() => {
+                clearAllSessionHistory();
+                setHistory([]);
+                setHistoryCleared(true);
+              }}
+              className="text-[11px] text-[#e8e0d4]/25 hover:text-[#e8e0d4]/50
+                         transition-colors duration-500 font-light"
+            >
+              Clear session history
+            </button>
+          )}
         </motion.div>
       </motion.div>
     </div>

@@ -3,7 +3,6 @@
 import { useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
-import { useSpeed } from "@/lib/SpeedContext";
 
 interface BilateralDotProps {
   /** Seconds for one full L→R pass (half-cycle). EMDR ≈ 0.5s, ART ≈ 0.35s */
@@ -31,9 +30,6 @@ export default function BilateralDot({
   onContinue,
   showContinue = false,
 }: BilateralDotProps) {
-  const speed = useSpeed();
-  const speedRef = useRef(speed);
-  speedRef.current = speed;
   const dotRef = useRef<HTMLDivElement>(null);
   const trailRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
@@ -41,16 +37,16 @@ export default function BilateralDot({
 
   const colorMain =
     color === "gold"
-      ? "radial-gradient(circle, rgba(201, 169, 110, 0.95), rgba(201, 169, 110, 0.2))"
-      : "radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(220, 210, 190, 0.2))";
+      ? "radial-gradient(circle, rgba(212, 180, 120, 1), rgba(201, 169, 110, 0.4))"
+      : "radial-gradient(circle, rgba(255, 255, 255, 1), rgba(230, 220, 200, 0.5))";
   const shadowMain =
     color === "gold"
-      ? "0 0 16px rgba(201, 169, 110, 0.45), 0 0 50px rgba(201, 169, 110, 0.15)"
-      : "0 0 16px rgba(255, 255, 255, 0.45), 0 0 50px rgba(201, 169, 110, 0.12)";
+      ? "0 0 20px rgba(201, 169, 110, 0.6), 0 0 60px rgba(201, 169, 110, 0.2)"
+      : "0 0 20px rgba(255, 255, 255, 0.6), 0 0 60px rgba(201, 169, 110, 0.15)";
   const colorTrail =
     color === "gold"
-      ? "radial-gradient(circle, rgba(201, 169, 110, 0.3), transparent)"
-      : "radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent)";
+      ? "radial-gradient(circle, rgba(201, 169, 110, 0.45), transparent)"
+      : "radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent)";
   const lineColor =
     color === "gold" ? "rgba(201, 169, 110, 0.06)" : "rgba(255, 255, 255, 0.04)";
 
@@ -58,16 +54,12 @@ export default function BilateralDot({
     if (!dotRef.current || !active) return;
 
     const fullCycle = halfCycleSec * 2;
-    let phase = 0; // accumulated phase 0-1
-    let lastTime = performance.now();
+    const startTime = performance.now();
 
     const tick = (now: number) => {
       if (!dotRef.current) return;
-      const dt = (now - lastTime) / 1000;
-      lastTime = now;
-      // Accumulate phase, scaled by speed multiplier
-      phase = (phase + (dt * speedRef.current) / fullCycle) % 1;
-      const t = phase;
+      const elapsed = ((now - startTime) / 1000) % fullCycle;
+      const t = elapsed / fullCycle;
 
       // Use percentage of viewport for full-width travel
       // sin produces -1 to 1, we map to -42vw to 42vw (84% of viewport)
@@ -137,20 +129,26 @@ export default function BilateralDot({
         />
       </div>
 
-      {/* Continue button */}
+      {/* Continue button + helper text */}
       {showContinue && onContinue && (
-        <motion.button
+        <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          whileHover={{ opacity: 0.8 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
-          onClick={onContinue}
-          className="px-8 py-3 border border-gold/35 rounded-full text-gold/75
-                     hover:border-gold/70 hover:text-gold transition-all duration-700
-                     ui-text pointer-events-auto"
+          className="flex flex-col items-center gap-3 pointer-events-auto"
         >
-          continue
-        </motion.button>
+          <button
+            onClick={onContinue}
+            className="px-8 py-3 border border-gold/50 rounded-full text-gold/90
+                       hover:border-gold hover:text-gold hover:bg-gold/5
+                       transition-all duration-500 ui-text"
+          >
+            continue
+          </button>
+          <span className="text-[11px] text-[#e8e0d4]/35 font-light">
+            Press continue when you&apos;re ready to move on
+          </span>
+        </motion.div>
       )}
     </div>
   );

@@ -19,8 +19,7 @@ const sections: AboutSection[] = [
   {
     title: "How This Works",
     content:
-      "TRANCE uses well-established techniques from clinical hypnotherapy, adapted for a browser-based experience. None of this is magic — it's applied psychology, rhythm, and focused attention. Multiple induction methods work together to create a genuine altered state.",
-    evidence: [{ label: "APA Dictionary: Hypnosis", href: "https://dictionary.apa.org/hypnosis" }],
+      "This experience uses well-established techniques from clinical hypnotherapy, EMDR, and ART, adapted for a browser-based format. None of this is magic — it's applied psychology, rhythm, and focused attention. Multiple methods work together to support relaxation and emotional regulation.",
   },
   {
     title: "EMDR-Style Eye Movement",
@@ -40,7 +39,7 @@ const sections: AboutSection[] = [
   {
     title: "Voice Synthesis",
     content:
-      "TRANCE uses your browser's speech synthesis to deliver narration in a slow, low-pitched voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled hypnotherapist. Spoken suggestions engage different processing pathways than written text, and the combination of reading and hearing the same content creates dual-channel reinforcement that deepens suggestibility.",
+      "This experience uses your browser's speech synthesis to deliver narration in a slow, low-pitched voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled hypnotherapist. Spoken suggestions engage different processing pathways than written text, and the combination of reading and hearing the same content creates dual-channel reinforcement that deepens suggestibility.",
     evidence: [
       { label: "APA Dictionary: Suggestibility", href: "https://dictionary.apa.org/suggestibility" },
       { label: "Web Speech API (MDN)", href: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API" },
@@ -127,7 +126,7 @@ export default function AboutPage() {
           </Link>
 
           <h1 className="narration-text text-4xl text-gold/80 mb-4">
-            The Science Behind TRANCE
+            The Science Behind the Experience
           </h1>
           <p className="text-[#e8e0d4]/40 text-sm mb-16 font-light">
             Understanding the psychology and neuroscience of what you just experienced.
@@ -183,7 +182,7 @@ export default function AboutPage() {
                        hover:border-gold/70 hover:text-gold transition-all duration-700
                        ui-text inline-block"
           >
-            Begin a session
+            Back to experience
           </Link>
         </motion.div>
       </div>

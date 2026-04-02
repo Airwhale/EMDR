@@ -4,14 +4,12 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import { TranceVoice } from "@/lib/TranceVoice";
-import { useSpeed } from "@/lib/SpeedContext";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
 
 type ArtPhase =
-  | "disclaimer"
   | "centering"
   | "scene-select"
   | "sud-initial"
@@ -38,11 +36,12 @@ export interface ArtSummaryData {
 
 const MAX_ROUNDS = 3;
 
-// ART uses ~40 passes per set at 0.35s half-cycle = ~28s per set
-const ART_SET_DURATION = 28000;
+// ART uses ~40 passes per set at 0.35s half-cycle ≈ 28s minimum
+// Add buffer so user has time to settle — 35s before continue appears
+const ART_SET_DURATION = 35000;
 
 export default function ArtSession({ onComplete }: ArtSessionProps) {
-  const [phase, setPhase] = useState<ArtPhase>("disclaimer");
+  const [phase, setPhase] = useState<ArtPhase>("centering");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
   const [round, setRound] = useState(0);
@@ -52,13 +51,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   const [showSudFinal, setShowSudFinal] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
-  const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
-
-  useEffect(() => {
-    if (voiceRef.current) voiceRef.current.speedMultiplier = speed;
-  }, [speed]);
 
   useEffect(() => {
     const audio = new TranceAudioEngine();
@@ -84,9 +78,6 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
     return setTimeout(() => setNarration(null), duration);
   }, [speak]);
 
-  // ---- DISCLAIMER ----
-  const handleDisclaimerAccept = useCallback(() => setPhase("centering"), []);
-
   // ---- CENTERING ----
   useEffect(() => {
     if (phase !== "centering") return;
@@ -107,8 +98,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
       "Think of something mildly stressful. You don't need to describe it — just bring it to mind...", 8000,
       "Think of something mildly stressful... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
-      showNarr("See it like a scene in a movie... notice the details...", 7000,
-        "See it like a scene in a movie... notice the details...");
+      showNarr("See it like a scene in a movie in your mind... notice the details...", 7000,
+        "See it like a scene in a movie... in your mind... notice the details...");
     }, 10000));
     timers.push(setTimeout(() => setPhase("sud-initial"), 20000));
     return () => timers.forEach(clearTimeout);
@@ -180,24 +171,24 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Now — replace that scene with any image you choose...", 7000,
-      "Now... replace that scene... with any image you choose..."));
+    timers.push(showNarr("Now — in your mind, change the scene. You're in control of this image...", 7000,
+      "Now... in your mind... change the scene. You're in control of this image..."));
     timers.push(setTimeout(() => {
-      showNarr("It can be peaceful, funny, powerful — anything you want. Make the swap...", 7000,
-        "It can be peaceful... funny... powerful... anything you want. Make the swap...");
+      showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 8000,
+        "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
     }, 9000));
     timers.push(setTimeout(() => setPhase("vir-bls"), 18000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
-  // ---- VIR BLS (40 passes to install new image, then continue) ----
+  // ---- VIR BLS (40 passes to install the changed scene, then continue) ----
   useEffect(() => {
     if (phase !== "vir-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
 
-    showNarr("Hold the new image... follow the dot... let it settle in...", 6000,
-      "Hold the new image... follow the dot... let it settle in...");
+    showNarr("Hold the changed scene in mind... follow the dot... let it settle in...", 6000,
+      "Hold the changed scene in mind... follow the dot... let it settle in...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
@@ -266,7 +257,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
         <div className="absolute top-[30%] w-full">
           <BilateralDot
             halfCycleSec={0.35}
-            size={16}
+            size={22}
             active={true}
             audio={audioRef.current}
             color="white"
@@ -277,25 +268,6 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
       )}
 
       <AnimatePresence mode="wait">
-        {phase === "disclaimer" && (
-          <motion.div key="art-disclaimer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}
-            className="flex flex-col items-center gap-8 px-6 max-w-lg text-center">
-            <p className="narration-text text-xl text-[#e8e0d4]/80">
-              This session uses techniques from Accelerated Resolution Therapy.
-            </p>
-            <p className="text-sm text-[#e8e0d4]/40 font-light leading-relaxed">
-              Work with mildly stressful memories only. For trauma or highly
-              distressing memories, please work with a trained ART clinician.
-              You will not be asked to describe or share what you&apos;re processing.
-            </p>
-            <button onClick={handleDisclaimerAccept}
-              className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
-                         hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text">
-              I understand
-            </button>
-          </motion.div>
-        )}
-
         {phase === "grounding" && (
           <motion.div key="art-grounding" exit={{ opacity: 0 }} transition={{ duration: 1 }}>
             <GroundingExercise voice={voiceRef.current} onComplete={handleGroundingComplete} />
@@ -310,7 +282,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
 
         {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {narration && !showSudRecheck && !showSudFinal && !isBls && (
-          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}>
+          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}>
             <NarrationDisplay text={narration} size="large" />
           </motion.div>
         )}

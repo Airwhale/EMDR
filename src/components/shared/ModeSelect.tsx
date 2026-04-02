@@ -11,13 +11,6 @@ interface ModeSelectProps {
 
 const modes: { id: SessionMode; title: string; subtitle: string; description: string }[] = [
   {
-    id: "trance",
-    title: "TRANCE",
-    subtitle: "Guided hypnotic relaxation",
-    description:
-      "Deep breathing, progressive relaxation, and suggestibility experiments. A full self-hypnosis session.",
-  },
-  {
     id: "emdr",
     title: "EMDR",
     subtitle: "Resource building & calm",
@@ -27,9 +20,16 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
   {
     id: "art",
     title: "ART",
-    subtitle: "Scene processing & replacement",
+    subtitle: "Scene processing & rescripting",
     description:
       "Guided eye movements, voluntary image replacement, and body awareness. Based on Accelerated Resolution Therapy protocol.",
+  },
+  {
+    id: "trance",
+    title: "TRANCE",
+    subtitle: "Guided hypnotic relaxation & experiences",
+    description:
+      "Deep breathing, progressive relaxation, and suggestibility experiments. A full guided self-hypnosis session with interactive demonstrations of hypnotic phenomena.",
   },
 ];
 
@@ -40,7 +40,7 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 2 }}
+      transition={{ duration: 0.8 }}
       className="flex flex-col items-center gap-10 px-4"
     >
       <p className="narration-text text-xl text-[#e8e0d4]/50">
@@ -74,9 +74,9 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
       {/* Expandable description */}
       <motion.button
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        whileHover={{ opacity: 0.6 }}
-        transition={{ delay: 1, duration: 1 }}
+        animate={{ opacity: 0.7 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.8 }}
         onClick={() => setExpanded(!expanded)}
         className="ui-text text-[10px] text-[#e8e0d4]/30"
       >

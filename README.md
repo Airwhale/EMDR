@@ -1,6 +1,6 @@
-# TRANCE
+# EMDR/ ARM self-administered experience
 
-TRANCE is a browser-based guided self-regulation experience built with Next.js. It includes:
+The EMDR/ ARM self-administered experience is a browser-based guided self-regulation experience built with Next.js. It includes:
 
 - **TRANCE mode** (guided hypnotic relaxation + suggestibility experiments)
 - **EMDR-inspired stabilization mode** (resource-focused, non-trauma reprocessing)

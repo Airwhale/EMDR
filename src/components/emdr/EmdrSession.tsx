@@ -4,7 +4,6 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import { TranceVoice } from "@/lib/TranceVoice";
-import { useSpeed } from "@/lib/SpeedContext";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
@@ -12,7 +11,6 @@ import NarrationDisplay from "../NarrationDisplay";
 import ButterflyHug from "./ButterflyHug";
 
 type EmdrPhase =
-  | "disclaimer"
   | "centering"
   | "safe-place"
   | "safe-place-bls"
@@ -38,7 +36,7 @@ export interface EmdrSummaryData {
 }
 
 export default function EmdrSession({ onComplete }: EmdrSessionProps) {
-  const [phase, setPhase] = useState<EmdrPhase>("disclaimer");
+  const [phase, setPhase] = useState<EmdrPhase>("sud-check");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
   const [sudEnd, setSudEnd] = useState<number | null>(null);
@@ -47,13 +45,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   const [showBlsContinue, setShowBlsContinue] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
-  const speed = useSpeed();
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
-
-  useEffect(() => {
-    if (voiceRef.current) voiceRef.current.speedMultiplier = speed;
-  }, [speed]);
 
   useEffect(() => {
     const audio = new TranceAudioEngine();
@@ -79,9 +72,6 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     return setTimeout(() => setNarration(null), duration);
   }, [speak]);
 
-  // ---- DISCLAIMER ----
-  const handleDisclaimerAccept = useCallback(() => setPhase("sud-check"), []);
-
   // ---- SUD CHECK (initial) ----
   const handleSudStart = useCallback((rating: number) => {
     setSudStart(rating);
@@ -106,11 +96,11 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "safe-place") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think of a place where you feel completely safe and at peace...", 8000,
-      "Think of a place... where you feel completely safe... and at peace..."));
+    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace...", 8000,
+      "In your mind... think of a place... where you feel completely safe... and at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("Notice the colors, sounds, and temperature of this place...", 8000,
-        "Notice the colors... the sounds... and the temperature of this place...");
+      showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 8000,
+        "Notice the colors... the sounds... and the temperature of this place... in your mind...");
     }, 10000));
     timers.push(setTimeout(() => {
       showNarr("Choose a single word that represents this place...", 7000,
@@ -128,8 +118,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     setShowBlsContinue(false);
     showNarr("Follow the dot while holding your safe place in mind...", 6000,
       "Follow the dot... while holding your safe place in mind...");
-    // Show continue after 6 passes (6s at 1Hz half-cycle = 0.5s)
-    const t = setTimeout(() => setShowBlsContinue(true), 6000);
+    // Safe place: minimum 20s (~20 slow passes) before continue appears
+    const t = setTimeout(() => setShowBlsContinue(true), 20000);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
 
@@ -150,8 +140,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "container") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Imagine a strong container — a box, a vault, anything that locks securely...", 8000,
-      "Imagine a strong container... a box... a vault... anything that locks securely..."));
+    timers.push(showNarr("In your mind, imagine a strong container — a box, a vault, anything that locks securely...", 8000,
+      "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."));
     timers.push(setTimeout(() => {
       showNarr("Place anything that's been bothering you inside... close the lid firmly...", 8000,
         "Place anything that's been bothering you inside... close the lid firmly...");
@@ -171,7 +161,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     setShowBlsContinue(false);
     showNarr("Follow the dot to seal the container...", 5000,
       "Follow the dot... to seal the container...");
-    const t = setTimeout(() => setShowBlsContinue(true), 6000);
+    // Container: minimum 15s (~15 slow passes)
+    const t = setTimeout(() => setShowBlsContinue(true), 15000);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
 
@@ -186,11 +177,11 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "resource") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think of a time you felt strong, capable, or deeply at peace...", 8000,
-      "Think of a time... you felt strong... capable... or deeply at peace..."));
+    timers.push(showNarr("In your mind, think of a time you felt strong, capable, or deeply at peace...", 8000,
+      "In your mind... think of a time... you felt strong... capable... or deeply at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("Step into that memory... feel it in your body...", 7000,
-        "Step into that memory... feel it... in your body...");
+      showNarr("In your mind, step into that memory... feel it in your body...", 7000,
+        "In your mind... step into that memory... feel it... in your body...");
     }, 10000));
     timers.push(setTimeout(() => {
       showNarr("Where do you feel this strength? Let it grow...", 7000,
@@ -207,8 +198,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     setShowBlsContinue(false);
     showNarr("Follow the dot... let the eye movements strengthen this feeling...", 6000,
       "Follow the dot... let the eye movements strengthen this feeling...");
-    // Longer than safe place/container — 12 passes (12s)
-    const t = setTimeout(() => setShowBlsContinue(true), 12000);
+    // Resource installation: minimum 25s (~25 passes, longest EMDR set)
+    const t = setTimeout(() => setShowBlsContinue(true), 25000);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
 
@@ -265,7 +256,7 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
         <div className="absolute top-[30%] w-full">
           <BilateralDot
             halfCycleSec={0.5}
-            size={18}
+            size={24}
             active={true}
             audio={audioRef.current}
             color="gold"
@@ -276,24 +267,6 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
       )}
 
       <AnimatePresence mode="wait">
-        {phase === "disclaimer" && (
-          <motion.div key="disclaimer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}
-            className="flex flex-col items-center gap-8 px-6 max-w-lg text-center">
-            <p className="narration-text text-xl text-[#e8e0d4]/80">
-              This session uses EMDR-based stabilization exercises.
-            </p>
-            <p className="text-sm text-[#e8e0d4]/40 font-light leading-relaxed">
-              These are resource-building techniques, not trauma reprocessing.
-              If you are working through trauma, please do so with a trained EMDR clinician.
-            </p>
-            <button onClick={handleDisclaimerAccept}
-              className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
-                         hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text">
-              I understand
-            </button>
-          </motion.div>
-        )}
-
         {phase === "sud-check" && sudStart === null && (
           <motion.div key="sud-start" exit={{ opacity: 0 }} transition={{ duration: 1 }}>
             <SudCheck prompt="Before we begin — how much distress are you feeling right now?" onRate={handleSudStart} />
@@ -307,9 +280,9 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
         )}
 
         {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
-        {!["disclaimer", "sud-check", "grounding", "butterfly-hug"].includes(phase) &&
+        {!["sud-check", "grounding", "butterfly-hug"].includes(phase) &&
           sudEnd === null && narration && !blsActive && (
-          <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}>
+          <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}>
             <NarrationDisplay text={narration} size="large" />
           </motion.div>
         )}

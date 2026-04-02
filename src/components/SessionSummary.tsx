@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { ExperimentResult } from "@/lib/sessionScript";
+import { clearAllSessionHistory } from "@/lib/sessionPersistence";
 import Link from "next/link";
 
 interface SessionSummaryProps {
@@ -9,12 +11,14 @@ interface SessionSummaryProps {
 }
 
 export default function SessionSummary({ results }: SessionSummaryProps) {
+  const [historyCleared, setHistoryCleared] = useState(false);
+
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-16 px-6 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 2 }}
+        transition={{ duration: 0.8 }}
         className="max-w-2xl w-full"
       >
         <h1 className="narration-text text-3xl md:text-4xl text-center text-gold/80 mb-2">
@@ -80,6 +84,23 @@ export default function SessionSummary({ results }: SessionSummaryProps) {
             >
               How it works
             </Link>
+          </div>
+
+          <div className="mt-8">
+            {historyCleared ? (
+              <span className="text-[11px] text-[#e8e0d4]/30 font-light">Session history cleared</span>
+            ) : (
+              <button
+                onClick={() => {
+                  clearAllSessionHistory();
+                  setHistoryCleared(true);
+                }}
+                className="text-[11px] text-[#e8e0d4]/25 hover:text-[#e8e0d4]/50
+                           transition-colors duration-500 font-light"
+              >
+                Clear session history
+              </button>
+            )}
           </div>
         </motion.div>
       </motion.div>

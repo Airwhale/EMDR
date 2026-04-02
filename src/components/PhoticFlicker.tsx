@@ -52,7 +52,7 @@ export default function PhoticFlicker({
       className="absolute inset-0 pointer-events-none z-40"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 3 }}
+      transition={{ duration: 1.5 }}
       style={{ willChange: "background-color" }}
     />
   );
