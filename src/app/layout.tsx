@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TRANCE — A Guided Hypnotic Experience",
+  title: "EMDR / ART Self-Administered Experience",
   description:
-    "An interactive self-hypnosis session using visual fixation, synchronized breathing, progressive relaxation, and suggestibility experiments.",
+    "A browser-based guided EMDR, ART, and self-hypnosis experience using bilateral stimulation, progressive relaxation, and evidence-based therapeutic techniques.",
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-trance-dark text-foreground min-h-screen overflow-hidden">
+      <body className="bg-trance-dark text-foreground min-h-screen">
         {children}
       </body>
     </html>

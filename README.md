@@ -1,4 +1,4 @@
-# TRANCE
+# EMDR / ART Self-Administered Experience
 
 A browser-based guided self-regulation experience built with Next.js 14. Three modes:
 

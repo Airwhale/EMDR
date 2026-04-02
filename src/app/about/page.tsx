@@ -103,7 +103,7 @@ export default function AboutPage() {
           </Link>
 
           <h1 className="narration-text text-4xl text-gold/80 mb-4">
-            The Science Behind TRANCE
+            The Science Behind the Experience
           </h1>
           <p className="text-[#e8e0d4]/40 text-sm mb-16 font-light">
             Understanding the psychology and neuroscience of what you just experienced.
