@@ -74,9 +74,9 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
       {/* Expandable description */}
       <motion.button
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        whileHover={{ opacity: 0.6 }}
-        transition={{ delay: 1, duration: 1 }}
+        animate={{ opacity: 0.7 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.8 }}
         onClick={() => setExpanded(!expanded)}
         className="ui-text text-[10px] text-[#e8e0d4]/30"
       >
