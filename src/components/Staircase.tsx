@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { staircaseNumbers } from "@/lib/sessionScript";
 
 interface StaircaseProps {
@@ -12,45 +12,50 @@ interface StaircaseProps {
 
 export default function Staircase({ isActive, onComplete, onStep }: StaircaseProps) {
   const [currentIndex, setCurrentIndex] = useState(-1);
-  const [particles, setParticles] = useState<{ id: number; x: number; delay: number }[]>([]);
 
-  // Generate drifting particles
-  useEffect(() => {
-    if (!isActive) return;
-    const newParticles = Array.from({ length: 15 }, (_, i) => ({
+  // Memoize particles — generate once, never recalculate
+  const particles = useMemo(() => {
+    if (!isActive) return [];
+    return Array.from({ length: 15 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       delay: Math.random() * 10,
+      duration: 15 + Math.random() * 10,
     }));
-    setParticles(newParticles);
   }, [isActive]);
 
   const runStaircase = useCallback(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
     staircaseNumbers.forEach((num, index) => {
-      setTimeout(() => {
-        setCurrentIndex(index);
-        onStep?.(num);
-      }, index * 5000);
+      timers.push(
+        setTimeout(() => {
+          setCurrentIndex(index);
+          onStep?.(num);
+        }, index * 5000)
+      );
     });
 
-    // Complete after all numbers shown
-    setTimeout(() => {
-      setCurrentIndex(-1);
-      onComplete();
-    }, staircaseNumbers.length * 5000 + 2000);
+    timers.push(
+      setTimeout(() => {
+        setCurrentIndex(-1);
+        onComplete();
+      }, staircaseNumbers.length * 5000 + 2000)
+    );
+
+    return () => timers.forEach(clearTimeout);
   }, [onComplete, onStep]);
 
   useEffect(() => {
-    if (isActive) {
-      // Start after initial narration
-      const timer = setTimeout(runStaircase, 18000);
-      return () => clearTimeout(timer);
-    }
+    if (!isActive) return;
+    // Start after initial narration
+    const timer = setTimeout(runStaircase, 18000);
+    return () => clearTimeout(timer);
   }, [isActive, runStaircase]);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-      {/* Drifting particles */}
+      {/* Drifting particles — stable durations, no recalculation */}
       {particles.map((p) => (
         <div
           key={p.id}
@@ -58,7 +63,7 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
           style={{
             left: `${p.x}%`,
             top: "-10px",
-            animationDuration: `${15 + Math.random() * 10}s`,
+            animationDuration: `${p.duration}s`,
             animationDelay: `${p.delay}s`,
           }}
         />
@@ -70,6 +75,7 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
           <motion.div
             key={staircaseNumbers[currentIndex]}
             className="absolute flex items-center justify-center"
+            style={{ willChange: "transform, opacity, filter" }}
             initial={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
             animate={{ opacity: 0.6, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 0.8, filter: "blur(15px)", y: 40 }}

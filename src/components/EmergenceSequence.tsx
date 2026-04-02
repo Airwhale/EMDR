@@ -69,13 +69,12 @@ export default function EmergenceSequence({
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {/* Brightening overlay */}
+      {/* Brightening overlay — use opacity instead of color interpolation */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        animate={{
-          backgroundColor: `rgba(40, 40, 60, ${brightness * 0.12})`,
-        }}
-        transition={{ duration: 3 }}
+        style={{ backgroundColor: "rgba(40, 40, 60, 0.12)", willChange: "opacity" }}
+        animate={{ opacity: brightness }}
+        transition={{ duration: 3, ease: "easeInOut" }}
       />
 
       <AnimatePresence mode="wait">

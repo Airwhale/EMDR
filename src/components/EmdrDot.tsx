@@ -3,17 +3,14 @@
 import { motion } from "framer-motion";
 
 interface EmdrDotProps {
-  /** Seconds for one full L→R→L cycle */
   cycleDuration?: number;
-  /** Dot size in px */
   size?: number;
-  /** Horizontal travel range in px (half-width each side of center) */
   range?: number;
 }
 
 /**
- * EMDR-style dot that moves horizontally through the center of its container.
- * Designed to overlay the breathing guide circle so it passes through the middle.
+ * EMDR-style dot — smooth horizontal movement through container center.
+ * Uses GPU-accelerated transforms with will-change hints.
  */
 export default function EmdrDot({
   cycleDuration = 4,
@@ -25,14 +22,17 @@ export default function EmdrDot({
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
       style={{ zIndex: 10 }}
     >
-      {/* The EMDR dot — distinct from the breathing ring's warm glow */}
+      {/* The EMDR dot */}
       <motion.div
         className="absolute rounded-full"
         style={{
           width: size,
           height: size,
-          background: "radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(220, 210, 190, 0.3))",
-          boxShadow: "0 0 12px rgba(255, 255, 255, 0.3), 0 0 40px rgba(201, 169, 110, 0.1)",
+          background:
+            "radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(220, 210, 190, 0.3))",
+          boxShadow:
+            "0 0 12px rgba(255, 255, 255, 0.3), 0 0 40px rgba(201, 169, 110, 0.1)",
+          willChange: "transform",
         }}
         animate={{
           x: [-range, range, -range],
@@ -50,8 +50,10 @@ export default function EmdrDot({
         style={{
           width: size * 0.6,
           height: size * 0.6,
-          background: "radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent)",
+          background:
+            "radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent)",
           filter: "blur(3px)",
+          willChange: "transform",
         }}
         animate={{
           x: [-range, range, -range],

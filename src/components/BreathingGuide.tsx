@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface BreathingGuideProps {
   isActive: boolean;
@@ -11,10 +11,19 @@ interface BreathingGuideProps {
 
 type BreathPhase = "inhale" | "hold" | "exhale";
 
-const INHALE_DURATION = 4000;
-const HOLD_DURATION = 4000;
-const EXHALE_DURATION = 6000;
+const INHALE_MS = 4000;
+const HOLD_MS = 4000;
+const EXHALE_MS = 6000;
+const TOTAL_CYCLE = INHALE_MS + HOLD_MS + EXHALE_MS; // 14s
 
+/**
+ * Uses a single continuous Framer Motion keyframe animation for the entire
+ * breath cycle instead of swapping duration/scale per phase. This avoids
+ * animation interruption on state changes.
+ *
+ * The breathPhase state is only used for the label text — it does NOT
+ * drive the motion animation.
+ */
 export default function BreathingGuide({
   isActive,
   size = "full",
@@ -23,6 +32,7 @@ export default function BreathingGuide({
   const [breathPhase, setBreathPhase] = useState<BreathPhase>("inhale");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Label-only state cycle (does not drive animation)
   useEffect(() => {
     if (!isActive) return;
 
@@ -32,34 +42,27 @@ export default function BreathingGuide({
         setBreathPhase("hold");
         timerRef.current = setTimeout(() => {
           setBreathPhase("exhale");
-          timerRef.current = setTimeout(cycle, EXHALE_DURATION);
-        }, HOLD_DURATION);
-      }, INHALE_DURATION);
+          timerRef.current = setTimeout(cycle, EXHALE_MS);
+        }, HOLD_MS);
+      }, INHALE_MS);
     };
 
     cycle();
-
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [isActive]);
 
   const baseSize = size === "full" ? 200 : 60;
-  const scale =
-    breathPhase === "inhale"
-      ? 1.4
-      : breathPhase === "hold"
-      ? 1.4
-      : 0.8;
 
-  const duration =
-    breathPhase === "inhale"
-      ? INHALE_DURATION / 1000
-      : breathPhase === "hold"
-      ? HOLD_DURATION / 1000
-      : EXHALE_DURATION / 1000;
+  // Keyframe stops: inhale peak at 4/14 ≈ 0.286, hold ends at 8/14 ≈ 0.571
+  const inhaleStop = INHALE_MS / TOTAL_CYCLE;
+  const holdStop = (INHALE_MS + HOLD_MS) / TOTAL_CYCLE;
 
-  const opacity = breathPhase === "exhale" ? 0.5 : 0.9;
+  // Scale keyframes: 0.8 → 1.4 (inhale) → 1.4 (hold) → 0.8 (exhale)
+  const scaleKeys = [0.8, 1.4, 1.4, 0.8];
+  const opacityKeys = [0.5, 0.9, 0.9, 0.5];
+  const times = [0, inhaleStop, holdStop, 1];
 
   return (
     <div
@@ -74,11 +77,14 @@ export default function BreathingGuide({
           height: baseSize * 1.5,
           background:
             "radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%)",
+          willChange: "transform, opacity",
         }}
-        animate={{ scale, opacity: opacity * 0.5 }}
+        animate={isActive ? { scale: scaleKeys, opacity: opacityKeys.map((o) => o * 0.5) } : {}}
         transition={{
-          duration,
+          duration: TOTAL_CYCLE / 1000,
+          times,
           ease: "easeInOut",
+          repeat: Infinity,
         }}
       />
 
@@ -91,13 +97,14 @@ export default function BreathingGuide({
           borderColor: "rgba(201, 169, 110, 0.4)",
           boxShadow:
             "0 0 30px rgba(201, 169, 110, 0.1), inset 0 0 30px rgba(201, 169, 110, 0.05)",
+          willChange: "transform, opacity",
         }}
-        animate={{ scale, opacity }}
+        animate={isActive ? { scale: scaleKeys, opacity: opacityKeys } : {}}
         transition={{
-          duration,
-          type: "spring",
-          stiffness: 20,
-          damping: 15,
+          duration: TOTAL_CYCLE / 1000,
+          times,
+          ease: "easeInOut",
+          repeat: Infinity,
         }}
       />
 
@@ -109,29 +116,41 @@ export default function BreathingGuide({
           height: baseSize * 0.15,
           background:
             "radial-gradient(circle, rgba(201, 169, 110, 0.8) 0%, rgba(201, 169, 110, 0.2) 70%)",
+          willChange: "transform, opacity",
         }}
-        animate={{ scale: scale * 0.8, opacity }}
-        transition={{ duration, ease: "easeInOut" }}
+        animate={
+          isActive
+            ? { scale: scaleKeys.map((s) => s * 0.8), opacity: opacityKeys }
+            : {}
+        }
+        transition={{
+          duration: TOTAL_CYCLE / 1000,
+          times,
+          ease: "easeInOut",
+          repeat: Infinity,
+        }}
       />
 
-      {/* Spiral texture overlay */}
-      {showSpiral && (
-        <motion.div
-          className="absolute rounded-full spiral-texture"
-          style={{
-            width: baseSize * 1.2,
-            height: baseSize * 1.2,
-          }}
-          animate={{ rotate: 360 }}
-          transition={{
+      {/* Spiral texture overlay — always mounted, opacity-toggled */}
+      <motion.div
+        className="absolute rounded-full spiral-texture"
+        style={{
+          width: baseSize * 1.2,
+          height: baseSize * 1.2,
+          willChange: "transform",
+        }}
+        animate={{ rotate: 360, opacity: showSpiral ? 1 : 0 }}
+        transition={{
+          rotate: {
             duration: 30,
             ease: "linear",
             repeat: Infinity,
-          }}
-        />
-      )}
+          },
+          opacity: { duration: 2 },
+        }}
+      />
 
-      {/* Breath phase label (small, subtle) */}
+      {/* Breath phase label */}
       {size === "full" && (
         <motion.span
           className="absolute ui-text text-gold/40"

@@ -3,14 +3,15 @@
 import { useEffect, useRef } from "react";
 
 interface HypnoticSpiralProps {
-  /** Overall opacity of the spiral (keep very low) */
   opacity?: number;
-  /** Rotation speed in degrees per second */
   speed?: number;
-  /** Size in px */
   size?: number;
 }
 
+/**
+ * Canvas-rendered logarithmic spiral. Uses devicePixelRatio for sharp rendering.
+ * The RAF loop only touches the canvas — no React state updates, no re-renders.
+ */
 export default function HypnoticSpiral({
   opacity = 0.06,
   speed = 12,
@@ -18,6 +19,11 @@ export default function HypnoticSpiral({
 }: HypnoticSpiralProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
+  // Store props in refs so RAF loop doesn't restart when they change
+  const opacityRef = useRef(opacity);
+  const speedRef = useRef(speed);
+  opacityRef.current = opacity;
+  speedRef.current = speed;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -26,20 +32,24 @@ export default function HypnoticSpiral({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = size;
-    canvas.height = size;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    ctx.scale(dpr, dpr);
 
     const cx = size / 2;
     const cy = size / 2;
     let rotation = 0;
 
     const draw = () => {
+      const currentOpacity = opacityRef.current;
+      const currentSpeed = speedRef.current;
+
       ctx.clearRect(0, 0, size, size);
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate((rotation * Math.PI) / 180);
 
-      // Draw logarithmic spiral arms
       const arms = 5;
       const maxRadius = size * 0.45;
 
@@ -57,10 +67,9 @@ export default function HypnoticSpiral({
           else ctx.lineTo(x, y);
         }
 
-        // Fade from center outward
         const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, maxRadius);
-        gradient.addColorStop(0, `rgba(201, 169, 110, ${opacity * 2})`);
-        gradient.addColorStop(0.5, `rgba(201, 169, 110, ${opacity})`);
+        gradient.addColorStop(0, `rgba(201, 169, 110, ${currentOpacity * 2})`);
+        gradient.addColorStop(0.5, `rgba(201, 169, 110, ${currentOpacity})`);
         gradient.addColorStop(1, `rgba(201, 169, 110, 0)`);
 
         ctx.strokeStyle = gradient;
@@ -69,7 +78,7 @@ export default function HypnoticSpiral({
       }
 
       ctx.restore();
-      rotation += speed / 60; // ~60fps
+      rotation += currentSpeed / 60;
       rafRef.current = requestAnimationFrame(draw);
     };
 
@@ -78,7 +87,7 @@ export default function HypnoticSpiral({
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [size, opacity, speed]);
+  }, [size]); // Only restart on size change — opacity/speed read from refs
 
   return (
     <canvas
@@ -87,7 +96,6 @@ export default function HypnoticSpiral({
       style={{
         width: size,
         height: size,
-        opacity: 1, // Opacity is handled in the drawing
       }}
     />
   );
