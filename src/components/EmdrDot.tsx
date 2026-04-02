@@ -34,9 +34,9 @@ export default function EmdrDot({
           width: size,
           height: size,
           background:
-            "radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(220, 210, 190, 0.3))",
+            "radial-gradient(circle, rgba(255, 255, 255, 1), rgba(230, 220, 200, 0.5))",
           boxShadow:
-            "0 0 14px rgba(255, 255, 255, 0.35), 0 0 50px rgba(201, 169, 110, 0.1)",
+            "0 0 18px rgba(255, 255, 255, 0.6), 0 0 60px rgba(201, 169, 110, 0.2)",
           willChange: "transform",
         }}
         animate={{
@@ -56,7 +56,7 @@ export default function EmdrDot({
           width: size * 0.6,
           height: size * 0.6,
           background:
-            "radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent)",
+            "radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent)",
           filter: "blur(4px)",
           willChange: "transform",
         }}

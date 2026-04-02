@@ -37,16 +37,16 @@ export default function BilateralDot({
 
   const colorMain =
     color === "gold"
-      ? "radial-gradient(circle, rgba(201, 169, 110, 0.95), rgba(201, 169, 110, 0.2))"
-      : "radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(220, 210, 190, 0.2))";
+      ? "radial-gradient(circle, rgba(212, 180, 120, 1), rgba(201, 169, 110, 0.4))"
+      : "radial-gradient(circle, rgba(255, 255, 255, 1), rgba(230, 220, 200, 0.5))";
   const shadowMain =
     color === "gold"
-      ? "0 0 16px rgba(201, 169, 110, 0.45), 0 0 50px rgba(201, 169, 110, 0.15)"
-      : "0 0 16px rgba(255, 255, 255, 0.45), 0 0 50px rgba(201, 169, 110, 0.12)";
+      ? "0 0 20px rgba(201, 169, 110, 0.6), 0 0 60px rgba(201, 169, 110, 0.2)"
+      : "0 0 20px rgba(255, 255, 255, 0.6), 0 0 60px rgba(201, 169, 110, 0.15)";
   const colorTrail =
     color === "gold"
-      ? "radial-gradient(circle, rgba(201, 169, 110, 0.3), transparent)"
-      : "radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent)";
+      ? "radial-gradient(circle, rgba(201, 169, 110, 0.45), transparent)"
+      : "radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent)";
   const lineColor =
     color === "gold" ? "rgba(201, 169, 110, 0.06)" : "rgba(255, 255, 255, 0.04)";
 

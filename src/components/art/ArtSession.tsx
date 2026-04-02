@@ -282,7 +282,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
 
         {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {narration && !showSudRecheck && !showSudFinal && !isBls && (
-          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}>
             <NarrationDisplay text={narration} size="large" />
           </motion.div>
         )}
