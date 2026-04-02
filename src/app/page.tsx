@@ -13,10 +13,12 @@ import {
   appendSummaryToHistory,
   clearAppSnapshot,
   EndSummary,
+  hasSafetyBeenAcknowledged,
   loadAppSnapshot,
   loadLatestEndSummary,
   saveAppSnapshot,
   saveLatestEndSummary,
+  setSafetyAcknowledged,
 } from "@/lib/sessionPersistence";
 
 type AppState = "entry" | "safety" | "mode-select" | "session" | "end-summary";
@@ -48,10 +50,11 @@ export default function App() {
     }
 
     const saved = loadAppSnapshot();
-    if (saved) {
+    if (saved && saved.appState === "end-summary" && saved.endSummary) {
+      // Only restore to end-summary — mid-session state can't be meaningfully resumed
       setSelectedMode(saved.selectedMode);
-      if (saved.endSummary) setEndSummary(saved.endSummary);
-      setAppState(saved.appState);
+      setEndSummary(saved.endSummary);
+      setAppState("end-summary");
     }
     setIsHydrated(true);
   }, []);
@@ -78,10 +81,15 @@ export default function App() {
   }, [appState]);
 
   const handleReady = useCallback(() => {
-    setAppState("safety");
+    if (hasSafetyBeenAcknowledged()) {
+      setAppState("mode-select");
+    } else {
+      setAppState("safety");
+    }
   }, []);
 
   const handleSafetyContinue = useCallback(() => {
+    setSafetyAcknowledged();
     setAppState("mode-select");
   }, []);
 

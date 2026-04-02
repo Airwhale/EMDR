@@ -1,27 +1,25 @@
 # TRANCE
 
-TRANCE is a browser-based guided self-regulation experience built with Next.js. It includes:
+A browser-based guided self-regulation experience built with Next.js 14. Three modes:
 
-- **TRANCE mode** (guided hypnotic relaxation + suggestibility experiments)
-- **EMDR-inspired stabilization mode** (resource-focused, non-trauma reprocessing)
-- **ART-inspired processing mode** (mild-stress scene processing and replacement)
+- **TRANCE** — Guided hypnotic relaxation with progressive induction, breathing synchronization, and suggestibility experiments
+- **EMDR** — Resource-building stabilization exercises (safe place, butterfly hug, container, resource installation) with bilateral stimulation
+- **ART** — Accelerated Resolution Therapy-inspired scene processing with voluntary image replacement
 
-> This project is educational/wellness-oriented and not a substitute for clinical care.
+> This is an educational/wellness tool, not a substitute for clinical care.
 
-## Safety first
+## Safety
 
-- Use this app only when you can sit/lie down safely.
-- If distress increases, stop and ground.
-- For urgent emotional crisis support in the US, call or text **988**.
+- Use only when seated or lying down safely in a private setting.
+- If distress increases, stop and ground yourself.
+- In the US, call or text **988** for 24/7 mental health crisis support.
 
 ## Tech stack
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Web Audio API (generative audio)
-- Web Speech API (narration, with text fallback)
+- Next.js 14 (App Router), TypeScript, Tailwind CSS
+- Framer Motion for animations
+- Web Audio API — generative binaural tones, pink noise, isochronic pulses, bilateral ping sounds (no audio files)
+- Web Speech API — narration with smart voice selection (falls back to text-only)
 
 ## Local development
 
@@ -30,39 +28,25 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000`. Headphones recommended.
 
-## Scripts
+## Architecture
 
-- `npm run dev` — local dev server
-- `npm run build` — production build
-- `npm run start` — run production build
-- `npm run lint` — Next.js lint
-- `npm run test` — run lightweight Node-based project checks
+| File | Purpose |
+|---|---|
+| `src/app/page.tsx` | App router — entry → safety gate → mode select → session |
+| `src/components/TranceSession.tsx` | Trance mode (fixation → deepening → staircase → experiments → emergence) |
+| `src/components/emdr/EmdrSession.tsx` | EMDR mode (safe place → butterfly hug → container → resource install) |
+| `src/components/art/ArtSession.tsx` | ART mode (scene → processing BLS → sensation → VIR → recheck) |
+| `src/lib/TranceAudioEngine.ts` | Web Audio synthesis engine with mode-specific presets |
+| `src/lib/TranceVoice.ts` | Speech synthesis with prioritized voice selection and per-voice tuning |
+| `src/lib/sessionPersistence.ts` | localStorage: session history, preferences, safety acknowledgment |
+| `src/lib/SpeedContext.tsx` | Hold-to-fast-forward (4x) for portfolio demos |
 
-## Architecture notes
+## Data storage
 
-- `src/app/page.tsx` orchestrates global app state and mode routing.
-- `src/components/TranceSession.tsx` handles the trance flow and experiments.
-- `src/components/emdr/EmdrSession.tsx` and `src/components/art/ArtSession.tsx` manage session-specific state machines.
-- `src/lib/TranceAudioEngine.ts` generates immersive audio entirely in-browser.
-- `src/lib/TranceVoice.ts` wraps speech synthesis and handles voice selection.
-- `src/lib/sessionPersistence.ts` stores snapshots, summaries, and user preferences.
+All data is stored in the browser's `localStorage`. Nothing is sent to any server.
 
-## Persistence behavior
-
-The app stores lightweight local data in `localStorage`:
-
-- latest summary + summary history
-- app snapshot (for resuming)
-- simple user preferences (e.g., voice on/off)
-
-No backend storage is required for these features.
-
-## Testing
-
-Tests use Node's built-in test runner. Start with:
-
-```bash
-npm run test
-```
+- Session history (last 10 EMDR/ART summaries with SUD scores)
+- User preferences (voice on/off)
+- Safety gate acknowledgment (first-run only)

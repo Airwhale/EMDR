@@ -9,25 +9,21 @@ const sections = [
     title: "How This Works",
     content:
       "TRANCE uses well-established techniques from clinical hypnotherapy, adapted for a browser-based experience. None of this is magic — it's applied psychology, rhythm, and focused attention. Multiple induction methods work together to create a genuine altered state.",
-    evidence: ["American Psychological Association — Hypnosis"],
   },
   {
     title: "EMDR-Style Eye Movement",
     content:
       "The slowly moving dot that tracks horizontally across your screen uses the same principle as EMDR (Eye Movement Desensitization and Reprocessing) therapy. Bilateral eye movements activate both brain hemispheres alternately, which reduces cognitive arousal and facilitates a shift from active, analytical thinking into a more receptive, trance-like state. In clinical EMDR, this is used to process trauma; here, it serves as an induction aid that helps disengage the critical faculty.",
-    evidence: ["EMDRIA overview of bilateral stimulation", "WHO guideline references for EMDR in trauma care"],
   },
   {
     title: "True Binaural Tones",
     content:
       "The audio engine sends a slightly different frequency to each ear — for example, 100Hz to the left and 104Hz to the right. Your brain perceives the 4Hz difference as a rhythmic 'beat' that isn't present in either signal alone. This theta-frequency beating pattern (4-7Hz) corresponds to the EEG signature of deep meditation and light sleep. As trance deepens, the binaural beat frequency shifts lower into deep theta. During emergence, it rises to alpha (8-12Hz) to promote alertness. Headphones are essential for this effect.",
-    evidence: ["Oster (1973), Scientific American — Auditory beats in the brain"],
   },
   {
     title: "Voice Synthesis",
     content:
       "TRANCE uses your browser's speech synthesis to deliver narration in a slow, low-pitched voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled hypnotherapist. Spoken suggestions engage different processing pathways than written text, and the combination of reading and hearing the same content creates dual-channel reinforcement that deepens suggestibility.",
-    evidence: ["APA dictionary — suggestibility", "Web Speech API specification"],
   },
   {
     title: "Fixation Induction & Spiral",
@@ -48,7 +44,6 @@ const sections = [
     title: "Photic Driving",
     content:
       "During deepening phases, you may notice an extremely subtle luminance flicker on screen. This is photic driving — rhythmic visual stimulation at alpha (8Hz) or theta (6Hz) frequencies that can entrain brainwave activity. The effect is kept very subtle (barely perceptible) for comfort, but clinical studies show that even low-intensity photic stimulation can measurably shift dominant EEG frequency.",
-    evidence: ["Neuroscience reviews on rhythmic visual stimulation and entrainment"],
   },
   {
     title: "Vignette & Tunnel Vision",
@@ -69,7 +64,6 @@ const sections = [
     title: "Sub-Bass Heartbeat Entrainment",
     content:
       "A barely-audible 40Hz sub-bass oscillation is modulated at approximately resting heart rate (60bpm). As trance deepens, this slows to ~50bpm. Research on auditory-cardiac entrainment suggests that rhythmic auditory stimulation near heart rate can influence actual cardiac rhythm, promoting parasympathetic dominance and physiological relaxation.",
-    evidence: ["Research on auditory rhythm and autonomic regulation"],
   },
   {
     title: "The Suggestibility Experiments",
@@ -80,7 +74,6 @@ const sections = [
     title: "Is This Real Hypnosis?",
     content:
       "Yes. This experience layers genuine clinical induction techniques — EMDR-style bilateral stimulation, binaural entrainment, Ericksonian language, confusion technique, photic driving, progressive relaxation, anchoring, and fractionation. Any one of these alone can induce trance in responsive individuals; together they create a robust multi-modal induction. However, it lacks the real-time adaptation of a live hypnotherapist. Suggestibility increases with repeated sessions.",
-    evidence: ["Clinical hypnotherapy texts and APA resources on hypnosis"],
   },
 ];
 
@@ -131,11 +124,6 @@ export default function AboutPage() {
               <p className="text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
                 {section.content}
               </p>
-              {section.evidence && (
-                <p className="text-[#e8e0d4]/35 leading-relaxed text-xs font-light mt-3">
-                  Evidence references: {section.evidence.join(" • ")}
-                </p>
-              )}
             </motion.div>
           ))}
         </div>
@@ -147,12 +135,12 @@ export default function AboutPage() {
           className="mt-20 pt-8 border-t border-gold/25 text-center"
         >
           <Link
-            href="/"
+            href={backHref === "/" ? "/" : "/?return=summary"}
             className="px-10 py-4 border border-gold/35 rounded-full text-gold/80
                        hover:border-gold/70 hover:text-gold transition-all duration-700
                        ui-text inline-block"
           >
-            Begin a session
+            Back to experience
           </Link>
         </motion.div>
       </div>

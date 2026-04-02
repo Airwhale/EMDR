@@ -99,3 +99,15 @@ export function saveTrancePrefs(prefs: TrancePrefs): void {
   if (!hasStorage()) return;
   window.localStorage.setItem(TRANCE_PREFS_KEY, JSON.stringify(prefs));
 }
+
+const SAFETY_ACKNOWLEDGED_KEY = "trance.safety.acknowledged.v1";
+
+export function hasSafetyBeenAcknowledged(): boolean {
+  if (!hasStorage()) return false;
+  return window.localStorage.getItem(SAFETY_ACKNOWLEDGED_KEY) === "true";
+}
+
+export function setSafetyAcknowledged(): void {
+  if (!hasStorage()) return;
+  window.localStorage.setItem(SAFETY_ACKNOWLEDGED_KEY, "true");
+}
