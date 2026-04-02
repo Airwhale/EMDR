@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0a0f;
+  --foreground: #e8e0d4;
+}
+
+* {
+  cursor: default;
+}
+
+button, a, [role="button"] {
+  cursor: pointer;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.narration-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+.ui-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+/* Spiral texture for breathing guide */
+.spiral-texture {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(201, 169, 110, 0.03) 30deg,
+    transparent 60deg,
+    rgba(201, 169, 110, 0.02) 90deg,
+    transparent 120deg,
+    rgba(201, 169, 110, 0.03) 150deg,
+    transparent 180deg,
+    rgba(201, 169, 110, 0.02) 210deg,
+    transparent 240deg,
+    rgba(201, 169, 110, 0.03) 270deg,
+    transparent 300deg,
+    rgba(201, 169, 110, 0.02) 330deg,
+    transparent 360deg
+  );
+}
+
+/* Glow effect for text */
+.text-glow {
+  text-shadow: 0 0 40px rgba(201, 169, 110, 0.15),
+               0 0 80px rgba(201, 169, 110, 0.05);
+}
+
+/* Subtle particle shimmer */
+@keyframes drift {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(201, 169, 110, 0.3);
+  border-radius: 50%;
+  animation: drift linear infinite;
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(201, 169, 110, 0.2);
+  color: #e8e0d4;
+}
