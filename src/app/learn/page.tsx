@@ -3,7 +3,14 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const sections = [
+interface Section {
+  title: string;
+  content?: string;
+  link?: { label: string; url: string };
+  items?: { label: string; time: string; detail: string }[];
+}
+
+const sections: Section[] = [
   {
     title: "What is this?",
     content:
@@ -13,11 +20,13 @@ const sections = [
     title: "What is EMDR?",
     content:
       "EMDR (Eye Movement Desensitization and Reprocessing) is a psychotherapy approach developed by Francine Shapiro in the late 1980s. It uses bilateral stimulation — typically side-to-side eye movements — while focusing on specific thoughts, feelings, or memories. Decades of clinical research have shown it to be effective for reducing distress associated with traumatic memories, anxiety, and negative self-beliefs. Our EMDR mode focuses on Phase 2 stabilization resources: safe place visualization, the butterfly hug, a container exercise, and resource installation. These are calming, resource-building techniques — not trauma reprocessing.",
+    link: { label: "Learn more about EMDR →", url: "https://www.emdria.org/about-emdr-therapy/" },
   },
   {
     title: "What is ART?",
     content:
-      "ART (Accelerated Resolution Therapy) is a newer, directive therapy developed by Laney Rosenzweig. Like EMDR, it uses eye movements, but with a distinctive technique called Voluntary Image Replacement — you mentally swap a distressing scene for one you choose. A key feature of ART is that you never need to describe or share what you're processing. The therapist (or in this case, the guided experience) simply asks you to \"bring the scene to mind\" and later to \"replace it.\" Our ART mode guides you through this process for mildly stressful memories.",
+      "ART (Accelerated Resolution Therapy) is a newer, directive therapy developed by Laney Rosenzweig. While both ART and EMDR use bilateral eye movements, they differ in important ways. EMDR uses shorter sets of eye movements and allows the mind to freely associate between memories — the process is open-ended and exploratory. ART, by contrast, is highly scripted and directive: it uses longer, faster sets of eye movements and follows a fixed sequence of steps. The most distinctive difference is ART's Voluntary Image Replacement technique — after processing a scene with eye movements, you are asked to mentally replace the distressing image with any image you choose. This \"swap\" is the core of how ART works. Another key difference: ART does not require you to describe or share what you're processing. You simply bring the scene to mind privately, process it, and replace it. Our ART mode guides you through this process for mildly stressful memories.",
+    link: { label: "Learn more about ART →", url: "https://acceleratedresolutiontherapy.com/about-art/" },
   },
   {
     title: "Why would I want to do this?",
@@ -46,7 +55,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5 }}
+          transition={{ duration: 0.8 }}
         >
           <Link
             href="/"
@@ -69,7 +78,7 @@ export default function LearnPage() {
               key={section.title}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 1 }}
+              transition={{ delay: 0.2 + index * 0.1, duration: 0.8 }}
             >
               <h2 className="narration-text text-2xl text-gold/80 mb-3">
                 {section.title}
@@ -78,6 +87,17 @@ export default function LearnPage() {
                 <p className="text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
                   {section.content}
                 </p>
+              )}
+              {section.link && (
+                <a
+                  href={section.link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 text-xs text-gold/60 hover:text-gold
+                             transition-colors duration-500 font-light"
+                >
+                  {section.link.label}
+                </a>
               )}
               {section.items && (
                 <div className="space-y-4 mt-2">
@@ -105,7 +125,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1.5 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
           className="mt-16 pt-8 border-t border-gold/20 text-center"
         >
           <Link
