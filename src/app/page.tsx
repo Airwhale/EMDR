@@ -14,13 +14,15 @@ import {
   appendSummaryToHistory,
   clearAppSnapshot,
   EndSummary,
+  hasAcknowledgedSafety,
   loadAppSnapshot,
   loadLatestEndSummary,
   saveAppSnapshot,
+  saveSafetyAcknowledged,
   saveLatestEndSummary,
 } from "@/lib/sessionPersistence";
 
-type AppState = "entry" | "learn" | "safety" | "mode-select" | "session" | "end-summary";
+type AppState = "entry" | "safety" | "mode-select" | "session" | "end-summary";
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
@@ -49,11 +51,10 @@ export default function App() {
     }
 
     const saved = loadAppSnapshot();
-    if (saved && saved.appState === "end-summary" && saved.endSummary) {
-      // Only restore to end-summary — mid-session state can't be meaningfully resumed
+    if (saved) {
       setSelectedMode(saved.selectedMode);
-      setEndSummary(saved.endSummary);
-      setAppState("end-summary");
+      if (saved.endSummary) setEndSummary(saved.endSummary);
+      setAppState(saved.appState);
     }
     setIsHydrated(true);
   }, []);
@@ -80,10 +81,15 @@ export default function App() {
   }, [appState]);
 
   const handleReady = useCallback(() => {
+    if (hasAcknowledgedSafety()) {
+      setAppState("mode-select");
+      return;
+    }
     setAppState("safety");
   }, []);
 
   const handleSafetyContinue = useCallback(() => {
+    saveSafetyAcknowledged();
     setAppState("mode-select");
   }, []);
 
@@ -133,7 +139,13 @@ export default function App() {
     setAppState("entry");
   }, []);
 
-  if (!isHydrated) return null;
+  if (!isHydrated) {
+    return (
+      <div className="w-screen h-screen bg-trance-dark flex items-center justify-center">
+        <p className="ui-text text-xs text-[#e8e0d4]/40 tracking-widest">Loading…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-screen h-screen bg-trance-dark overflow-hidden">

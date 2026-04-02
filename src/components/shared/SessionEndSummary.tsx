@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { EndSummary, loadSummaryHistory, clearAllSessionHistory } from "@/lib/sessionPersistence";
+import { EndSummary, loadSummaryHistory } from "@/lib/sessionPersistence";
 
 interface SessionEndSummaryProps {
   mode: "emdr" | "art";
@@ -23,7 +23,6 @@ export default function SessionEndSummary({
   onStartNewSession,
 }: SessionEndSummaryProps) {
   const [history, setHistory] = useState<EndSummary[]>([]);
-  const [historyCleared, setHistoryCleared] = useState(false);
   const sudImproved = sudStart !== null && sudEnd !== null && sudEnd < sudStart;
   const modeLabel = mode === "emdr" ? "EMDR" : "ART";
   const completedLabel = completedAt
@@ -119,8 +118,7 @@ export default function SessionEndSummary({
             transition={{ delay: 1.8, duration: 1.5 }}
             className="border border-[#e8e0d4]/15 rounded-2xl p-6 mb-6"
           >
-            <p className="ui-text text-[#e8e0d4]/45 mb-1">recent sessions</p>
-            <p className="text-[10px] text-[#e8e0d4]/25 font-light mb-3">stored locally on this device</p>
+            <p className="ui-text text-[#e8e0d4]/45 mb-3">recent sessions</p>
             <ul className="space-y-2">
               {history.slice(1).map((item, i) => (
                 <li key={`${item.completedAt}-${i}`} className="text-xs text-[#e8e0d4]/45 font-light flex justify-between gap-3">
@@ -132,6 +130,9 @@ export default function SessionEndSummary({
                 </li>
               ))}
             </ul>
+            <p className="text-[10px] text-[#e8e0d4]/30 mt-3">
+              Stored locally on this device only.
+            </p>
           </motion.div>
         )}
 

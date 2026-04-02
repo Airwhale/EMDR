@@ -11,15 +11,18 @@ export default function SafetyGate({ onContinue, onBack }: SafetyGateProps) {
   return (
     <motion.main
       key="safety-gate"
+      role="dialog"
+      aria-labelledby="safety-gate-title"
+      aria-describedby="safety-gate-description"
       className="w-full h-full flex items-center justify-center px-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 1.2 }}
     >
       <div className="w-full max-w-xl border border-gold/30 rounded-2xl p-8 bg-gold/[0.02]">
-        <h1 className="narration-text text-3xl text-gold/85 mb-4 text-center">Safety check</h1>
-        <p className="text-sm text-[#e8e0d4]/55 font-light leading-relaxed mb-5">
+        <h1 id="safety-gate-title" className="narration-text text-3xl text-gold/85 mb-4 text-center">Safety check</h1>
+        <p id="safety-gate-description" className="text-sm text-[#e8e0d4]/55 font-light leading-relaxed mb-5">
           This experience supports relaxation and emotional regulation, but is not medical care,
           psychotherapy, or crisis support.
         </p>
