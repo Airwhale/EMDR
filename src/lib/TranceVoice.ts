@@ -66,10 +66,12 @@ export class TranceVoice {
   private tuning: VoiceTuning = { ...DEFAULT_TUNING };
   private ready = false;
   private enabled = true;
+  private supported = false;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
 
   init(): void {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
+    this.supported = true;
     this.synth = window.speechSynthesis;
 
     const pickVoice = () => {
@@ -161,6 +163,10 @@ export class TranceVoice {
 
   isReady(): boolean {
     return this.ready;
+  }
+
+  isSupported(): boolean {
+    return this.supported;
   }
 
   getVoiceName(): string {

@@ -19,6 +19,7 @@ import ArmLevitation from "@/components/experiments/ArmLevitation";
 import TimeDistortion from "@/components/experiments/TimeDistortion";
 import SensoryAmplification from "@/components/experiments/SensoryAmplification";
 import ChevreuPendulum from "@/components/experiments/ChevreuPendulum";
+import { loadTrancePrefs, saveTrancePrefs } from "@/lib/sessionPersistence";
 
 type ExperimentId = "arm" | "time" | "sensory" | "pendulum";
 const EXPERIMENT_ORDER: ExperimentId[] = ["arm", "time", "sensory", "pendulum"];
@@ -32,6 +33,7 @@ export default function TranceSession() {
   const [results, setResults] = useState<ExperimentResult[]>([]);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [voiceAvailable, setVoiceAvailable] = useState(true);
   const [breathSlowdown, setBreathSlowdown] = useState(1.0);
 
   const speed = useSpeed();
@@ -54,6 +56,9 @@ export default function TranceSession() {
 
   // Init audio + voice on mount
   useEffect(() => {
+    const prefs = loadTrancePrefs();
+    setVoiceEnabled(prefs.voiceEnabled);
+
     const audio = new TranceAudioEngine();
     audio.init("trance");
     audio.fadeIn(20, 0.45);
@@ -61,7 +66,9 @@ export default function TranceSession() {
 
     const voice = new TranceVoice();
     voice.init();
+    voice.setEnabled(prefs.voiceEnabled);
     voiceRef.current = voice;
+    setVoiceAvailable(voice.isSupported());
 
     return () => {
       audio.stop();
@@ -222,6 +229,7 @@ export default function TranceSession() {
     setVoiceEnabled((prev) => {
       const next = !prev;
       voiceRef.current?.setEnabled(next);
+      saveTrancePrefs({ voiceEnabled: next });
       return next;
     });
   }, []);
@@ -308,6 +316,12 @@ export default function TranceSession() {
           </motion.button>
         )}
       </div>
+
+      {!voiceAvailable && phase !== "summary" && (
+        <div className="fixed top-4 left-4 z-50 text-[11px] ui-text px-3 py-2 rounded-full border border-[#e8e0d4]/20 text-[#e8e0d4]/55">
+          Voice unavailable in this browser — text guidance only
+        </div>
+      )}
     </main>
   );
 }
