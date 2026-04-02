@@ -98,8 +98,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
     if (phase !== "scene-select") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr(
-      "Think of something mildly stressful. You don't need to describe it — just bring it to mind...", 8000,
-      "Think of something mildly stressful... you don't need to describe it... just bring it to mind..."));
+      "Think of something stressful. You don't need to describe it — just bring it to mind...", 8000,
+      "Think of something stressful... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
       showNarr("See it like a scene in a movie in your mind... notice the details...", 7000,
         "See it like a scene in a movie... in your mind... notice the details...");
