@@ -184,17 +184,35 @@ export default function App() {
 
               <AnimatePresence>
                 {showReady && (
-                  <motion.button
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 2 }}
-                    onClick={handleReady}
-                    className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
-                               hover:border-gold/70 hover:text-gold transition-all duration-1000
-                               ui-text tracking-widest"
+                    className="flex flex-col items-center gap-5"
                   >
-                    I&apos;m ready
-                  </motion.button>
+                    <button
+                      onClick={handleReady}
+                      className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
+                                 hover:border-gold/70 hover:text-gold transition-all duration-1000
+                                 ui-text tracking-widest"
+                    >
+                      I&apos;m ready
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (document.fullscreenElement) {
+                          document.exitFullscreen();
+                        } else {
+                          document.documentElement.requestFullscreen().catch(() => {});
+                        }
+                      }}
+                      className="px-5 py-2 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/40
+                                 hover:border-[#e8e0d4]/40 hover:text-[#e8e0d4]/70
+                                 transition-all duration-700 ui-text text-[10px]"
+                    >
+                      full screen
+                    </button>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>

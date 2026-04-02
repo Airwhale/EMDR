@@ -118,8 +118,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     setShowBlsContinue(false);
     showNarr("Follow the dot while holding your safe place in mind...", 6000,
       "Follow the dot... while holding your safe place in mind...");
-    // Show continue after 6 passes (6s at 1Hz half-cycle = 0.5s)
-    const t = setTimeout(() => setShowBlsContinue(true), 6000);
+    // Safe place: minimum 20s (~20 slow passes) before continue appears
+    const t = setTimeout(() => setShowBlsContinue(true), 20000);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
 
@@ -161,7 +161,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     setShowBlsContinue(false);
     showNarr("Follow the dot to seal the container...", 5000,
       "Follow the dot... to seal the container...");
-    const t = setTimeout(() => setShowBlsContinue(true), 6000);
+    // Container: minimum 15s (~15 slow passes)
+    const t = setTimeout(() => setShowBlsContinue(true), 15000);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
 
@@ -197,8 +198,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     setShowBlsContinue(false);
     showNarr("Follow the dot... let the eye movements strengthen this feeling...", 6000,
       "Follow the dot... let the eye movements strengthen this feeling...");
-    // Longer than safe place/container — 12 passes (12s)
-    const t = setTimeout(() => setShowBlsContinue(true), 12000);
+    // Resource installation: minimum 25s (~25 passes, longest EMDR set)
+    const t = setTimeout(() => setShowBlsContinue(true), 25000);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
 
