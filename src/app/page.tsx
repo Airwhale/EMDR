@@ -3,10 +3,14 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
+import { TranceVoice } from "@/lib/TranceVoice";
 import { sessionScript, PhaseId, ExperimentResult } from "@/lib/sessionScript";
-import { useSessionTimer } from "@/lib/useSessionTimer";
 import BreathingGuide from "@/components/BreathingGuide";
 import NarrationDisplay from "@/components/NarrationDisplay";
+import EmdrDot from "@/components/EmdrDot";
+import HypnoticSpiral from "@/components/HypnoticSpiral";
+import PhoticFlicker from "@/components/PhoticFlicker";
+import Vignette from "@/components/Vignette";
 import Staircase from "@/components/Staircase";
 import EmergenceSequence from "@/components/EmergenceSequence";
 import SessionSummary from "@/components/SessionSummary";
@@ -25,11 +29,12 @@ export default function TranceExperience() {
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [experimentIndex, setExperimentIndex] = useState(0);
   const [results, setResults] = useState<ExperimentResult[]>([]);
+  const [vignetteIntensity, setVignetteIntensity] = useState(0);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
 
   const audioRef = useRef<TranceAudioEngine | null>(null);
-  const { scheduleCues } = useSessionTimer();
+  const voiceRef = useRef<TranceVoice | null>(null);
 
-  // Background color evolution
   const bgColors: Record<string, string> = {
     entry: "#0a0a0f",
     fixation: "#0a0a14",
@@ -40,9 +45,50 @@ export default function TranceExperience() {
     summary: "#0a0a0f",
   };
 
-  // ---- PHASE HANDLERS ----
+  // Helper: speak narration text
+  const speakNarration = useCallback(
+    (text: string, spoken?: string) => {
+      if (!voiceEnabled) return;
+      voiceRef.current?.speak(spoken || text);
+    },
+    [voiceEnabled]
+  );
 
-  // Entry: show text after 3s, button after 8s
+  // Helper: schedule narration cues for a phase with voice
+  const schedulePhaseNarration = useCallback(
+    (
+      phaseId: PhaseId,
+      onComplete?: () => void
+    ) => {
+      const script = sessionScript.find((p) => p.id === phaseId)!;
+      let cumulative = 0;
+      const timers: ReturnType<typeof setTimeout>[] = [];
+
+      script.narration.forEach((cue) => {
+        cumulative += cue.delay;
+        const show = cumulative;
+        const hide = show + cue.duration;
+
+        timers.push(
+          setTimeout(() => {
+            setCurrentNarration(cue.text);
+            speakNarration(cue.text, cue.spoken);
+          }, show)
+        );
+        timers.push(setTimeout(() => setCurrentNarration(null), hide));
+        cumulative = hide;
+      });
+
+      if (onComplete) {
+        timers.push(setTimeout(onComplete, cumulative + 2000));
+      }
+
+      return () => timers.forEach(clearTimeout);
+    },
+    [speakNarration]
+  );
+
+  // ---- ENTRY ----
   useEffect(() => {
     if (phase !== "entry") return;
     const t1 = setTimeout(() => setEntryTextVisible(true), 3000);
@@ -54,113 +100,85 @@ export default function TranceExperience() {
   }, [phase]);
 
   const handleReady = useCallback(() => {
-    // Transition UI first, then init audio off the critical path
     setPhase("fixation");
     requestAnimationFrame(() => {
+      // Audio
       const audio = new TranceAudioEngine();
       audio.init();
       audio.fadeIn(20);
       audioRef.current = audio;
+
+      // Voice
+      const voice = new TranceVoice();
+      voice.init();
+      voiceRef.current = voice;
     });
   }, []);
 
-  // Fixation phase
+  // ---- FIXATION ----
   useEffect(() => {
     if (phase !== "fixation") return;
 
-    const script = sessionScript.find((p) => p.id === "fixation")!;
-    scheduleCues(script.narration, () => {
+    setVignetteIntensity(0.3);
+
+    const cleanup = schedulePhaseNarration("fixation", () => {
       setCurrentNarration(null);
       setPhase("deepening");
     });
 
-    let cumulative = 0;
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    return cleanup;
+  }, [phase, schedulePhaseNarration]);
 
-    script.narration.forEach((cue) => {
-      cumulative += cue.delay;
-      const show = cumulative;
-      const hide = show + cue.duration;
-      timers.push(setTimeout(() => setCurrentNarration(cue.text), show));
-      timers.push(setTimeout(() => setCurrentNarration(null), hide));
-      cumulative = hide;
-    });
-
-    timers.push(setTimeout(() => setPhase("deepening"), cumulative + 2000));
-
-    return () => timers.forEach(clearTimeout);
-  }, [phase, scheduleCues]);
-
-  // Deepening phase
+  // ---- DEEPENING ----
   useEffect(() => {
     if (phase !== "deepening") return;
 
     audioRef.current?.setDepth(0.4);
+    setVignetteIntensity(0.5);
 
-    const script = sessionScript.find((p) => p.id === "deepening")!;
-    let cumulative = 0;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-
-    script.narration.forEach((cue) => {
-      cumulative += cue.delay;
-      const show = cumulative;
-      const hide = show + cue.duration;
-      timers.push(setTimeout(() => setCurrentNarration(cue.text), show));
-      timers.push(setTimeout(() => setCurrentNarration(null), hide));
-      cumulative = hide;
+    const cleanup = schedulePhaseNarration("deepening", () => {
+      setCurrentNarration(null);
+      setPhase("staircase");
     });
 
-    timers.push(
-      setTimeout(() => {
-        setCurrentNarration(null);
-        setPhase("staircase");
-      }, cumulative + 2000)
-    );
+    return cleanup;
+  }, [phase, schedulePhaseNarration]);
 
-    return () => timers.forEach(clearTimeout);
-  }, [phase]);
-
-  // Staircase handlers
+  // ---- STAIRCASE ----
   const handleStaircaseStep = useCallback((step: number) => {
     const pitchOffset = (10 - step) * 2;
     audioRef.current?.shiftPitch(100 - pitchOffset, 3);
     audioRef.current?.setDepth(0.4 + (10 - step) * 0.06);
+    setVignetteIntensity(0.5 + (10 - step) * 0.04);
   }, []);
 
   const handleStaircaseComplete = useCallback(() => {
     setPhase("experiments");
   }, []);
 
-  // Staircase narration
   useEffect(() => {
     if (phase !== "staircase") return;
 
     audioRef.current?.setDepth(0.5);
+    setVignetteIntensity(0.6);
 
-    const script = sessionScript.find((p) => p.id === "staircase")!;
-    let cumulative = 0;
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    const cleanup = schedulePhaseNarration("staircase");
+    return cleanup;
+  }, [phase, schedulePhaseNarration]);
 
-    script.narration.forEach((cue) => {
-      cumulative += cue.delay;
-      const show = cumulative;
-      const hide = show + cue.duration;
-      timers.push(setTimeout(() => setCurrentNarration(cue.text), show));
-      timers.push(setTimeout(() => setCurrentNarration(null), hide));
-      cumulative = hide;
-    });
-
-    return () => timers.forEach(clearTimeout);
-  }, [phase]);
-
-  // Experiments intro narration
+  // ---- EXPERIMENTS ----
   useEffect(() => {
     if (phase !== "experiments") return;
+
+    setVignetteIntensity(0.3);
 
     const script = sessionScript.find((p) => p.id === "experiments")!;
     if (script.narration.length > 0) {
       const cue = script.narration[0];
-      const t1 = setTimeout(() => setCurrentNarration(cue.text), cue.delay);
+      const t1 = setTimeout(() => {
+        setCurrentNarration(cue.text);
+        speakNarration(cue.text, cue.spoken);
+      }, cue.delay);
       const t2 = setTimeout(
         () => setCurrentNarration(null),
         cue.delay + cue.duration
@@ -170,7 +188,7 @@ export default function TranceExperience() {
         clearTimeout(t2);
       };
     }
-  }, [phase]);
+  }, [phase, speakNarration]);
 
   const handleExperimentComplete = useCallback(
     (result: ExperimentResult) => {
@@ -185,9 +203,10 @@ export default function TranceExperience() {
     [experimentIndex]
   );
 
-  // Emergence
+  // ---- EMERGENCE ----
   const handleEmergenceStep = useCallback((step: number) => {
     audioRef.current?.shiftPitch(80 + step * 8, 3);
+    setVignetteIntensity(Math.max(0, 0.3 - step * 0.06));
   }, []);
 
   const handleEmergenceComplete = useCallback(() => {
@@ -195,10 +214,12 @@ export default function TranceExperience() {
     setTimeout(() => {
       audioRef.current?.stop();
     }, 11000);
+    voiceRef.current?.stop();
+    setVignetteIntensity(0);
     setPhase("summary");
   }, []);
 
-  // Skip to playground
+  // ---- SKIP ----
   const handleSkip = useCallback(() => {
     if (!audioRef.current) {
       const audio = new TranceAudioEngine();
@@ -206,45 +227,52 @@ export default function TranceExperience() {
       audio.fadeIn(5);
       audioRef.current = audio;
     }
+    if (!voiceRef.current) {
+      const voice = new TranceVoice();
+      voice.init();
+      voiceRef.current = voice;
+    }
     setPhase("experiments");
   }, []);
 
+  // ---- VOICE TOGGLE ----
+  const toggleVoice = useCallback(() => {
+    setVoiceEnabled((prev) => {
+      const next = !prev;
+      voiceRef.current?.setEnabled(next);
+      return next;
+    });
+  }, []);
+
   const currentExperiment = EXPERIMENT_ORDER[experimentIndex];
+
+  const showSpiral = phase === "fixation" || phase === "deepening";
+  const showPhotic = phase === "deepening" || phase === "staircase";
 
   return (
     <main
       className="relative w-screen h-screen flex items-center justify-center overflow-hidden transition-colors duration-[5000ms]"
       style={{ backgroundColor: bgColors[phase] || "#0a0a0f" }}
     >
+      {/* Global overlays */}
+      <Vignette intensity={vignetteIntensity} />
+      <PhoticFlicker
+        active={showPhotic}
+        frequency={phase === "staircase" ? 6 : 8}
+        intensity={0.02}
+      />
+
       {/* =================== ENTRY =================== */}
       <AnimatePresence mode="wait">
         {phase === "entry" && (
           <motion.div
             key="entry"
-            className="flex flex-col items-center gap-12"
+            className="flex flex-col items-center gap-12 z-10"
             exit={{ opacity: 0 }}
             transition={{ duration: 2 }}
           >
-            {/* Breathing dot */}
-            <motion.div
-              className="rounded-full"
-              style={{
-                width: 12,
-                height: 12,
-                background:
-                  "radial-gradient(circle, rgba(201, 169, 110, 0.8), rgba(201, 169, 110, 0.1))",
-                boxShadow: "0 0 30px rgba(201, 169, 110, 0.2)",
-              }}
-              animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.6, 1, 0.6],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
+            {/* EMDR-style moving dot */}
+            <EmdrDot cycleDuration={5} size={12} showTrace={true} />
 
             {/* Entry text */}
             <AnimatePresence>
@@ -284,13 +312,25 @@ export default function TranceExperience() {
         {phase === "fixation" && (
           <motion.div
             key="fixation"
-            className="flex flex-col items-center gap-16"
+            className="flex flex-col items-center gap-8 z-10 w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 3 }}
           >
-            <BreathingGuide isActive={true} size="full" showSpiral={true} />
+            {/* EMDR dot at top */}
+            <div className="absolute top-[15%] w-full">
+              <EmdrDot cycleDuration={4} size={14} showTrace={true} />
+            </div>
+
+            {/* Breathing guide + spiral in center */}
+            <div className="relative flex items-center justify-center">
+              {showSpiral && (
+                <HypnoticSpiral opacity={0.05} speed={12} size={450} />
+              )}
+              <BreathingGuide isActive={true} size="full" showSpiral={true} />
+            </div>
+
             <NarrationDisplay text={currentNarration} />
           </motion.div>
         )}
@@ -299,15 +339,24 @@ export default function TranceExperience() {
         {phase === "deepening" && (
           <motion.div
             key="deepening"
-            className="flex flex-col items-center w-full h-full"
+            className="flex flex-col items-center w-full h-full z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 3 }}
           >
+            {/* Small breathing guide at top */}
             <div className="absolute top-12">
               <BreathingGuide isActive={true} size="small" />
             </div>
+
+            {/* Spiral behind narration */}
+            {showSpiral && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <HypnoticSpiral opacity={0.04} speed={8} size={600} />
+              </div>
+            )}
+
             <div className="flex-1 flex items-center justify-center">
               <NarrationDisplay text={currentNarration} size="large" />
             </div>
@@ -318,7 +367,7 @@ export default function TranceExperience() {
         {phase === "staircase" && (
           <motion.div
             key="staircase"
-            className="w-full h-full flex flex-col items-center"
+            className="w-full h-full flex flex-col items-center z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -342,7 +391,7 @@ export default function TranceExperience() {
         {phase === "experiments" && (
           <motion.div
             key="experiments"
-            className="w-full h-full"
+            className="w-full h-full z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -411,7 +460,7 @@ export default function TranceExperience() {
         {phase === "emergence" && (
           <motion.div
             key="emergence"
-            className="w-full h-full"
+            className="w-full h-full z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -429,7 +478,7 @@ export default function TranceExperience() {
         {phase === "summary" && (
           <motion.div
             key="summary"
-            className="w-full h-full overflow-y-auto"
+            className="w-full h-full overflow-y-auto z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 3 }}
@@ -439,22 +488,43 @@ export default function TranceExperience() {
         )}
       </AnimatePresence>
 
-      {/* Skip to playground */}
-      {phase !== "experiments" &&
-        phase !== "emergence" &&
-        phase !== "summary" && (
+      {/* Bottom controls */}
+      <div className="fixed bottom-4 left-0 right-0 flex justify-between px-4 z-50">
+        {/* Voice toggle */}
+        {phase !== "entry" && phase !== "summary" && (
           <motion.button
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            whileHover={{ opacity: 0.4 }}
+            animate={{ opacity: 0.25 }}
+            whileHover={{ opacity: 0.5 }}
             transition={{ duration: 1 }}
-            onClick={handleSkip}
-            className="fixed bottom-4 right-4 ui-text text-[10px] text-[#e8e0d4]/30
-                       hover:text-[#e8e0d4]/50 transition-colors duration-500 z-50"
+            onClick={toggleVoice}
+            className="ui-text text-[10px] text-[#e8e0d4]/30
+                       hover:text-[#e8e0d4]/50 transition-colors duration-500"
           >
-            skip to playground →
+            voice {voiceEnabled ? "on" : "off"}
           </motion.button>
         )}
+
+        {/* Spacer */}
+        <div />
+
+        {/* Skip to playground */}
+        {phase !== "experiments" &&
+          phase !== "emergence" &&
+          phase !== "summary" && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.15 }}
+              whileHover={{ opacity: 0.4 }}
+              transition={{ duration: 1 }}
+              onClick={handleSkip}
+              className="ui-text text-[10px] text-[#e8e0d4]/30
+                         hover:text-[#e8e0d4]/50 transition-colors duration-500"
+            >
+              skip to playground →
+            </motion.button>
+          )}
+      </div>
     </main>
   );
 }

@@ -1,6 +1,7 @@
 /**
  * TranceAudioEngine — Pure Web Audio API synthesis engine.
- * Generates binaural-style drones, pink noise, and isochronic pulses.
+ * True binaural tones (separate L/R channels), pink noise, isochronic pulses,
+ * and a sub-bass heartbeat layer.
  * No audio files. No fetch calls. All generative.
  */
 
@@ -8,9 +9,11 @@ export class TranceAudioEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
 
-  // Base drone
-  private droneOsc1: OscillatorNode | null = null;
-  private droneOsc2: OscillatorNode | null = null;
+  // Binaural drone — true stereo separation
+  private droneOscL: OscillatorNode | null = null;
+  private droneOscR: OscillatorNode | null = null;
+  private panL: StereoPannerNode | null = null;
+  private panR: StereoPannerNode | null = null;
   private droneGain: GainNode | null = null;
   private droneFilter: BiquadFilterNode | null = null;
 
@@ -24,8 +27,19 @@ export class TranceAudioEngine {
   private lfo: OscillatorNode | null = null;
   private lfoGain: GainNode | null = null;
 
+  // Sub-bass heartbeat
+  private heartbeatOsc: OscillatorNode | null = null;
+  private heartbeatGain: GainNode | null = null;
+  private heartbeatLfo: OscillatorNode | null = null;
+  private heartbeatLfoGain: GainNode | null = null;
+
+  // Photic driving — amplitude pulse for visual sync
+  private photicGain: GainNode | null = null;
+  private photicLfo: OscillatorNode | null = null;
+
   private isRunning = false;
   private baseFreq = 100;
+  private binauralBeat = 4; // Hz difference between L/R
 
   init(): void {
     if (this.ctx) return;
@@ -35,13 +49,14 @@ export class TranceAudioEngine {
     this.masterGain.gain.value = 0;
     this.masterGain.connect(this.ctx.destination);
 
-    this.setupDrone();
+    this.setupBinauralDrone();
     this.setupPinkNoise();
     this.setupIsochronicPulse();
+    this.setupHeartbeat();
     this.isRunning = true;
   }
 
-  private setupDrone(): void {
+  private setupBinauralDrone(): void {
     if (!this.ctx || !this.masterGain) return;
 
     this.droneFilter = this.ctx.createBiquadFilter();
@@ -50,36 +65,41 @@ export class TranceAudioEngine {
     this.droneFilter.Q.value = 1;
 
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = 0.35;
+    this.droneGain.gain.value = 0.3;
 
-    // Oscillator 1 — base frequency
-    this.droneOsc1 = this.ctx.createOscillator();
-    this.droneOsc1.type = "sine";
-    this.droneOsc1.frequency.value = this.baseFreq;
+    // Left ear — base frequency
+    this.droneOscL = this.ctx.createOscillator();
+    this.droneOscL.type = "sine";
+    this.droneOscL.frequency.value = this.baseFreq;
+    this.panL = this.ctx.createStereoPanner();
+    this.panL.pan.value = -1; // Full left
 
-    // Oscillator 2 — slightly detuned for binaural beating (~4Hz)
-    this.droneOsc2 = this.ctx.createOscillator();
-    this.droneOsc2.type = "sine";
-    this.droneOsc2.frequency.value = this.baseFreq + 4;
+    // Right ear — base + binaural beat offset
+    this.droneOscR = this.ctx.createOscillator();
+    this.droneOscR.type = "sine";
+    this.droneOscR.frequency.value = this.baseFreq + this.binauralBeat;
+    this.panR = this.ctx.createStereoPanner();
+    this.panR.pan.value = 1; // Full right
 
-    this.droneOsc1.connect(this.droneFilter);
-    this.droneOsc2.connect(this.droneFilter);
+    // Route: osc → pan → filter → gain → master
+    this.droneOscL.connect(this.panL);
+    this.panL.connect(this.droneFilter);
+    this.droneOscR.connect(this.panR);
+    this.panR.connect(this.droneFilter);
     this.droneFilter.connect(this.droneGain);
     this.droneGain.connect(this.masterGain);
 
-    this.droneOsc1.start();
-    this.droneOsc2.start();
+    this.droneOscL.start();
+    this.droneOscR.start();
   }
 
   private setupPinkNoise(): void {
     if (!this.ctx || !this.masterGain) return;
 
-    // Generate pink noise buffer
     const bufferSize = this.ctx.sampleRate * 2;
     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const data = buffer.getChannelData(0);
 
-    // Pink noise generation using Paul Kellet's method
     let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
     for (let i = 0; i < bufferSize; i++) {
       const white = Math.random() * 2 - 1;
@@ -114,7 +134,6 @@ export class TranceAudioEngine {
   private setupIsochronicPulse(): void {
     if (!this.ctx || !this.masterGain) return;
 
-    // Soft pad oscillator
     this.padOsc = this.ctx.createOscillator();
     this.padOsc.type = "sine";
     this.padOsc.frequency.value = 200;
@@ -122,15 +141,13 @@ export class TranceAudioEngine {
     this.padGain = this.ctx.createGain();
     this.padGain.gain.value = 0;
 
-    // LFO for amplitude modulation at theta frequency (~6Hz)
     this.lfo = this.ctx.createOscillator();
     this.lfo.type = "sine";
-    this.lfo.frequency.value = 6;
+    this.lfo.frequency.value = 6; // Theta
 
     this.lfoGain = this.ctx.createGain();
     this.lfoGain.gain.value = 0.12;
 
-    // Connect LFO to pad gain for AM
     this.lfo.connect(this.lfoGain);
     this.lfoGain.connect(this.padGain.gain);
 
@@ -141,91 +158,119 @@ export class TranceAudioEngine {
     this.lfo.start();
   }
 
+  private setupHeartbeat(): void {
+    if (!this.ctx || !this.masterGain) return;
+
+    // Sub-bass oscillator for heartbeat-like throb
+    this.heartbeatOsc = this.ctx.createOscillator();
+    this.heartbeatOsc.type = "sine";
+    this.heartbeatOsc.frequency.value = 40; // Sub-bass
+
+    this.heartbeatGain = this.ctx.createGain();
+    this.heartbeatGain.gain.value = 0;
+
+    // LFO at ~1Hz (60bpm resting heart rate)
+    this.heartbeatLfo = this.ctx.createOscillator();
+    this.heartbeatLfo.type = "sine";
+    this.heartbeatLfo.frequency.value = 1;
+
+    this.heartbeatLfoGain = this.ctx.createGain();
+    this.heartbeatLfoGain.gain.value = 0.1;
+
+    this.heartbeatLfo.connect(this.heartbeatLfoGain);
+    this.heartbeatLfoGain.connect(this.heartbeatGain.gain);
+
+    this.heartbeatOsc.connect(this.heartbeatGain);
+    this.heartbeatGain.connect(this.masterGain);
+
+    this.heartbeatOsc.start();
+    this.heartbeatLfo.start();
+  }
+
   fadeIn(duration: number = 20): void {
     if (!this.ctx || !this.masterGain) return;
-    this.masterGain.gain.setValueAtTime(
-      this.masterGain.gain.value,
-      this.ctx.currentTime
-    );
-    this.masterGain.gain.linearRampToValueAtTime(
-      0.7,
-      this.ctx.currentTime + duration
-    );
+    this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
+    this.masterGain.gain.linearRampToValueAtTime(0.7, this.ctx.currentTime + duration);
   }
 
   fadeOut(duration: number = 10): void {
     if (!this.ctx || !this.masterGain) return;
-    this.masterGain.gain.setValueAtTime(
-      this.masterGain.gain.value,
-      this.ctx.currentTime
-    );
-    this.masterGain.gain.linearRampToValueAtTime(
-      0,
-      this.ctx.currentTime + duration
-    );
+    this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
+    this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + duration);
   }
 
+  /** Shift binaural base frequency. Both L/R track with the beat offset preserved. */
   shiftPitch(targetHz: number, duration: number = 2): void {
-    if (!this.ctx || !this.droneOsc1 || !this.droneOsc2) return;
+    if (!this.ctx || !this.droneOscL || !this.droneOscR) return;
     const now = this.ctx.currentTime;
-    this.droneOsc1.frequency.setValueAtTime(
-      this.droneOsc1.frequency.value,
-      now
-    );
-    this.droneOsc1.frequency.linearRampToValueAtTime(targetHz, now + duration);
-    this.droneOsc2.frequency.setValueAtTime(
-      this.droneOsc2.frequency.value,
-      now
-    );
-    this.droneOsc2.frequency.linearRampToValueAtTime(
-      targetHz + 4,
-      now + duration
-    );
+    this.droneOscL.frequency.setValueAtTime(this.droneOscL.frequency.value, now);
+    this.droneOscL.frequency.linearRampToValueAtTime(targetHz, now + duration);
+    this.droneOscR.frequency.setValueAtTime(this.droneOscR.frequency.value, now);
+    this.droneOscR.frequency.linearRampToValueAtTime(targetHz + this.binauralBeat, now + duration);
     this.baseFreq = targetHz;
+  }
+
+  /** Change the binaural beat frequency (e.g. 4Hz theta → 10Hz alpha) */
+  setBinauralBeat(beatHz: number, duration: number = 4): void {
+    if (!this.ctx || !this.droneOscR) return;
+    this.binauralBeat = beatHz;
+    const now = this.ctx.currentTime;
+    this.droneOscR.frequency.setValueAtTime(this.droneOscR.frequency.value, now);
+    this.droneOscR.frequency.linearRampToValueAtTime(this.baseFreq + beatHz, now + duration);
   }
 
   /** Crossfade between lighter (0) and deeper (1) audio states */
   setDepth(depth: number): void {
     if (!this.ctx || !this.droneGain || !this.pinkGain || !this.lfoGain) return;
     const now = this.ctx.currentTime;
-    // Deeper = more drone, more pink noise, slower LFO
+
     this.droneGain.gain.setValueAtTime(this.droneGain.gain.value, now);
-    this.droneGain.gain.linearRampToValueAtTime(
-      0.25 + depth * 0.25,
-      now + 2
-    );
+    this.droneGain.gain.linearRampToValueAtTime(0.2 + depth * 0.25, now + 2);
+
     this.pinkGain.gain.setValueAtTime(this.pinkGain.gain.value, now);
-    this.pinkGain.gain.linearRampToValueAtTime(
-      0.06 + depth * 0.08,
-      now + 2
-    );
+    this.pinkGain.gain.linearRampToValueAtTime(0.06 + depth * 0.08, now + 2);
+
     if (this.lfo) {
       this.lfo.frequency.setValueAtTime(this.lfo.frequency.value, now);
       this.lfo.frequency.linearRampToValueAtTime(6 - depth * 2, now + 2);
     }
+
     if (this.droneFilter) {
-      this.droneFilter.frequency.setValueAtTime(
-        this.droneFilter.frequency.value,
-        now
-      );
-      this.droneFilter.frequency.linearRampToValueAtTime(
-        300 - depth * 100,
-        now + 2
-      );
+      this.droneFilter.frequency.setValueAtTime(this.droneFilter.frequency.value, now);
+      this.droneFilter.frequency.linearRampToValueAtTime(300 - depth * 100, now + 2);
     }
+
+    // Heartbeat gets louder deeper in trance
+    if (this.heartbeatLfoGain) {
+      this.heartbeatLfoGain.gain.setValueAtTime(this.heartbeatLfoGain.gain.value, now);
+      this.heartbeatLfoGain.gain.linearRampToValueAtTime(0.05 + depth * 0.12, now + 2);
+    }
+
+    // Slow heartbeat as trance deepens (60bpm → 50bpm)
+    if (this.heartbeatLfo) {
+      this.heartbeatLfo.frequency.setValueAtTime(this.heartbeatLfo.frequency.value, now);
+      this.heartbeatLfo.frequency.linearRampToValueAtTime(1 - depth * 0.17, now + 4);
+    }
+
+    // Shift binaural beat deeper into theta as depth increases (4Hz → 3Hz)
+    this.setBinauralBeat(4 - depth * 1, 3);
   }
 
   /** Raise pitch and brighten for emergence */
   emerge(duration: number = 10): void {
     if (!this.ctx) return;
     this.shiftPitch(this.baseFreq + 20, duration);
+    this.setBinauralBeat(10, duration); // Shift to alpha for alertness
     if (this.droneFilter) {
       const now = this.ctx.currentTime;
-      this.droneFilter.frequency.setValueAtTime(
-        this.droneFilter.frequency.value,
-        now
-      );
+      this.droneFilter.frequency.setValueAtTime(this.droneFilter.frequency.value, now);
       this.droneFilter.frequency.linearRampToValueAtTime(600, now + duration);
+    }
+    // Speed heartbeat back up
+    if (this.heartbeatLfo) {
+      const now = this.ctx.currentTime;
+      this.heartbeatLfo.frequency.setValueAtTime(this.heartbeatLfo.frequency.value, now);
+      this.heartbeatLfo.frequency.linearRampToValueAtTime(1.2, now + duration);
     }
   }
 
@@ -234,11 +279,13 @@ export class TranceAudioEngine {
     this.fadeOut(3);
     setTimeout(() => {
       try {
-        this.droneOsc1?.stop();
-        this.droneOsc2?.stop();
+        this.droneOscL?.stop();
+        this.droneOscR?.stop();
         this.pinkNoiseSource?.stop();
         this.padOsc?.stop();
         this.lfo?.stop();
+        this.heartbeatOsc?.stop();
+        this.heartbeatLfo?.stop();
         this.ctx?.close();
       } catch {
         // Nodes may already be stopped

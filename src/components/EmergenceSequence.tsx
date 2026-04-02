@@ -9,12 +9,14 @@ interface EmergenceSequenceProps {
   isActive: boolean;
   onComplete: () => void;
   onStep?: (step: number) => void;
+  voice?: { speakAlert: (text: string, step: number) => void } | null;
 }
 
 export default function EmergenceSequence({
   isActive,
   onComplete,
   onStep,
+  voice,
 }: EmergenceSequenceProps) {
   const [currentCue, setCurrentCue] = useState<string | null>(null);
   const [brightness, setBrightness] = useState(0);
@@ -33,6 +35,7 @@ export default function EmergenceSequence({
           setCurrentCue(cue.text);
           setBrightness((index + 1) / emergenceNarration.length);
           onStep?.(index + 1);
+          voice?.speakAlert(cue.spoken || cue.text, index + 1);
         }, showTime)
       );
 
@@ -52,12 +55,11 @@ export default function EmergenceSequence({
     );
 
     return () => timers.forEach(clearTimeout);
-  }, [onComplete, onStep]);
+  }, [onComplete, onStep, voice]);
 
   useEffect(() => {
     if (!isActive) return;
 
-    // Wait for initial narration
     const startTimer = setTimeout(() => {
       return runEmergence();
     }, 12000);
@@ -71,7 +73,7 @@ export default function EmergenceSequence({
       <motion.div
         className="absolute inset-0 pointer-events-none"
         animate={{
-          backgroundColor: `rgba(30, 30, 50, ${brightness * 0.15})`,
+          backgroundColor: `rgba(40, 40, 60, ${brightness * 0.12})`,
         }}
         transition={{ duration: 3 }}
       />
