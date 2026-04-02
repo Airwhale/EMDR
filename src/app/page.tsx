@@ -251,7 +251,7 @@ export default function App() {
         {appState === "mode-select" && (
           <motion.main
             key="mode-select"
-            className="w-full h-full flex items-center justify-center"
+            className="w-full min-h-full overflow-y-auto flex items-center justify-center py-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
