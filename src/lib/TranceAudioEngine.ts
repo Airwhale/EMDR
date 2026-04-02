@@ -75,7 +75,7 @@ export class TranceAudioEngine {
     if (!this.ctx || !this.masterGain) return;
 
     // Generate pink noise buffer
-    const bufferSize = this.ctx.sampleRate * 4;
+    const bufferSize = this.ctx.sampleRate * 2;
     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const data = buffer.getChannelData(0);
 

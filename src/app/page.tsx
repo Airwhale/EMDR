@@ -54,11 +54,14 @@ export default function TranceExperience() {
   }, [phase]);
 
   const handleReady = useCallback(() => {
-    const audio = new TranceAudioEngine();
-    audio.init();
-    audio.fadeIn(20);
-    audioRef.current = audio;
+    // Transition UI first, then init audio off the critical path
     setPhase("fixation");
+    requestAnimationFrame(() => {
+      const audio = new TranceAudioEngine();
+      audio.init();
+      audio.fadeIn(20);
+      audioRef.current = audio;
+    });
   }, []);
 
   // Fixation phase
