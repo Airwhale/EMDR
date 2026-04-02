@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { EndSummary, loadSummaryHistory } from "@/lib/sessionPersistence";
+import { EndSummary, loadSummaryHistory, clearAllSessionHistory } from "@/lib/sessionPersistence";
 
 interface SessionEndSummaryProps {
   mode: "emdr" | "art";
@@ -23,6 +23,7 @@ export default function SessionEndSummary({
   onStartNewSession,
 }: SessionEndSummaryProps) {
   const [history, setHistory] = useState<EndSummary[]>([]);
+  const [historyCleared, setHistoryCleared] = useState(false);
   const sudImproved = sudStart !== null && sudEnd !== null && sudEnd < sudStart;
   const modeLabel = mode === "emdr" ? "EMDR" : "ART";
   const completedLabel = completedAt
@@ -154,6 +155,29 @@ export default function SessionEndSummary({
           >
             How it works
           </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 1.5 }}
+          className="mt-8 text-center"
+        >
+          {historyCleared ? (
+            <span className="text-[11px] text-[#e8e0d4]/30 font-light">Session history cleared</span>
+          ) : (
+            <button
+              onClick={() => {
+                clearAllSessionHistory();
+                setHistory([]);
+                setHistoryCleared(true);
+              }}
+              className="text-[11px] text-[#e8e0d4]/25 hover:text-[#e8e0d4]/50
+                         transition-colors duration-500 font-light"
+            >
+              Clear session history
+            </button>
+          )}
         </motion.div>
       </motion.div>
     </div>

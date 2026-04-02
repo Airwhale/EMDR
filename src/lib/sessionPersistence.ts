@@ -111,3 +111,10 @@ export function setSafetyAcknowledged(): void {
   if (!hasStorage()) return;
   window.localStorage.setItem(SAFETY_ACKNOWLEDGED_KEY, "true");
 }
+
+export function clearAllSessionHistory(): void {
+  if (!hasStorage()) return;
+  window.localStorage.removeItem(APP_SNAPSHOT_KEY);
+  window.localStorage.removeItem(END_SUMMARY_KEY);
+  window.localStorage.removeItem(END_SUMMARY_HISTORY_KEY);
+}
