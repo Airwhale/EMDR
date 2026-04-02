@@ -8,7 +8,7 @@ const sections = [
   {
     title: "How This Works",
     content:
-      "TRANCE uses well-established techniques from clinical hypnotherapy, adapted for a browser-based experience. None of this is magic — it's applied psychology, rhythm, and focused attention. Multiple induction methods work together to create a genuine altered state.",
+      "This experience uses well-established techniques from clinical hypnotherapy, EMDR, and ART, adapted for a browser-based format. None of this is magic — it's applied psychology, rhythm, and focused attention. Multiple methods work together to support relaxation and emotional regulation.",
   },
   {
     title: "EMDR-Style Eye Movement",
@@ -23,7 +23,7 @@ const sections = [
   {
     title: "Voice Synthesis",
     content:
-      "TRANCE uses your browser's speech synthesis to deliver narration in a slow, low-pitched voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled hypnotherapist. Spoken suggestions engage different processing pathways than written text, and the combination of reading and hearing the same content creates dual-channel reinforcement that deepens suggestibility.",
+      "This experience uses your browser's speech synthesis to deliver narration in a slow, low-pitched voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled therapist. Spoken suggestions engage different processing pathways than written text, and the combination of reading and hearing the same content creates dual-channel reinforcement that deepens the effect.",
   },
   {
     title: "Fixation Induction & Spiral",
