@@ -11,13 +11,6 @@ interface ModeSelectProps {
 
 const modes: { id: SessionMode; title: string; subtitle: string; description: string }[] = [
   {
-    id: "trance",
-    title: "TRANCE",
-    subtitle: "Guided hypnotic relaxation",
-    description:
-      "Deep breathing, progressive relaxation, and suggestibility experiments. A full self-hypnosis session.",
-  },
-  {
     id: "emdr",
     title: "EMDR",
     subtitle: "Resource building & calm",
@@ -30,6 +23,13 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
     subtitle: "Scene processing & replacement",
     description:
       "Guided eye movements, voluntary image replacement, and body awareness. Based on Accelerated Resolution Therapy protocol.",
+  },
+  {
+    id: "trance",
+    title: "TRANCE",
+    subtitle: "Guided hypnotic relaxation & experiences",
+    description:
+      "Deep breathing, progressive relaxation, and suggestibility experiments. A full guided self-hypnosis session with interactive demonstrations of hypnotic phenomena.",
   },
 ];
 

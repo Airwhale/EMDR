@@ -152,7 +152,17 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 2 }}
           >
-            <div className="flex flex-col items-center gap-12 z-10">
+            <div className="flex flex-col items-center gap-10 z-10">
+              {/* Title */}
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.85 }}
+                transition={{ duration: 2 }}
+                className="narration-text text-3xl md:text-4xl text-gold/85 text-center"
+              >
+                EMDR / ART Self-Administered Experience
+              </motion.h1>
+
               {/* Slow dot on entry */}
               <div className="relative w-full" style={{ height: 56 }}>
                 <EmdrDot cycleDuration={5} size={12} rangeVw={30} />
@@ -164,7 +174,7 @@ export default function App() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0.7 }}
                     transition={{ duration: 3 }}
-                    className="narration-text text-xl md:text-2xl text-center max-w-lg text-[#e8e0d4]/70"
+                    className="narration-text text-lg md:text-xl text-center max-w-lg text-[#e8e0d4]/60"
                   >
                     Find a comfortable position. Put on headphones for the full
                     experience.
