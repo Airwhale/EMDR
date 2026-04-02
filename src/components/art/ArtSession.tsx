@@ -57,7 +57,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     const audio = new TranceAudioEngine();
     audio.init("art");
-    audio.fadeIn(6, 0.45);
+    audio.fadeIn(6, 0.5);
     audioRef.current = audio;
 
     const voice = new TranceVoice();
@@ -124,12 +124,22 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
     setShowBlsContinue(false);
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    timers.push(showNarr("Hold the scene in mind... follow the dot...", 5000,
-      "Hold the scene in mind... follow the dot..."));
-    timers.push(setTimeout(() => {
-      showNarr("Keep following... let whatever comes up just be there...", 5000,
-        "Keep following... let whatever comes up... just be there...");
-    }, 10000));
+    if (round > 1) {
+      // Returning for another round — explicitly bring back the original
+      timers.push(showNarr("Bring the original scene back to mind... how it was before you changed it...", 6000,
+        "Bring the original scene back to mind... how it was... before you changed it..."));
+      timers.push(setTimeout(() => {
+        showNarr("Follow the dot... notice what's still there...", 5000,
+          "Follow the dot... notice what's still there...");
+      }, 10000));
+    } else {
+      timers.push(showNarr("Hold that scene in mind... follow the dot...", 5000,
+        "Hold that scene in mind... follow the dot..."));
+      timers.push(setTimeout(() => {
+        showNarr("Keep following... let whatever comes up just be there...", 5000,
+          "Keep following... let whatever comes up... just be there...");
+      }, 10000));
+    }
     // Show continue after ~40 passes
     timers.push(setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION));
 
@@ -146,8 +156,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "sensation-check") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Where do you feel this in your body? Focus on that place...", 7000,
-      "Where do you feel this... in your body... focus on that place..."));
+    timers.push(showNarr("Where do you feel the tension or discomfort in your body? Focus on that place...", 7000,
+      "Where do you feel the tension... or discomfort... in your body... focus on that place..."));
     timers.push(setTimeout(() => setPhase("sensation-bls"), 9000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
@@ -158,8 +168,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
     setBlsActive(true);
     setShowBlsContinue(false);
 
-    showNarr("Follow the dot... focus on the sensation... let it shift...", 5000,
-      "Follow the dot... focus on the sensation... let it shift...");
+    showNarr("Follow the dot... focus on where you feel it in your body... let the feeling soften...", 5000,
+      "Follow the dot... focus on where you feel it in your body... let the feeling soften...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
   }, [phase, showNarr]);
@@ -234,7 +244,8 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "closing") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Take a deep breath... notice how different the scene feels now...", 8000));
+    timers.push(showNarr("Take a deep breath... think back to the original memory... notice how different it feels now...", 9000,
+      "Take a deep breath... think back to the original memory... notice how different it feels now..."));
     timers.push(setTimeout(() => setShowSudFinal(true), 12000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);

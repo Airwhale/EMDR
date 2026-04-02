@@ -121,7 +121,7 @@ export class TranceAudioEngine {
     this.droneFilter.Q.value = 1;
 
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = this.mode === "trance" ? 0.3 : 0.2;
+    this.droneGain.gain.value = this.mode === "trance" ? 0.3 : 0.25;
 
     this.droneOscL = this.ctx.createOscillator();
     this.droneOscL.type = "sine";

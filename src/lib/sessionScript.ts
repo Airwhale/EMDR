@@ -224,7 +224,7 @@ export const sessionScript: PhaseConfig[] = [
       },
       {
         text: "...and let yourself drop twice as deep as before...",
-        spoken: "...and now... let yourself drop... twice as deep as before... that's right... deeper and deeper... every time you come back... you go so much further down...",
+        spoken: "...and now... let yourself drop... twice as deep as before... that's right... deeper and deeper... so much further down...",
         delay: 5000,
         duration: 8000,
       },

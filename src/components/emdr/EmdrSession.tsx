@@ -51,7 +51,7 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
   useEffect(() => {
     const audio = new TranceAudioEngine();
     audio.init("emdr");
-    audio.fadeIn(8, 0.4);
+    audio.fadeIn(8, 0.5);
     audioRef.current = audio;
 
     const voice = new TranceVoice();
@@ -187,8 +187,8 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
         "In your mind... step into that memory... feel it... in your body...");
     }, 10000));
     timers.push(setTimeout(() => {
-      showNarr("Where do you feel this strength? Let it grow...", 7000,
-        "Where do you feel this strength... let it grow...");
+      showNarr("Where in your body do you feel that strength or peace? Let the feeling expand...", 7000,
+        "Where in your body do you feel that strength... or peace... let the feeling expand...");
     }, 19000));
     timers.push(setTimeout(() => setPhase("resource-bls"), 28000));
     return () => timers.forEach(clearTimeout);

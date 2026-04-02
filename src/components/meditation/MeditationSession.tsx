@@ -17,20 +17,21 @@ type MedPhase = "fixation" | "deepening" | "staircase" | "sustain" | "emergence"
 
 interface MeditationSessionProps {
   onComplete: () => void;
+  onExit: () => void;
 }
 
 // Extended deepening narration — cycles through these during the sustained phase
 const sustainCues: NarrationCue[] = [
-  { text: "Sinking deeper... with every breath...", spoken: "Sinking deeper... with every breath... that's right...", delay: 25000, duration: 8000 },
-  { text: "There's nowhere to go... nothing to do... just this stillness...", spoken: "There's nowhere to go... nothing to do... just this stillness...", delay: 25000, duration: 8000 },
-  { text: "Each exhale takes you further down... deeper and deeper...", spoken: "Each exhale takes you further down... deeper... and deeper...", delay: 30000, duration: 8000 },
-  { text: "Your mind is quiet... your body is soft... everything is at peace...", spoken: "Your mind is quiet... your body is soft... everything... is at peace...", delay: 30000, duration: 8000 },
-  { text: "You might notice how far you've drifted... and that's perfectly fine...", spoken: "You might notice how far you've drifted... and that's perfectly fine...", delay: 30000, duration: 8000 },
-  { text: "Deeper still... every sound around you takes you further in...", spoken: "Deeper still... every sound around you... takes you further in...", delay: 25000, duration: 8000 },
-  { text: "Let go of the last thread of effort... there is only calm...", spoken: "Let go of the last thread of effort... there is only calm...", delay: 30000, duration: 8000 },
-  { text: "You are deeply, profoundly relaxed...", spoken: "You are deeply... profoundly... relaxed...", delay: 30000, duration: 8000 },
-  { text: "Rest here... in this deep, comfortable place...", spoken: "Rest here... in this deep... comfortable place...", delay: 35000, duration: 8000 },
-  { text: "With each breath... deeper... and more peaceful...", spoken: "With each breath... deeper... and more peaceful...", delay: 30000, duration: 8000 },
+  { text: "deeper", spoken: "Sinking deeper... with every breath... that's right...", delay: 25000, duration: 6000 },
+  { text: "stillness", spoken: "There's nowhere to go... nothing to do... just this stillness...", delay: 25000, duration: 6000 },
+  { text: "deeper", spoken: "Each exhale takes you further down... deeper... and deeper...", delay: 30000, duration: 6000 },
+  { text: "peace", spoken: "Your mind is quiet... your body is soft... everything... is at peace...", delay: 30000, duration: 6000 },
+  { text: "drifting", spoken: "You might notice how far you've drifted... and that's perfectly fine...", delay: 30000, duration: 6000 },
+  { text: "deeper", spoken: "Deeper still... every sound around you... takes you further in...", delay: 25000, duration: 6000 },
+  { text: "let go", spoken: "Let go of the last thread of effort... there is only calm...", delay: 30000, duration: 6000 },
+  { text: "relaxed", spoken: "You are deeply... profoundly... relaxed...", delay: 30000, duration: 6000 },
+  { text: "rest", spoken: "Rest here... in this deep... comfortable place...", delay: 35000, duration: 6000 },
+  { text: "peaceful", spoken: "With each breath... deeper... and more peaceful...", delay: 30000, duration: 6000 },
 ];
 
 const emergenceCues: NarrationCue[] = [
@@ -42,7 +43,7 @@ const emergenceCues: NarrationCue[] = [
   { text: "5 — eyes open, fully alert, feeling refreshed.", spoken: "Five... eyes open... wide awake... fully alert... feeling wonderful... refreshed... and clear.", delay: 7000, duration: 8000 },
 ];
 
-export default function MeditationSession({ onComplete }: MeditationSessionProps) {
+export default function MeditationSession({ onComplete, onExit }: MeditationSessionProps) {
   const [phase, setPhase] = useState<MedPhase>("fixation");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
@@ -289,7 +290,7 @@ export default function MeditationSession({ onComplete }: MeditationSessionProps
           <motion.div key="med-fixation" className="flex flex-col items-center gap-8 z-10 w-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <div className="relative flex items-center justify-center">
               {showSpiral && <HypnoticSpiral opacity={0.05} speed={12} size={450} />}
-              <BreathingGuide isActive={true} size="full" showSpiral={true} slowdown={breathSlowdown} />
+              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
               <EmdrDot cycleDuration={4} size={18} rangeVw={35} />
             </div>
             <NarrationDisplay text={currentNarration} />
@@ -316,10 +317,14 @@ export default function MeditationSession({ onComplete }: MeditationSessionProps
 
         {/* SUSTAINED DEEP MEDITATION */}
         {phase === "sustain" && (
-          <motion.div key="med-sustain" className="flex flex-col items-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><HypnoticSpiral opacity={0.03} speed={6} size={700} /></div>
-            <div className="flex-1 flex items-center justify-center"><NarrationDisplay text={currentNarration} size="large" /></div>
+          <motion.div key="med-sustain" className="flex flex-col items-center justify-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+            <div className="relative flex items-center justify-center">
+              <HypnoticSpiral opacity={0.03} speed={6} size={700} />
+              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
+            </div>
+            {currentNarration && (
+              <p className="narration-text text-glow text-2xl text-gold/40 mt-8 text-center">{currentNarration}</p>
+            )}
           </motion.div>
         )}
 
@@ -330,6 +335,26 @@ export default function MeditationSession({ onComplete }: MeditationSessionProps
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Exit button — top left */}
+      {phase !== "emergence" && phase !== "complete" && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.2 }}
+          whileHover={{ opacity: 0.6 }}
+          transition={{ duration: 0.8 }}
+          onClick={() => {
+            audioRef.current?.fadeOut(3);
+            setTimeout(() => audioRef.current?.stop(), 3500);
+            voiceRef.current?.stop();
+            onExit();
+          }}
+          className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
+                     hover:text-[#e8e0d4]/60 transition-colors duration-500"
+        >
+          ← exit
+        </motion.button>
+      )}
 
       {/* Bottom controls */}
       <div className="fixed bottom-4 left-0 right-0 flex justify-between items-end px-4 z-50">

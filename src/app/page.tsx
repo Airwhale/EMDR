@@ -286,7 +286,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <MeditationSession onComplete={handleStartNewSession} />
+            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} />
           </motion.div>
         )}
 

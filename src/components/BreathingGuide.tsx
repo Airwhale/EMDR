@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 interface BreathingGuideProps {
   isActive: boolean;
-  size?: "full" | "small";
+  size?: "large" | "full" | "small";
   showSpiral?: boolean;
   /** Multiplier for cycle speed. 1.0 = default (14s), 1.3 = 30% slower (18.2s), etc. */
   slowdown?: number;
@@ -41,7 +41,7 @@ export default function BreathingGuide({
   const glowControls = useAnimation();
   const dotControls = useAnimation();
 
-  const baseSize = size === "full" ? 200 : 60;
+  const baseSize = size === "large" ? 350 : size === "full" ? 200 : 60;
 
   const runCycle = useCallback(async () => {
     if (!isActive) return;
@@ -163,7 +163,7 @@ export default function BreathingGuide({
       />
 
       {/* Breath phase label */}
-      {size === "full" && (
+      {(size === "full" || size === "large") && (
         <motion.span
           className="absolute ui-text text-gold/80"
           style={{ bottom: -30 }}
