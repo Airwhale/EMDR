@@ -12,7 +12,6 @@ import NarrationDisplay from "../NarrationDisplay";
 import ButterflyHug from "./ButterflyHug";
 
 type EmdrPhase =
-  | "disclaimer"
   | "centering"
   | "safe-place"
   | "safe-place-bls"
@@ -38,7 +37,7 @@ export interface EmdrSummaryData {
 }
 
 export default function EmdrSession({ onComplete }: EmdrSessionProps) {
-  const [phase, setPhase] = useState<EmdrPhase>("disclaimer");
+  const [phase, setPhase] = useState<EmdrPhase>("sud-check");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
   const [sudEnd, setSudEnd] = useState<number | null>(null);
@@ -78,9 +77,6 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
     speak(spokenText || text);
     return setTimeout(() => setNarration(null), duration);
   }, [speak]);
-
-  // ---- DISCLAIMER ----
-  const handleDisclaimerAccept = useCallback(() => setPhase("sud-check"), []);
 
   // ---- SUD CHECK (initial) ----
   const handleSudStart = useCallback((rating: number) => {
@@ -276,24 +272,6 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
       )}
 
       <AnimatePresence mode="wait">
-        {phase === "disclaimer" && (
-          <motion.div key="disclaimer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}
-            className="flex flex-col items-center gap-8 px-6 max-w-lg text-center">
-            <p className="narration-text text-xl text-[#e8e0d4]/80">
-              This session uses EMDR-based stabilization exercises.
-            </p>
-            <p className="text-sm text-[#e8e0d4]/40 font-light leading-relaxed">
-              These are resource-building techniques, not trauma reprocessing.
-              If you are working through trauma, please do so with a trained EMDR clinician.
-            </p>
-            <button onClick={handleDisclaimerAccept}
-              className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
-                         hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text">
-              I understand
-            </button>
-          </motion.div>
-        )}
-
         {phase === "sud-check" && sudStart === null && (
           <motion.div key="sud-start" exit={{ opacity: 0 }} transition={{ duration: 1 }}>
             <SudCheck prompt="Before we begin — how much distress are you feeling right now?" onRate={handleSudStart} />
@@ -307,7 +285,7 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
         )}
 
         {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
-        {!["disclaimer", "sud-check", "grounding", "butterfly-hug"].includes(phase) &&
+        {!["sud-check", "grounding", "butterfly-hug"].includes(phase) &&
           sudEnd === null && narration && !blsActive && (
           <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}>
             <NarrationDisplay text={narration} size="large" />

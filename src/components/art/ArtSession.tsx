@@ -11,7 +11,6 @@ import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
 
 type ArtPhase =
-  | "disclaimer"
   | "centering"
   | "scene-select"
   | "sud-initial"
@@ -42,7 +41,7 @@ const MAX_ROUNDS = 3;
 const ART_SET_DURATION = 28000;
 
 export default function ArtSession({ onComplete }: ArtSessionProps) {
-  const [phase, setPhase] = useState<ArtPhase>("disclaimer");
+  const [phase, setPhase] = useState<ArtPhase>("centering");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
   const [round, setRound] = useState(0);
@@ -83,9 +82,6 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
     speak(spoken || text);
     return setTimeout(() => setNarration(null), duration);
   }, [speak]);
-
-  // ---- DISCLAIMER ----
-  const handleDisclaimerAccept = useCallback(() => setPhase("centering"), []);
 
   // ---- CENTERING ----
   useEffect(() => {
@@ -277,25 +273,6 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
       )}
 
       <AnimatePresence mode="wait">
-        {phase === "disclaimer" && (
-          <motion.div key="art-disclaimer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5 }}
-            className="flex flex-col items-center gap-8 px-6 max-w-lg text-center">
-            <p className="narration-text text-xl text-[#e8e0d4]/80">
-              This session uses techniques from Accelerated Resolution Therapy.
-            </p>
-            <p className="text-sm text-[#e8e0d4]/40 font-light leading-relaxed">
-              Work with mildly stressful memories only. For trauma or highly
-              distressing memories, please work with a trained ART clinician.
-              You will not be asked to describe or share what you&apos;re processing.
-            </p>
-            <button onClick={handleDisclaimerAccept}
-              className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
-                         hover:border-gold/70 hover:text-gold transition-all duration-700 ui-text">
-              I understand
-            </button>
-          </motion.div>
-        )}
-
         {phase === "grounding" && (
           <motion.div key="art-grounding" exit={{ opacity: 0 }} transition={{ duration: 1 }}>
             <GroundingExercise voice={voiceRef.current} onComplete={handleGroundingComplete} />
