@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-export type SessionMode = "trance" | "emdr" | "art";
+export type SessionMode = "trance" | "emdr" | "art" | "meditation";
 
 interface ModeSelectProps {
   onSelect: (mode: SessionMode) => void;
@@ -23,6 +23,13 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
     subtitle: "Process & rescript a stressful memory",
     description:
       "Best if you have a specific stressful memory you'd like to take the edge off. Fast-paced eye movements help you process the scene, then you'll be guided to change it in your mind — reshaping it into something that feels better. You won't need to describe or share anything.",
+  },
+  {
+    id: "meditation",
+    title: "MEDITATION",
+    subtitle: "Extended guided deep meditation",
+    description:
+      "Best if you want a long, immersive session. A full hypnotic induction guides you into a deep meditative state, then holds you there with gentle deepening cues for up to 30 minutes. End whenever you're ready.",
   },
   {
     id: "trance",

@@ -6,6 +6,7 @@ import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import LearnContent from "@/components/shared/LearnContent";
 import EmdrDot from "@/components/EmdrDot";
 import TranceSession from "@/components/TranceSession";
+import MeditationSession from "@/components/meditation/MeditationSession";
 import EmdrSession, { EmdrSummaryData } from "@/components/emdr/EmdrSession";
 import ArtSession, { ArtSummaryData } from "@/components/art/ArtSession";
 import SessionEndSummary from "@/components/shared/SessionEndSummary";
@@ -274,6 +275,18 @@ export default function App() {
             transition={{ duration: 0.8 }}
           >
             <TranceSession />
+          </motion.div>
+        )}
+
+        {appState === "session" && selectedMode === "meditation" && (
+          <motion.div
+            key="meditation-session"
+            className="w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <MeditationSession onComplete={handleStartNewSession} />
           </motion.div>
         )}
 

@@ -37,6 +37,7 @@ const sections: Section[] = [
     items: [
       { label: "EMDR mode", time: "10–15 minutes", detail: "Centering, safe place visualization, butterfly hug, container exercise, resource installation, and body scan." },
       { label: "ART mode", time: "10–20 minutes", detail: "Centering, scene selection, 1–3 processing rounds with eye movements, guided scene change (voluntary image replacement), and body scan." },
+      { label: "Meditation mode", time: "Up to 30 minutes", detail: "A full hypnotic induction followed by an extended deep meditation. Gentle deepening cues sustain the state. End whenever you're ready." },
       { label: "Trance mode", time: "15–25 minutes", detail: "Full guided self-hypnosis session with breathing induction, progressive relaxation, deepening, and interactive suggestibility experiments." },
     ],
   },
