@@ -256,7 +256,7 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
         <div className="absolute top-[30%] w-full">
           <BilateralDot
             halfCycleSec={0.5}
-            size={18}
+            size={24}
             active={true}
             audio={audioRef.current}
             color="gold"

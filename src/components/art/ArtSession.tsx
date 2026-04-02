@@ -257,7 +257,7 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
         <div className="absolute top-[30%] w-full">
           <BilateralDot
             halfCycleSec={0.35}
-            size={16}
+            size={22}
             active={true}
             audio={audioRef.current}
             color="white"

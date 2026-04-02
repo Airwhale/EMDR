@@ -167,7 +167,7 @@ export default function App() {
                 className="relative w-full"
                 style={{ height: 56 }}
               >
-                <EmdrDot cycleDuration={5} size={12} rangeVw={30} />
+                <EmdrDot cycleDuration={5} size={18} rangeVw={30} />
               </motion.div>
 
               <motion.p
