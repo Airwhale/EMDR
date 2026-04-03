@@ -85,7 +85,7 @@ emdr-butterfly-06.mp3: "Continue tapping for a few more moments... feeling calme
 
 emdr-container-01.mp3: "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."
 emdr-container-02.mp3: "Place anything that's been bothering you inside... close the lid firmly..."
-emdr-container-03.mp3: "It's held safely there... contained for now..."
+emdr-container-03.mp3: "It's held safely there... not gone... just contained for now..."
 emdr-container-bls.mp3: "Imagine the container sealing... as you follow the dot... feeling it become more and more secure... with each movement of your eyes..."
 
 emdr-resource-01.mp3: "In your mind... think of a time... you felt strong... capable... or deeply at peace..."
@@ -94,9 +94,9 @@ emdr-resource-03.mp3: "Where in your body do you feel that strength... or peace.
 emdr-resource-bls.mp3: "Follow the dot... let the eye movements strengthen this feeling..."
 
 emdr-bodyscan-01.mp3: "Scan your body from head to toe... notice how you feel now..."
-emdr-bodyscan-02.mp3: "Observe any changes... with appreciation..."
+emdr-bodyscan-02.mp3: "Observe any changes... without judgment..."
 
-emdr-closing-01.mp3: "Take a deep breath... you can return to your safe place... anytime you choose..."
+emdr-closing-01.mp3: "Take a deep breath... you can return to your safe place... anytime you need..."
 
 ## public/audio/art/
 
@@ -119,7 +119,7 @@ art-vir-02.mp3: "Change what happens... change who's there... change how it look
 art-vir-bls.mp3: "Hold the changed scene in mind... follow the dot... let it settle in..."
 
 art-bodyscan-01.mp3: "Scan your body from head to toe... notice what has shifted..."
-art-bodyscan-02.mp3: "Observe... with appreciation..."
+art-bodyscan-02.mp3: "Observe... without judgment..."
 
 art-closing-01.mp3: "Take a deep breath... think back to the original memory... notice how different it feels now..."
 
