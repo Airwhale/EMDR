@@ -80,51 +80,27 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 px-4">
-      {/* Reference photos + illustration (shown during placement cues) */}
+      {/* Reference photos (shown during placement cues) */}
       {showPose && !tapping && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex gap-5 items-center justify-center flex-wrap"
+          className="flex gap-6 items-center justify-center"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/emdr/butterfly-hug-2.webp"
             alt="Butterfly hug hand placement — arms crossed over upper chest"
-            className="rounded-2xl max-h-[25vh] w-auto"
+            className="rounded-2xl max-h-[28vh] w-auto"
             style={{ opacity: 0.85 }}
           />
-
-          {/* Drawn illustration */}
-          <div
-            className="relative flex items-center justify-center"
-            style={{ width: 200, height: 180 }}
-          >
-            {/* Head */}
-            <div className="absolute rounded-full" style={{ width: 34, height: 34, border: "1.5px solid rgba(201, 169, 110, 0.4)", top: 0, left: "50%", transform: "translateX(-50%)" }} />
-            {/* Neck */}
-            <div className="absolute" style={{ width: 2, height: 10, background: "rgba(201, 169, 110, 0.3)", top: 34, left: "50%", transform: "translateX(-50%)" }} />
-            {/* Torso */}
-            <div className="absolute rounded-[25px]" style={{ width: 60, height: 90, border: "1.5px solid rgba(201, 169, 110, 0.35)", top: 44, left: "50%", transform: "translateX(-50%)" }} />
-            {/* Shoulders */}
-            <div className="absolute" style={{ width: 90, height: 2, background: "rgba(201, 169, 110, 0.3)", top: 52, left: "50%", transform: "translateX(-50%)" }} />
-            {/* Left arm crossing */}
-            <div className="absolute" style={{ width: 62, height: 2, background: "rgba(201, 169, 110, 0.45)", top: 62, left: 42, transform: "rotate(-28deg)", transformOrigin: "right center" }} />
-            {/* Right arm crossing */}
-            <div className="absolute" style={{ width: 62, height: 2, background: "rgba(201, 169, 110, 0.45)", top: 62, right: 42, transform: "rotate(28deg)", transformOrigin: "left center" }} />
-            {/* Left hand */}
-            <div className="absolute rounded-full" style={{ width: 12, height: 12, background: "rgba(201, 169, 110, 0.6)", top: 52, right: 60 }} />
-            {/* Right hand */}
-            <div className="absolute rounded-full" style={{ width: 12, height: 12, background: "rgba(201, 169, 110, 0.6)", top: 52, left: 60 }} />
-          </div>
-
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/emdr/butterfly-hug-1.jpg"
             alt="Butterfly hug full pose — arms crossed, eyes closed"
-            className="rounded-2xl max-h-[25vh] w-auto"
+            className="rounded-2xl max-h-[28vh] w-auto"
             style={{ opacity: 0.85 }}
           />
         </motion.div>
