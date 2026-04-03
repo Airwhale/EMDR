@@ -155,36 +155,23 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       );
     }, 2000));
 
+    // One complete breathing instruction timed to one breath cycle (~14s)
     timers.push(setTimeout(() => {
       speakNarration(
-        "As the sounds rise... breathe in slowly through your nose...",
-        "As the sounds rise... breathe in slowly through your nose..."
+        "As the sounds rise... breathe in... as they hold... hold... as they fall... breathe out slowly...",
+        "As the sounds rise... breathe in... as they hold... hold... as they fall... breathe out slowly..."
       );
     }, 16000));
 
     timers.push(setTimeout(() => {
       speakNarration(
-        "As they hold steady... hold your breath gently...",
-        "As they hold steady... hold your breath gently..."
+        "That's it... synchronize your breathing with the rhythm you hear... and allow it to become automatic... keeping your eyes on the dot...",
+        "That's it... synchronize your breathing with the rhythm you hear... and allow it to become automatic... keeping your eyes on the dot..."
       );
-    }, 30000));
-
-    timers.push(setTimeout(() => {
-      speakNarration(
-        "And as they fall... breathe out slowly through your mouth... letting everything release...",
-        "And as they fall... breathe out slowly through your mouth... letting everything release..."
-      );
-    }, 42000));
-
-    timers.push(setTimeout(() => {
-      speakNarration(
-        "That's it... synchronize your breathing with the rhythm you hear... and allow the breathing to become automatic... keeping your eyes on the dot...",
-        "That's it... synchronize your breathing with the rhythm you hear... and allow the breathing to become automatic... keeping your eyes on the dot..."
-      );
-    }, 56000));
+    }, 34000));
     timers.push(setTimeout(() => {
       setPhase("fixation");
-    }, 66000));
+    }, 48000));
 
     return () => timers.forEach(clearTimeout);
   }, [phase, speakNarration]);

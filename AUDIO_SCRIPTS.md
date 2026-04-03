@@ -126,10 +126,8 @@ art-closing-01.mp3: "Take a deep breath... think back to the original memory... 
 ## public/audio/meditation/
 
 meditation-centering-01.mp3: "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes..."
-meditation-centering-02.mp3: "As the sounds rise... breathe in slowly through your nose..."
-meditation-centering-03.mp3: "As they hold steady... hold your breath gently..."
-meditation-centering-04.mp3: "And as they fall... breathe out slowly through your mouth... letting everything release..."
-meditation-centering-05.mp3: "That's it... synchronize your breathing with the rhythm you hear... and allow the breathing to become automatic... keeping your eyes on the dot..."
+meditation-centering-02.mp3: "As the sounds rise... breathe in... as they hold... hold... as they fall... breathe out slowly..."
+meditation-centering-03.mp3: "That's it... synchronize your breathing with the rhythm you hear... and allow it to become automatic... keeping your eyes on the dot..."
 
 meditation-sustain-01.mp3: "And perhaps you can feel that contentment now... growing with every breath... deeper... and more satisfying..."
 meditation-sustain-02.mp3: "Some people notice the sounds welcoming them deeper... the gentle tones cradling them... and you might find you belong here... in this comfort..."
@@ -196,14 +194,14 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 111 audio files
+## Total: 109 audio files
 
 | Folder | Count |
 |--------|-------|
 | trance/ | 39 |
 | emdr/ | 21 |
 | art/ | 16 |
-| meditation/ | 30 |
+| meditation/ | 28 |
 | grounding/ | 7 |
 | experiments/ | 14 |
 | breath/ | 3 |
