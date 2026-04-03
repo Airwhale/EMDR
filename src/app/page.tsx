@@ -142,13 +142,13 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen bg-trance-dark overflow-hidden">
+    <div className="w-screen min-h-screen bg-trance-dark">
       <AnimatePresence mode="wait">
         {/* =================== ENTRY =================== */}
         {appState === "entry" && (
           <motion.main
             key="entry"
-            className="w-full h-full flex items-center justify-center"
+            className="w-full h-screen flex items-center justify-center overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -269,7 +269,7 @@ export default function App() {
         {appState === "session" && selectedMode === "trance" && (
           <motion.div
             key="trance-session"
-            className="w-full h-full"
+            className="w-full h-screen"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -281,7 +281,7 @@ export default function App() {
         {appState === "session" && selectedMode === "meditation" && (
           <motion.div
             key="meditation-session"
-            className="w-full h-full"
+            className="w-full h-screen"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -293,7 +293,7 @@ export default function App() {
         {appState === "session" && selectedMode === "emdr" && (
           <motion.main
             key="emdr-session"
-            className="w-full h-full bg-trance-dark"
+            className="w-full h-screen bg-trance-dark"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -305,7 +305,7 @@ export default function App() {
         {appState === "session" && selectedMode === "art" && (
           <motion.main
             key="art-session"
-            className="w-full h-full bg-trance-dark"
+            className="w-full h-screen bg-trance-dark"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -318,7 +318,7 @@ export default function App() {
         {appState === "end-summary" && endSummary && (
           <motion.main
             key="end-summary"
-            className="w-full h-full bg-trance-dark overflow-y-auto"
+            className="w-full min-h-screen bg-trance-dark overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
