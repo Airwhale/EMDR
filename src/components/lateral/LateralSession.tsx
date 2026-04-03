@@ -103,12 +103,12 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
       {/* Exit */}
       <motion.button
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.2 }}
-        whileHover={{ opacity: 0.6 }}
+        animate={{ opacity: 0.5 }}
+        whileHover={{ opacity: 0.9 }}
         transition={{ duration: 0.8 }}
         onClick={handleExit}
-        className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
-                   hover:text-[#e8e0d4]/60 transition-colors duration-500"
+        className="fixed top-4 left-4 z-50 ui-text text-[11px] text-[#e8e0d4]/50
+                   hover:text-[#e8e0d4]/80 transition-colors duration-300"
       >
         ← exit
       </motion.button>
