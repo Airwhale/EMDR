@@ -85,29 +85,50 @@ function parseScripts() {
 
 // ---- ElevenLabs API ----
 
-async function generateAudio(text) {
+async function generateAudio(text, retries = 4) {
   const url = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`;
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "xi-api-key": API_KEY,
-      "Content-Type": "application/json",
-      Accept: "audio/mpeg",
-    },
-    body: JSON.stringify({
-      text,
-      model_id: MODEL_ID,
-      voice_settings: VOICE_SETTINGS,
-    }),
-  });
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "xi-api-key": API_KEY,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: MODEL_ID,
+          voice_settings: VOICE_SETTINGS,
+        }),
+      });
 
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`ElevenLabs API error ${response.status}: ${errText}`);
+      if (response.status === 429) {
+        // Rate limited — wait and retry
+        const wait = (attempt + 1) * 5000;
+        console.log(`  ⏳ Rate limited, waiting ${wait / 1000}s...`);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`ElevenLabs API error ${response.status}: ${errText}`);
+      }
+
+      return Buffer.from(await response.arrayBuffer());
+    } catch (err) {
+      if (attempt < retries && (err.message.includes("fetch failed") || err.message.includes("429"))) {
+        const wait = (attempt + 1) * 3000;
+        console.log(`  ⏳ Retry ${attempt + 1}/${retries} in ${wait / 1000}s... (${err.message})`);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
+      }
+      throw err;
+    }
   }
-
-  return Buffer.from(await response.arrayBuffer());
+  throw new Error("Max retries exceeded");
 }
 
 // ---- Main ----
@@ -176,8 +197,8 @@ async function main() {
       generated++;
       console.log(`  ✓ ${(mp3Buffer.length / 1024).toFixed(1)}KB`);
 
-      // Rate limiting — ElevenLabs free tier allows ~3 requests/sec
-      await new Promise((r) => setTimeout(r, 400));
+      // Rate limiting — wait between requests to avoid 429s
+      await new Promise((r) => setTimeout(r, 1500));
     } catch (err) {
       console.error(`  ✗ FAILED: ${err.message}`);
       failed++;
