@@ -112,43 +112,53 @@ export class TranceAudioEngine {
     osc.stop(now + 0.15);
   }
 
-  /** Play a soft breath cue tone panned to one ear + whispered voice.
-   *  Inhale: rising tone in right ear. Exhale: falling tone in left ear. */
+  /** Play a breath cue: tonal chime panned L/R + spoken word.
+   *  Inhale: rising tone right ear. Hold: steady tone center. Exhale: falling tone left ear. */
   playBreathCue(phase: "inhale" | "hold" | "exhale"): void {
     if (!this.ctx || !this.masterGain) return;
-    if (phase === "hold") return;
 
     const now = this.ctx.currentTime;
-    const isInhale = phase === "inhale";
 
-    // Soft tonal cue — panned L/R
+    // Tonal cue — panned based on phase
     const osc = this.ctx.createOscillator();
     osc.type = "sine";
-    osc.frequency.setValueAtTime(isInhale ? 300 : 400, now);
-    osc.frequency.linearRampToValueAtTime(isInhale ? 400 : 250, now + 0.8);
 
     const env = this.ctx.createGain();
-    env.gain.setValueAtTime(0, now);
-    env.gain.linearRampToValueAtTime(0.08, now + 0.1);
-    env.gain.linearRampToValueAtTime(0.08, now + 0.6);
-    env.gain.linearRampToValueAtTime(0, now + 1.0);
-
     const pan = this.ctx.createStereoPanner();
-    pan.pan.value = isInhale ? 0.7 : -0.7; // Right for in, left for out
+
+    if (phase === "inhale") {
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.linearRampToValueAtTime(400, now + 1.0);
+      pan.pan.value = 0.7;
+    } else if (phase === "exhale") {
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.linearRampToValueAtTime(240, now + 1.0);
+      pan.pan.value = -0.7;
+    } else {
+      // Hold — gentle steady tone, centered
+      osc.frequency.value = 340;
+      pan.pan.value = 0;
+    }
+
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.15, now + 0.15);
+    env.gain.linearRampToValueAtTime(0.12, now + 0.7);
+    env.gain.linearRampToValueAtTime(0, now + 1.2);
 
     osc.connect(env);
     env.connect(pan);
     pan.connect(this.masterGain);
 
     osc.start(now);
-    osc.stop(now + 1.1);
+    osc.stop(now + 1.3);
 
-    // Also whisper via Speech API at low volume (both ears)
+    // Spoken cue via Speech API
     if (typeof window !== "undefined" && window.speechSynthesis) {
-      const utterance = new SpeechSynthesisUtterance(isInhale ? "in" : "out");
-      utterance.rate = 0.5;
-      utterance.pitch = 0.6;
-      utterance.volume = 0.25;
+      const word = phase === "inhale" ? "breathe in" : phase === "exhale" ? "breathe out" : "hold";
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.rate = 0.55;
+      utterance.pitch = 0.65;
+      utterance.volume = 0.4;
       window.speechSynthesis.speak(utterance);
     }
   }
