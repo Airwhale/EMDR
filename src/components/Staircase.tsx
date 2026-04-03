@@ -32,7 +32,7 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
         setTimeout(() => {
           setCurrentIndex(index);
           onStep?.(num);
-        }, index * 5000)
+        }, index * 7000)
       );
     });
 
@@ -40,7 +40,7 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
       setTimeout(() => {
         setCurrentIndex(-1);
         onComplete();
-      }, staircaseNumbers.length * 5000 + 2000)
+      }, staircaseNumbers.length * 7000 + 3000)
     );
 
     return () => timers.forEach(clearTimeout);
@@ -48,8 +48,8 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
 
   useEffect(() => {
     if (!isActive) return;
-    // Start after initial narration
-    const timer = setTimeout(runStaircase, 18000);
+    // Start after narration cues finish (~55s total for staircase narration)
+    const timer = setTimeout(runStaircase, 55000);
     return () => clearTimeout(timer);
   }, [isActive, runStaircase]);
 
