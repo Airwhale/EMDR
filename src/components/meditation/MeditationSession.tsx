@@ -306,17 +306,12 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
         {phase === "fixation" && (
           <motion.div key="med-fixation" className="absolute inset-0 flex flex-col items-center justify-center z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <EmdrDot cycleDuration={4} size={18} rangeVw={35} />
-            <div className="absolute bottom-[18%]"><NarrationDisplay text={currentNarration} /></div>
           </motion.div>
         )}
 
         {/* DEEPENING — narration below circle */}
         {phase === "deepening" && (
-          <motion.div key="med-deepening" className="absolute inset-0 flex items-end justify-center pb-[18%] z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            {currentNarration && (
-              <p className="narration-text text-glow text-xl text-[#e8e0d4]/60 text-center max-w-xl px-4">{currentNarration}</p>
-            )}
-          </motion.div>
+          <motion.div key="med-deepening" className="absolute inset-0 z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} />
         )}
 
         {/* STAIRCASE — numbers overlaid on circle, narration below */}
@@ -325,11 +320,6 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
             <div className="absolute inset-0 flex items-center justify-center">
               <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
             </div>
-            {currentNarration && (
-              <div className="absolute bottom-[18%] left-0 right-0 flex justify-center">
-                <p className="narration-text text-glow text-xl text-[#e8e0d4]/50 text-center">{currentNarration}</p>
-              </div>
-            )}
           </motion.div>
         )}
 
