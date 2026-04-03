@@ -155,13 +155,16 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
   }, [phase, scheduleNarrationCues]);
 
   // ---- STAIRCASE ----
+  const numberWords = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
   const handleStaircaseStep = useCallback((step: number) => {
     const pitchOffset = (10 - step) * 2;
     audioRef.current?.shiftPitch(100 - pitchOffset, 3);
     audioRef.current?.setDepth(0.5 + (10 - step) * 0.05);
     audioRef.current?.setMasterVolume(0.65 + (10 - step) * 0.012, 3);
     setVignetteIntensity(0.55 + (10 - step) * 0.035);
-  }, []);
+    // Speak the number
+    speakNarration(numberWords[step] || String(step));
+  }, [speakNarration]);
 
   const handleStaircaseComplete = useCallback(() => {
     setPhase("sustain");
@@ -263,7 +266,6 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const showSpiral = phase === "fixation" || phase === "deepening";
   const showPhotic = phase === "deepening" || phase === "staircase" || phase === "sustain";
   const showEndButton = phase === "sustain" || phase === "staircase" || phase === "deepening";
 
@@ -282,59 +284,55 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       style={{ backgroundColor: bgColors[phase] || "#0a0a0f" }}
     >
       <Vignette intensity={vignetteIntensity} />
-      <PhoticFlicker active={showPhotic} frequency={phase === "sustain" ? 5 : phase === "staircase" ? 6 : 8} intensity={phase === "sustain" ? 0.015 : 0.02} />
+      <PhoticFlicker active={showPhotic} frequency={phase === "sustain" ? 5 : phase === "staircase" ? 6 : 8} intensity={phase === "sustain" ? 0.025 : 0.03} />
+
+      {/* Persistent breathing guide — never unmounts, so animation is continuous */}
+      {phase !== "emergence" && phase !== "complete" && (
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+          <div className="relative flex items-center justify-center">
+            <HypnoticSpiral opacity={phase === "sustain" ? 0.03 : 0.05} speed={phase === "sustain" ? 6 : 10} size={700} />
+            <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
+          </div>
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
-        {/* FIXATION */}
+        {/* FIXATION — dot + narration overlay */}
         {phase === "fixation" && (
-          <motion.div key="med-fixation" className="flex flex-col items-center gap-8 z-10 w-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="relative flex items-center justify-center">
-              {showSpiral && <HypnoticSpiral opacity={0.05} speed={12} size={450} />}
-              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
-              <EmdrDot cycleDuration={4} size={18} rangeVw={35} />
-            </div>
-            <NarrationDisplay text={currentNarration} />
+          <motion.div key="med-fixation" className="absolute inset-0 flex flex-col items-center justify-center z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+            <EmdrDot cycleDuration={4} size={18} rangeVw={35} />
+            <div className="absolute bottom-[18%]"><NarrationDisplay text={currentNarration} /></div>
           </motion.div>
         )}
 
-        {/* DEEPENING — large circle stays centered, narration below */}
+        {/* DEEPENING — narration below circle */}
         {phase === "deepening" && (
-          <motion.div key="med-deepening" className="flex flex-col items-center justify-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="relative flex items-center justify-center">
-              {showSpiral && <HypnoticSpiral opacity={0.04} speed={8} size={600} />}
-              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
-            </div>
+          <motion.div key="med-deepening" className="absolute inset-0 flex items-end justify-center pb-[18%] z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             {currentNarration && (
-              <p className="narration-text text-glow text-xl text-[#e8e0d4]/60 mt-6 text-center max-w-xl px-4">{currentNarration}</p>
+              <p className="narration-text text-glow text-xl text-[#e8e0d4]/60 text-center max-w-xl px-4">{currentNarration}</p>
             )}
           </motion.div>
         )}
 
-        {/* STAIRCASE — large circle stays, numbers overlay on it */}
+        {/* STAIRCASE — numbers overlaid on circle, narration below */}
         {phase === "staircase" && (
-          <motion.div key="med-staircase" className="flex flex-col items-center justify-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="relative flex items-center justify-center">
-              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
-              {/* Staircase numbers overlaid on the circle */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
-              </div>
+          <motion.div key="med-staircase" className="absolute inset-0 z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
             </div>
             {currentNarration && (
-              <p className="narration-text text-glow text-xl text-[#e8e0d4]/50 mt-6 text-center">{currentNarration}</p>
+              <div className="absolute bottom-[18%] left-0 right-0 flex justify-center">
+                <p className="narration-text text-glow text-xl text-[#e8e0d4]/50 text-center">{currentNarration}</p>
+              </div>
             )}
           </motion.div>
         )}
 
-        {/* SUSTAINED DEEP MEDITATION */}
+        {/* SUSTAINED — key word below circle */}
         {phase === "sustain" && (
-          <motion.div key="med-sustain" className="flex flex-col items-center justify-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="relative flex items-center justify-center">
-              <HypnoticSpiral opacity={0.03} speed={6} size={700} />
-              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
-            </div>
+          <motion.div key="med-sustain" className="absolute inset-0 flex items-end justify-center pb-[15%] z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             {currentNarration && (
-              <p className="narration-text text-glow text-2xl text-gold/40 mt-8 text-center">{currentNarration}</p>
+              <p className="narration-text text-glow text-2xl text-gold/40 text-center">{currentNarration}</p>
             )}
           </motion.div>
         )}

@@ -149,13 +149,15 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
   }, [phase, schedulePhaseNarration]);
 
   // ---- STAIRCASE ----
+  const numberWords = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
   const handleStaircaseStep = useCallback((step: number) => {
     const pitchOffset = (10 - step) * 2;
     audioRef.current?.shiftPitch(100 - pitchOffset, 3);
     audioRef.current?.setDepth(0.5 + (10 - step) * 0.05);
     audioRef.current?.setMasterVolume(0.65 + (10 - step) * 0.012, 3);
     setVignetteIntensity(0.55 + (10 - step) * 0.035);
-  }, []);
+    speakNarration(numberWords[step] || String(step));
+  }, [speakNarration]);
 
   const handleStaircaseComplete = useCallback(() => setPhase("experiments"), []);
 
