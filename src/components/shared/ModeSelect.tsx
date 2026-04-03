@@ -31,13 +31,14 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
     description:
       "Best if you want a long, immersive session. A full hypnotic induction guides you into a deep meditative state, then holds you there with gentle deepening cues for up to 30 minutes. Includes suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing. End whenever you're ready.",
   },
-  {
-    id: "trance",
-    title: "TRANCE",
-    subtitle: "Deep relaxation & hypnotic exploration",
-    description:
-      "Best if you want to deeply unwind. A full guided self-hypnosis session with breathing synchronization, progressive relaxation, and interactive experiments that demonstrate what your mind can do in a relaxed state.",
-  },
+  // Trance mode hidden from UI but code preserved
+  // {
+  //   id: "trance",
+  //   title: "TRANCE",
+  //   subtitle: "Deep relaxation & hypnotic exploration",
+  //   description:
+  //     "Best if you want to deeply unwind. A full guided self-hypnosis session with breathing synchronization, progressive relaxation, and interactive experiments that demonstrate what your mind can do in a relaxed state.",
+  // },
 ];
 
 export default function ModeSelect({ onSelect }: ModeSelectProps) {

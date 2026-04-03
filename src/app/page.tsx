@@ -94,6 +94,10 @@ export default function App() {
   const handleModeSelect = useCallback((mode: SessionMode) => {
     setSelectedMode(mode);
     setAppState("session");
+    // Auto-enter fullscreen when starting a session
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
   }, []);
 
   const handleEmdrComplete = useCallback((data: EmdrSummaryData) => {
