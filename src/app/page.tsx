@@ -7,6 +7,7 @@ import LearnContent from "@/components/shared/LearnContent";
 import EmdrDot from "@/components/EmdrDot";
 import TranceSession from "@/components/TranceSession";
 import MeditationSession from "@/components/meditation/MeditationSession";
+import LateralSession from "@/components/lateral/LateralSession";
 import EmdrSession, { EmdrSummaryData } from "@/components/emdr/EmdrSession";
 import ArtSession, { ArtSummaryData } from "@/components/art/ArtSession";
 import SessionEndSummary from "@/components/shared/SessionEndSummary";
@@ -21,7 +22,7 @@ import {
   saveLatestEndSummary,
 } from "@/lib/sessionPersistence";
 
-type AppState = "entry" | "learn" | "safety" | "mode-select" | "session" | "end-summary";
+type AppState = "entry" | "learn" | "safety" | "mode-select" | "meditation-choice" | "session" | "end-summary";
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
@@ -29,6 +30,7 @@ export default function App() {
   const [showReady, setShowReady] = useState(false);
   const [entryTextVisible, setEntryTextVisible] = useState(false);
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
+  const [meditationSilent, setMeditationSilent] = useState(false);
 
   // EMDR/ART summary data
   const [endSummary, setEndSummary] = useState<EndSummary | null>(null);
@@ -91,14 +93,22 @@ export default function App() {
     setAppState("entry");
   }, []);
 
-  const handleModeSelect = useCallback((mode: SessionMode) => {
+  const startSession = useCallback((mode: SessionMode) => {
     setSelectedMode(mode);
     setAppState("session");
-    // Auto-enter fullscreen when starting a session
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
     }
   }, []);
+
+  const handleModeSelect = useCallback((mode: SessionMode) => {
+    if (mode === "meditation") {
+      setSelectedMode("meditation");
+      setAppState("meditation-choice");
+    } else {
+      startSession(mode);
+    }
+  }, [startSession]);
 
   const handleEmdrComplete = useCallback((data: EmdrSummaryData) => {
     const summary: EndSummary = {
@@ -269,6 +279,53 @@ export default function App() {
           <SafetyGate onContinue={handleSafetyContinue} onBack={handleSafetyBack} />
         )}
 
+        {/* =================== MEDITATION CHOICE =================== */}
+        {appState === "meditation-choice" && (
+          <motion.main
+            key="meditation-choice"
+            className="w-full h-screen flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="flex flex-col items-center gap-8 px-4">
+              <p className="narration-text text-xl text-[#e8e0d4]/60">
+                Choose your meditation style
+              </p>
+              <div className="flex flex-col gap-4 w-full max-w-sm">
+                <button
+                  onClick={() => { setMeditationSilent(false); startSession("meditation"); }}
+                  className="text-left px-6 py-5 border border-gold/30 rounded-2xl
+                             hover:border-gold/50 hover:bg-gold/[0.02] transition-all duration-500"
+                >
+                  <span className="ui-text text-sm text-gold/80">GUIDED</span>
+                  <p className="text-xs text-[#e8e0d4]/45 font-light mt-1">
+                    Voice narration, breathing instructions, countdown, and deepening cues
+                  </p>
+                </button>
+                <button
+                  onClick={() => { setMeditationSilent(true); startSession("meditation"); }}
+                  className="text-left px-6 py-5 border border-gold/30 rounded-2xl
+                             hover:border-gold/50 hover:bg-gold/[0.02] transition-all duration-500"
+                >
+                  <span className="ui-text text-sm text-gold/80">SILENT</span>
+                  <p className="text-xs text-[#e8e0d4]/45 font-light mt-1">
+                    Visual effects and binaural tones only — no voice, no countdown, no text
+                  </p>
+                </button>
+              </div>
+              <button
+                onClick={() => setAppState("mode-select")}
+                className="ui-text text-[10px] text-[#e8e0d4]/30 hover:text-[#e8e0d4]/60
+                           transition-colors duration-500 mt-4"
+              >
+                ← back
+              </button>
+            </div>
+          </motion.main>
+        )}
+
         {/* =================== SESSION =================== */}
         {appState === "session" && selectedMode === "trance" && (
           <motion.div
@@ -290,7 +347,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} />
+            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} />
           </motion.div>
         )}
 
@@ -316,6 +373,18 @@ export default function App() {
           >
             <ArtSession onComplete={handleArtComplete} onExit={handleStartNewSession} />
           </motion.main>
+        )}
+
+        {appState === "session" && selectedMode === "lateral" && (
+          <motion.div
+            key="lateral-session"
+            className="w-full h-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <LateralSession onExit={handleStartNewSession} />
+          </motion.div>
         )}
 
         {/* =================== END SUMMARY (EMDR/ART) =================== */}

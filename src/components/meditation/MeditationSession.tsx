@@ -19,6 +19,8 @@ type MedPhase = "centering" | "fixation" | "deepening" | "staircase" | "sustain"
 interface MeditationSessionProps {
   onComplete: () => void;
   onExit: () => void;
+  /** If true, skip all voice narration and countdown — visual + audio only */
+  silent?: boolean;
 }
 
 // Extended deepening narration — cycles through these during the sustained phase.
@@ -68,8 +70,8 @@ const emergenceCues: NarrationCue[] = [
   { text: "5 — eyes open, fully present, deeply at peace.", spoken: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you.", delay: 7000, duration: 8000 },
 ];
 
-export default function MeditationSession({ onComplete, onExit }: MeditationSessionProps) {
-  const [phase, setPhase] = useState<MedPhase>("centering");
+export default function MeditationSession({ onComplete, onExit, silent = false }: MeditationSessionProps) {
+  const [phase, setPhase] = useState<MedPhase>(silent ? "sustain" : "centering");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
   const [breathSlowdown, setBreathSlowdown] = useState(1.0);
@@ -86,8 +88,17 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
   useEffect(() => {
     const audio = new TranceAudioEngine();
     audio.init("trance");
-    audio.fadeIn(20, 0.5);
     audioRef.current = audio;
+
+    if (silent) {
+      // Silent mode starts at sustain — ramp up audio to deep state quickly
+      audio.fadeIn(5, 0.55);
+      audio.setDepth(0.8);
+      setVignetteIntensity(0.7);
+      setBreathSlowdown(1.9);
+    } else {
+      audio.fadeIn(20, 0.5);
+    }
 
     const voice = new TranceVoice();
     voice.init();
@@ -108,10 +119,10 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
 
   const speakNarration = useCallback(
     (text: string, spoken?: string) => {
-      if (!voiceEnabled) return;
+      if (!voiceEnabled || silent) return;
       voiceRef.current?.speak(spoken || text);
     },
-    [voiceEnabled]
+    [voiceEnabled, silent]
   );
 
   const scheduleNarrationCues = useCallback(
@@ -294,36 +305,42 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     const anchoringTimers = [
       // Right after staircase (~30s into sustain) — first anchor
       setTimeout(() => {
-        if (voiceEnabled) {
+        if (voiceEnabled && !silent) {
           voiceRef.current?.speak(
             "Gently press your thumb and forefinger together... feel this deep contentment lock into place... this feeling is yours... whenever you press these fingers together... this peace returns...",
             { volume: 0.95 }
           );
         }
-        setCurrentNarration("anchor");
-        setTimeout(() => setCurrentNarration(null), 6000);
+        if (!silent) {
+          setCurrentNarration("anchor");
+          setTimeout(() => setCurrentNarration(null), 6000);
+        }
       }, 30000),
       // ~10 min — reinforcement at deepening wave
       setTimeout(() => {
-        if (voiceEnabled) {
+        if (voiceEnabled && !silent) {
           voiceRef.current?.speak(
             "Press your thumb and forefinger together again now... notice how much deeper this feeling has become... your anchor grows stronger each time... this profound peace... this contentment... stored in this simple touch...",
             { volume: 0.95 }
           );
         }
-        setCurrentNarration("anchor");
-        setTimeout(() => setCurrentNarration(null), 6000);
+        if (!silent) {
+          setCurrentNarration("anchor");
+          setTimeout(() => setCurrentNarration(null), 6000);
+        }
       }, 620000),  // ~10 min 20s (just after the 10min binaural shift)
       // ~15 min — final reinforcement at deepest point
       setTimeout(() => {
-        if (voiceEnabled) {
+        if (voiceEnabled && !silent) {
           voiceRef.current?.speak(
             "One last time... press your thumb and forefinger together... at this deepest point... seal this feeling in... this is the deepest peace you have felt... and it is always here for you... always available... with this simple touch...",
             { volume: 0.95 }
           );
         }
-        setCurrentNarration("anchor");
-        setTimeout(() => setCurrentNarration(null), 6000);
+        if (!silent) {
+          setCurrentNarration("anchor");
+          setTimeout(() => setCurrentNarration(null), 6000);
+        }
       }, 920000),  // ~15 min 20s (just after the 15min binaural shift)
     ];
 
@@ -333,12 +350,14 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       sustainIndexRef.current++;
 
       const showTimer = setTimeout(() => {
-        setCurrentNarration(cue.text);
-        speakNarration(cue.text, cue.spoken);
+        if (!silent) {
+          setCurrentNarration(cue.text);
+          speakNarration(cue.text, cue.spoken);
+        }
       }, cue.delay);
 
       const hideTimer = setTimeout(() => {
-        setCurrentNarration(null);
+        if (!silent) setCurrentNarration(null);
       }, cue.delay + cue.duration);
 
       const nextTimer = setTimeout(runNextCue, cue.delay + cue.duration + 2000);

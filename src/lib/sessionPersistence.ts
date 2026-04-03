@@ -16,8 +16,8 @@ export interface EndSummary {
 
 export interface AppSnapshot {
   version?: number;
-  appState: "entry" | "learn" | "safety" | "mode-select" | "session" | "end-summary";
-  selectedMode: "trance" | "emdr" | "art" | "meditation" | null;
+  appState: "entry" | "learn" | "safety" | "mode-select" | "meditation-choice" | "session" | "end-summary";
+  selectedMode: "trance" | "emdr" | "art" | "meditation" | "lateral" | null;
   endSummary: EndSummary | null;
   updatedAt: string;
 }

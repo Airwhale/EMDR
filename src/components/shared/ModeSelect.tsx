@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-export type SessionMode = "trance" | "emdr" | "art" | "meditation";
+export type SessionMode = "trance" | "emdr" | "art" | "meditation" | "lateral";
 
 interface ModeSelectProps {
   onSelect: (mode: SessionMode) => void;
@@ -30,6 +30,13 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
     subtitle: "Extended guided deep meditation",
     description:
       "Best if you want a long, immersive session. A full hypnotic induction guides you into a deep meditative state, then holds you there with gentle deepening cues for up to 30 minutes. Includes suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing. End whenever you're ready.",
+  },
+  {
+    id: "lateral",
+    title: "LATERAL EYE MOVEMENT",
+    subtitle: "Customizable bilateral stimulation tool",
+    description:
+      "A simple, adjustable bilateral eye movement tool. Control the speed, sound, and binaural tone frequency with sliders. Use it however you like — on its own, alongside your own practice, or just to relax.",
   },
   // Trance mode hidden from UI but code preserved
   // {
