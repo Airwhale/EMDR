@@ -58,8 +58,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
       {
-        text: "Notice how your breathing is already beginning to slow...",
-        spoken: "Notice how your breathing... is already beginning to slow... and as it slows... you can relax deeply now...",
+        text: "Notice your breathing becoming more controlled... more steady...",
+        spoken: "Notice your breathing becoming more controlled... more steady... and as it steadies... feel it becoming automatic... beyond your notice... as you follow the circle... the voices...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
