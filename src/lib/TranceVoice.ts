@@ -23,42 +23,42 @@ interface VoiceTuning {
 const VOICE_PRIORITY: [string, Partial<VoiceTuning>][] = [
   // ---- macOS / iOS neural voices (best quality on Apple devices) ----
   // "Enhanced" or "Premium" suffix = downloaded neural voice
-  ["Samantha (Enhanced)", { rate: 0.74, pitch: 0.9, volume: 0.65 }],
-  ["Samantha (Premium)", { rate: 0.74, pitch: 0.9, volume: 0.65 }],
-  ["Karen (Enhanced)", { rate: 0.72, pitch: 0.88, volume: 0.65 }],
-  ["Karen (Premium)", { rate: 0.72, pitch: 0.88, volume: 0.65 }],
-  ["Moira (Enhanced)", { rate: 0.70, pitch: 0.85, volume: 0.65 }],
-  ["Moira (Premium)", { rate: 0.70, pitch: 0.85, volume: 0.65 }],
-  ["Tessa (Enhanced)", { rate: 0.72, pitch: 0.88, volume: 0.65 }],
-  ["Tessa (Premium)", { rate: 0.72, pitch: 0.88, volume: 0.65 }],
-  ["Daniel (Enhanced)", { rate: 0.68, pitch: 0.8, volume: 0.6 }],
-  ["Daniel (Premium)", { rate: 0.68, pitch: 0.8, volume: 0.6 }],
+  ["Samantha (Enhanced)", { rate: 0.74, pitch: 0.9, volume: 0.75 }],
+  ["Samantha (Premium)", { rate: 0.74, pitch: 0.9, volume: 0.75 }],
+  ["Karen (Enhanced)", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
+  ["Karen (Premium)", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
+  ["Moira (Enhanced)", { rate: 0.70, pitch: 0.85, volume: 0.75 }],
+  ["Moira (Premium)", { rate: 0.70, pitch: 0.85, volume: 0.75 }],
+  ["Tessa (Enhanced)", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
+  ["Tessa (Premium)", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
+  ["Daniel (Enhanced)", { rate: 0.68, pitch: 0.8, volume: 0.7 }],
+  ["Daniel (Premium)", { rate: 0.68, pitch: 0.8, volume: 0.7 }],
   // Standard macOS voices (still decent)
-  ["Samantha", { rate: 0.74, pitch: 0.9, volume: 0.65 }],
-  ["Karen", { rate: 0.72, pitch: 0.88, volume: 0.65 }],
-  ["Moira", { rate: 0.70, pitch: 0.85, volume: 0.65 }],
+  ["Samantha", { rate: 0.74, pitch: 0.9, volume: 0.75 }],
+  ["Karen", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
+  ["Moira", { rate: 0.70, pitch: 0.85, volume: 0.75 }],
 
   // ---- Microsoft Edge Online neural voices (Azure quality, free) ----
-  ["Microsoft Jenny Online", { rate: 0.76, pitch: 0.95, volume: 0.65 }],
-  ["Microsoft Aria Online", { rate: 0.74, pitch: 0.92, volume: 0.65 }],
-  ["Microsoft Sonia Online", { rate: 0.72, pitch: 0.9, volume: 0.65 }],
-  ["Microsoft Libby Online", { rate: 0.72, pitch: 0.9, volume: 0.65 }],
-  ["Microsoft Guy Online", { rate: 0.70, pitch: 0.82, volume: 0.6 }],
+  ["Microsoft Jenny Online", { rate: 0.76, pitch: 0.95, volume: 0.75 }],
+  ["Microsoft Aria Online", { rate: 0.74, pitch: 0.92, volume: 0.75 }],
+  ["Microsoft Sonia Online", { rate: 0.72, pitch: 0.9, volume: 0.75 }],
+  ["Microsoft Libby Online", { rate: 0.72, pitch: 0.9, volume: 0.75 }],
+  ["Microsoft Guy Online", { rate: 0.70, pitch: 0.82, volume: 0.7 }],
   // Edge desktop voices (still good)
-  ["Microsoft Jenny", { rate: 0.76, pitch: 0.95, volume: 0.65 }],
-  ["Microsoft Zira", { rate: 0.72, pitch: 0.88, volume: 0.6 }],
-  ["Microsoft David", { rate: 0.70, pitch: 0.82, volume: 0.6 }],
+  ["Microsoft Jenny", { rate: 0.76, pitch: 0.95, volume: 0.75 }],
+  ["Microsoft Zira", { rate: 0.72, pitch: 0.88, volume: 0.7 }],
+  ["Microsoft David", { rate: 0.70, pitch: 0.82, volume: 0.7 }],
 
   // ---- Google voices (Chrome on all platforms) ----
-  ["Google UK English Female", { rate: 0.72, pitch: 0.88, volume: 0.6 }],
-  ["Google US English", { rate: 0.74, pitch: 0.9, volume: 0.6 }],
-  ["Google UK English Male", { rate: 0.68, pitch: 0.82, volume: 0.6 }],
+  ["Google UK English Female", { rate: 0.72, pitch: 0.88, volume: 0.7 }],
+  ["Google US English", { rate: 0.74, pitch: 0.9, volume: 0.7 }],
+  ["Google UK English Male", { rate: 0.68, pitch: 0.82, volume: 0.7 }],
 
   // ---- Linux common voices ----
-  ["English+Annie", { rate: 0.74, pitch: 0.9, volume: 0.6 }],
+  ["English+Annie", { rate: 0.74, pitch: 0.9, volume: 0.7 }],
 ];
 
-const DEFAULT_TUNING: VoiceTuning = { rate: 0.72, pitch: 0.85, volume: 0.6 };
+const DEFAULT_TUNING: VoiceTuning = { rate: 0.72, pitch: 0.85, volume: 0.7 };
 
 export class TranceVoice {
   private synth: SpeechSynthesis | null = null;

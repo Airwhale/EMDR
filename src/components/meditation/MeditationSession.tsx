@@ -26,37 +26,37 @@ interface MeditationSessionProps {
 // Techniques: deepening challenges, dissociation language, presuppositions.
 const sustainCues: NarrationCue[] = [
   // Contentment
-  { text: "contentment", spoken: "And you can feel that contentment now... growing with every breath... deeper... and more satisfying...", delay: 25000, duration: 6000 },
+  { text: "contentment", spoken: "And perhaps you can feel that contentment now... growing with every breath... deeper... and more satisfying...", delay: 25000, duration: 6000 },
   // Belonging
-  { text: "belonging", spoken: "The sounds around you welcome you deeper... the gentle tones cradle you... you belong here... in this comfort...", delay: 25000, duration: 6000 },
+  { text: "belonging", spoken: "Some people notice the sounds welcoming them deeper... the gentle tones cradling them... and you might find you belong here... in this comfort...", delay: 25000, duration: 6000 },
   // Deepening challenge
-  { text: "deeper", spoken: "I wonder if you can go even deeper than this... and I think you can... because you already have... and it feels so good...", delay: 30000, duration: 6000 },
+  { text: "deeper", spoken: "I wonder if you can go even deeper than this... and I think you can... because you already have... and it can feel so good...", delay: 30000, duration: 6000 },
   // Peace
-  { text: "peace", spoken: "Your mind is beautifully still... your body perfectly at ease... and there is such deep peace... in this moment...", delay: 30000, duration: 6000 },
+  { text: "peace", spoken: "You might notice your mind becoming beautifully still... your body perfectly at ease... and perhaps there is such deep peace... in this moment...", delay: 30000, duration: 6000 },
   // Dissociation
-  { text: "floating", spoken: "Your body is here... comfortable and safe... but your mind can float freely... drifting... weightless... free...", delay: 30000, duration: 6000 },
+  { text: "floating", spoken: "Some people find that while their body rests here... comfortable and safe... their mind begins to float freely... drifting... weightless... free...", delay: 30000, duration: 6000 },
   // Gratitude
   { text: "gratitude", spoken: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace...", delay: 25000, duration: 6000 },
   // Deepening challenge + contentment
-  { text: "even deeper", spoken: "And you can go even deeper still... deeper than you thought possible... and each new depth brings even more contentment... even more joy...", delay: 30000, duration: 6000 },
+  { text: "even deeper", spoken: "And you may find you can go even deeper still... deeper than you thought possible... and each new depth might bring even more contentment... even more joy...", delay: 30000, duration: 6000 },
   // Wellbeing
-  { text: "wellbeing", spoken: "A profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace...", delay: 30000, duration: 6000 },
+  { text: "wellbeing", spoken: "Perhaps you can notice a profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace...", delay: 30000, duration: 6000 },
   // Dissociation + safety
-  { text: "free", spoken: "Your body rests here... warm and safe... while your mind is somewhere beautiful... somewhere peaceful... somewhere that is entirely yours...", delay: 35000, duration: 6000 },
+  { text: "free", spoken: "Some people find their body resting here... warm and safe... while their mind drifts somewhere beautiful... somewhere peaceful... somewhere that is entirely theirs...", delay: 35000, duration: 6000 },
   // Joy
-  { text: "joy", spoken: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that comes from deep within...", delay: 30000, duration: 6000 },
+  { text: "joy", spoken: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that might come from deep within...", delay: 30000, duration: 6000 },
   // Ease
-  { text: "ease", spoken: "And it becomes so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000 },
+  { text: "ease", spoken: "And you might notice it becoming so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000 },
   // Deepening challenge + dissociation
-  { text: "boundless", spoken: "How deep can you go... there is no limit... your mind is vast and open... and every moment here... brings more comfort... more peace... more contentment...", delay: 30000, duration: 6000 },
+  { text: "boundless", spoken: "I wonder how deep you can go... perhaps there is no limit... your mind vast and open... and every moment here... might bring more comfort... more peace... more contentment...", delay: 30000, duration: 6000 },
   // Contentment + belonging
-  { text: "exactly right", spoken: "Everything is exactly as it should be... and you are exactly where you want to be... you belong here... in this warmth...", delay: 30000, duration: 6000 },
+  { text: "exactly right", spoken: "And you may realize that everything is exactly as it should be... and you are exactly where you want to be... you might find you belong here... in this warmth...", delay: 30000, duration: 6000 },
   // Dissociation + wellbeing
-  { text: "dissolving", spoken: "The boundary between you and this peace... is dissolving... you are becoming the calm itself... the stillness itself...", delay: 30000, duration: 6000 },
+  { text: "dissolving", spoken: "Perhaps the boundary between you and this peace... is beginning to dissolve... and you might find yourself becoming the calm itself... the stillness itself...", delay: 30000, duration: 6000 },
   // Safety + joy
-  { text: "safe", spoken: "Rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you...", delay: 35000, duration: 6000 },
+  { text: "safe", spoken: "You can rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you...", delay: 35000, duration: 6000 },
   // Flowing + contentment
-  { text: "flowing", spoken: "Everything is flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly...", delay: 30000, duration: 6000 },
+  { text: "flowing", spoken: "Perhaps you can notice everything flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly...", delay: 30000, duration: 6000 },
 ];
 
 const emergenceCues: NarrationCue[] = [
