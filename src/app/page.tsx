@@ -8,22 +8,65 @@ import TranceSession from "@/components/TranceSession";
 import EmdrSession, { EmdrSummaryData } from "@/components/emdr/EmdrSession";
 import ArtSession, { ArtSummaryData } from "@/components/art/ArtSession";
 import SessionEndSummary from "@/components/shared/SessionEndSummary";
+import SafetyGate from "@/components/shared/SafetyGate";
+import {
+  appendSummaryToHistory,
+  clearAppSnapshot,
+  EndSummary,
+  hasAcknowledgedSafety,
+  loadAppSnapshot,
+  loadLatestEndSummary,
+  saveAppSnapshot,
+  saveSafetyAcknowledged,
+  saveLatestEndSummary,
+} from "@/lib/sessionPersistence";
 
-type AppState = "entry" | "mode-select" | "session" | "end-summary";
+type AppState = "entry" | "safety" | "mode-select" | "session" | "end-summary";
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
+  const [isHydrated, setIsHydrated] = useState(false);
   const [showReady, setShowReady] = useState(false);
   const [entryTextVisible, setEntryTextVisible] = useState(false);
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
 
   // EMDR/ART summary data
-  const [endSummary, setEndSummary] = useState<{
-    mode: "emdr" | "art";
-    sudStart: number | null;
-    sudEnd: number | null;
-    details: string[];
-  } | null>(null);
+  const [endSummary, setEndSummary] = useState<EndSummary | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const shouldReturnSummary = params.get("return") === "summary";
+
+    if (shouldReturnSummary) {
+      const latestSummary = loadLatestEndSummary();
+      if (latestSummary) {
+        setEndSummary(latestSummary);
+        setSelectedMode(latestSummary.mode);
+        setAppState("end-summary");
+        setIsHydrated(true);
+        return;
+      }
+    }
+
+    const saved = loadAppSnapshot();
+    if (saved) {
+      setSelectedMode(saved.selectedMode);
+      if (saved.endSummary) setEndSummary(saved.endSummary);
+      setAppState(saved.appState);
+    }
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    saveAppSnapshot({
+      appState,
+      selectedMode,
+      endSummary,
+      updatedAt: new Date().toISOString(),
+    });
+  }, [appState, selectedMode, endSummary, isHydrated]);
 
   // Entry timing
   useEffect(() => {
@@ -37,7 +80,20 @@ export default function App() {
   }, [appState]);
 
   const handleReady = useCallback(() => {
+    if (hasAcknowledgedSafety()) {
+      setAppState("mode-select");
+      return;
+    }
+    setAppState("safety");
+  }, []);
+
+  const handleSafetyContinue = useCallback(() => {
+    saveSafetyAcknowledged();
     setAppState("mode-select");
+  }, []);
+
+  const handleSafetyBack = useCallback(() => {
+    setAppState("entry");
   }, []);
 
   const handleModeSelect = useCallback((mode: SessionMode) => {
@@ -46,24 +102,49 @@ export default function App() {
   }, []);
 
   const handleEmdrComplete = useCallback((data: EmdrSummaryData) => {
-    setEndSummary({
+    const summary: EndSummary = {
       mode: "emdr",
       sudStart: data.sudStart,
       sudEnd: data.sudEnd,
       details: data.exercisesCompleted,
-    });
+      completedAt: new Date().toISOString(),
+    };
+    setEndSummary(summary);
+    saveLatestEndSummary(summary);
+    appendSummaryToHistory(summary);
     setAppState("end-summary");
   }, []);
 
   const handleArtComplete = useCallback((data: ArtSummaryData) => {
-    setEndSummary({
+    const summary: EndSummary = {
       mode: "art",
       sudStart: data.sudStart,
       sudEnd: data.sudEnd,
       details: [`${data.rounds} processing round${data.rounds !== 1 ? "s" : ""} completed`],
-    });
+      completedAt: new Date().toISOString(),
+    };
+    setEndSummary(summary);
+    saveLatestEndSummary(summary);
+    appendSummaryToHistory(summary);
     setAppState("end-summary");
   }, []);
+
+  const handleStartNewSession = useCallback(() => {
+    clearAppSnapshot();
+    setSelectedMode(null);
+    setEndSummary(null);
+    setShowReady(false);
+    setEntryTextVisible(false);
+    setAppState("entry");
+  }, []);
+
+  if (!isHydrated) {
+    return (
+      <div className="w-screen h-screen bg-trance-dark flex items-center justify-center">
+        <p className="ui-text text-xs text-[#e8e0d4]/40 tracking-widest">Loading…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-screen h-screen bg-trance-dark overflow-hidden">
@@ -129,6 +210,10 @@ export default function App() {
           </motion.main>
         )}
 
+        {appState === "safety" && (
+          <SafetyGate onContinue={handleSafetyContinue} onBack={handleSafetyBack} />
+        )}
+
         {/* =================== SESSION =================== */}
         {appState === "session" && selectedMode === "trance" && (
           <motion.div
@@ -180,6 +265,8 @@ export default function App() {
               sudStart={endSummary.sudStart}
               sudEnd={endSummary.sudEnd}
               details={endSummary.details}
+              completedAt={endSummary.completedAt}
+              onStartNewSession={handleStartNewSession}
             />
           </motion.main>
         )}

@@ -70,8 +70,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
       {
-        text: "You don't need to try to relax... relaxation is already happening...",
-        spoken: "You don't need to try to relax... relaxation is already happening... all by itself... let go completely...",
+        text: "Relaxation comes naturally... and each breath deepens that comfort...",
+        spoken: "Relaxation comes naturally... and each breath deepens that comfort... all by itself... sink into that ease completely...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
@@ -88,8 +88,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
       {
-        text: "There's nothing you need to do... nowhere you need to be...",
-        spoken: "There's nothing you need to do... nowhere you need to be... just this moment... drifting... deeper and deeper...",
+        text: "This is your time to receive calm... and enjoy this moment fully...",
+        spoken: "This is your time to receive calm... and enjoy this moment fully... just this moment... drifting... deeper and deeper...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
@@ -101,8 +101,8 @@ export const sessionScript: PhaseConfig[] = [
       },
       // Confusion technique
       {
-        text: "You might wonder whether you're relaxing... or whether relaxation is finding you...",
-        spoken: "You might wonder whether you're relaxing... or whether relaxation is finding you... and it doesn't matter which... because either way... you go deeper...",
+        text: "You might sense yourself relaxing... and relaxation meeting you...",
+        spoken: "You might sense yourself relaxing... and relaxation meeting you... and either way... you go deeper into comfort...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
@@ -140,8 +140,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "Some people feel it as warmth... others as lightness... there's no wrong way...",
-        spoken: "Some people feel it as warmth... others as lightness... there's no wrong way... your unconscious mind knows exactly what to do...",
+        text: "Some people feel warmth... others feel lightness... your way is perfect for you...",
+        spoken: "Some people feel warmth... others feel lightness... your way is perfect for you... your unconscious mind knows exactly how to guide this comfort...",
         delay: 7000,
         duration: 8000,
       },
@@ -164,8 +164,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "Your neck... releasing tension it was holding without you knowing...",
-        spoken: "Your neck... releasing tension... it was holding without you knowing... and isn't it interesting... how much tension we carry... without realizing...",
+        text: "Your neck feels open, easy, and comfortably free...",
+        spoken: "Your neck feels open, easy, and comfortably free... and it's beautiful how quickly your body welcomes ease...",
         delay: 7000,
         duration: 8000,
       },
@@ -182,15 +182,15 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "A wave of calm washing over your scalp... dissolving everything...",
-        spoken: "A wave of calm washing over your scalp... dissolving everything... every thought... every worry... dissolving... into deep... peaceful... stillness...",
+        text: "A wave of calm washing over your scalp... filling you with peace...",
+        spoken: "A wave of calm washing over your scalp... filling you with peace... each thought becoming softer... each moment becoming brighter... deep... peaceful... stillness...",
         delay: 7000,
         duration: 8000,
       },
       // Anchoring
       {
         text: "Gently press your thumb and forefinger together... let this become your anchor...",
-        spoken: "Now... gently press your thumb and forefinger together... and let this touch become your anchor... whenever you press them together in the future... this deep relaxation can return instantly...",
+        spoken: "Now... gently press your thumb and forefinger together... and let this touch become your anchor... whenever you press them together in the future... this deep relaxation returns quickly and beautifully...",
         delay: 7000,
         duration: 10000,
       },
@@ -217,8 +217,8 @@ export const sessionScript: PhaseConfig[] = [
       },
       // Fractionation
       {
-        text: "Now... become slightly more aware for a moment...",
-        spoken: "Now... become slightly more aware... for just a moment... notice the sounds around you... feel the surface beneath you...",
+        text: "Now... enjoy a brief moment of bright awareness...",
+        spoken: "Now... enjoy a brief moment of bright awareness... notice the sounds around you... feel the support beneath you...",
         delay: 7000,
         duration: 6000,
       },
@@ -253,8 +253,8 @@ export const sessionScript: PhaseConfig[] = [
     id: "emergence",
     narration: [
       {
-        text: "In a moment, I'll count from 1 to 5. With each number, you'll feel more alert...",
-        spoken: "In a moment... I'll count from 1 to 5. With each number... you'll feel more alert... more present... more refreshed...",
+        text: "In a moment, I'll count from 1 to 5. With each number, you'll feel brighter and refreshed...",
+        spoken: "In a moment... I'll count from 1 to 5. With each number... you'll feel brighter... more present... more refreshed...",
         delay: 2000,
         duration: 8000,
       },
