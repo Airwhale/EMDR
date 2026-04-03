@@ -112,6 +112,60 @@ export class TranceAudioEngine {
     osc.stop(now + 0.15);
   }
 
+  /** Play a soft breath cue tone panned to one ear + whispered voice.
+   *  Inhale: rising tone in right ear. Exhale: falling tone in left ear. */
+  playBreathCue(phase: "inhale" | "hold" | "exhale"): void {
+    if (!this.ctx || !this.masterGain) return;
+    if (phase === "hold") return;
+
+    const now = this.ctx.currentTime;
+    const isInhale = phase === "inhale";
+
+    // Soft tonal cue — panned L/R
+    const osc = this.ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(isInhale ? 300 : 400, now);
+    osc.frequency.linearRampToValueAtTime(isInhale ? 400 : 250, now + 0.8);
+
+    const env = this.ctx.createGain();
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.08, now + 0.1);
+    env.gain.linearRampToValueAtTime(0.08, now + 0.6);
+    env.gain.linearRampToValueAtTime(0, now + 1.0);
+
+    const pan = this.ctx.createStereoPanner();
+    pan.pan.value = isInhale ? 0.7 : -0.7; // Right for in, left for out
+
+    osc.connect(env);
+    env.connect(pan);
+    pan.connect(this.masterGain);
+
+    osc.start(now);
+    osc.stop(now + 1.1);
+
+    // Also whisper via Speech API at low volume (both ears)
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance(isInhale ? "in" : "out");
+      utterance.rate = 0.5;
+      utterance.pitch = 0.6;
+      utterance.volume = 0.25;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  /** Modulate binaural drone volume to follow the breathing cycle.
+   *  scale: 0 = quieter (exhale/hold), 1 = louder (inhale peak) */
+  setBreathDroneModulation(scale: number, duration: number = 2): void {
+    if (!this.ctx || !this.droneGain) return;
+    const now = this.ctx.currentTime;
+    // Base drone level + modulation range
+    const base = this.mode === "trance" ? 0.35 : 0.3;
+    const range = 0.15;
+    const target = base + scale * range;
+    this.droneGain.gain.setValueAtTime(this.droneGain.gain.value, now);
+    this.droneGain.gain.linearRampToValueAtTime(target, now + duration);
+  }
+
   private setupBinauralDrone(): void {
     if (!this.ctx || !this.masterGain) return;
 
@@ -121,7 +175,7 @@ export class TranceAudioEngine {
     this.droneFilter.Q.value = 1;
 
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = this.mode === "trance" ? 0.3 : 0.25;
+    this.droneGain.gain.value = this.mode === "trance" ? 0.4 : 0.3;
 
     this.droneOscL = this.ctx.createOscillator();
     this.droneOscL.type = "sine";

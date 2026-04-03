@@ -250,7 +250,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
           <motion.div key="fixation" className="flex flex-col items-center gap-8 z-10 w-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
             <div className="relative flex items-center justify-center">
               {showSpiral && <HypnoticSpiral opacity={0.05} speed={12} size={450} />}
-              <BreathingGuide isActive={true} size="full" showSpiral={true} slowdown={breathSlowdown} />
+              <BreathingGuide isActive={true} size="full" showSpiral={true} slowdown={breathSlowdown} onPhaseChange={(p) => { audioRef.current?.playBreathCue(p); audioRef.current?.setBreathDroneModulation(p === "inhale" ? 1 : p === "hold" ? 0.7 : 0, p === "inhale" ? 4 : 6); }} />
               <EmdrDot cycleDuration={4} size={18} rangeVw={35} />
             </div>
             <NarrationDisplay text={currentNarration} />
@@ -259,7 +259,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
 
         {phase === "deepening" && (
           <motion.div key="deepening" className="flex flex-col items-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
+            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} onPhaseChange={(p) => { audioRef.current?.setBreathDroneModulation(p === "inhale" ? 1 : p === "hold" ? 0.7 : 0, p === "inhale" ? 4 : 6); }} /></div>
             {showSpiral && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><HypnoticSpiral opacity={0.04} speed={8} size={600} /></div>}
             <div className="flex-1 flex items-center justify-center"><NarrationDisplay text={currentNarration} size="large" /></div>
           </motion.div>
@@ -267,7 +267,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
 
         {phase === "staircase" && (
           <motion.div key="staircase" className="w-full h-full flex flex-col items-center z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
+            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} onPhaseChange={(p) => { audioRef.current?.setBreathDroneModulation(p === "inhale" ? 1 : p === "hold" ? 0.7 : 0, p === "inhale" ? 4 : 6); }} /></div>
             <div className="absolute top-32 z-10"><NarrationDisplay text={currentNarration} /></div>
             <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
           </motion.div>

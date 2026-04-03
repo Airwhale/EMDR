@@ -291,7 +291,12 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
           <div className="relative flex items-center justify-center">
             <HypnoticSpiral opacity={phase === "sustain" ? 0.03 : 0.05} speed={phase === "sustain" ? 6 : 10} size={700} />
-            <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
+            <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown}
+              onPhaseChange={(p) => {
+                audioRef.current?.playBreathCue(p);
+                audioRef.current?.setBreathDroneModulation(p === "inhale" ? 1 : p === "hold" ? 0.7 : 0, p === "inhale" ? 4 : 6);
+              }}
+            />
           </div>
         </div>
       )}

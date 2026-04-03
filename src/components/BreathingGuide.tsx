@@ -7,8 +7,9 @@ interface BreathingGuideProps {
   isActive: boolean;
   size?: "large" | "full" | "small";
   showSpiral?: boolean;
-  /** Multiplier for cycle speed. 1.0 = default (14s), 1.3 = 30% slower (18.2s), etc. */
   slowdown?: number;
+  /** Called on each breath phase change */
+  onPhaseChange?: (phase: "inhale" | "hold" | "exhale") => void;
 }
 
 type BreathPhase = "inhale" | "hold" | "exhale";
@@ -31,11 +32,14 @@ export default function BreathingGuide({
   size = "full",
   showSpiral = false,
   slowdown = 1,
+  onPhaseChange,
 }: BreathingGuideProps) {
   const [breathPhase, setBreathPhase] = useState<BreathPhase>("inhale");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const slowdownRef = useRef(slowdown);
   slowdownRef.current = slowdown;
+  const onPhaseChangeRef = useRef(onPhaseChange);
+  onPhaseChangeRef.current = onPhaseChange;
 
   const controls = useAnimation();
   const glowControls = useAnimation();
@@ -77,12 +81,15 @@ export default function BreathingGuide({
       transition: { duration: totalS, times, ease: "easeInOut" },
     });
 
-    // Label phase tracking
+    // Label phase tracking + callback
     setBreathPhase("inhale");
+    onPhaseChangeRef.current?.("inhale");
     timerRef.current = setTimeout(() => {
       setBreathPhase("hold");
+      onPhaseChangeRef.current?.("hold");
       timerRef.current = setTimeout(() => {
         setBreathPhase("exhale");
+        onPhaseChangeRef.current?.("exhale");
         timerRef.current = setTimeout(() => {
           // Next cycle — picks up latest slowdown
           runCycle();
