@@ -192,6 +192,32 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     setVignetteIntensity(0.7);
     setBreathSlowdown(1.9);
 
+    // Progressive binaural reduction over sustain phase:
+    // Start: 100Hz base, ~3Hz beat (deep theta)
+    // Gradually drop to 70Hz base, ~1.5Hz beat (deep delta, near sleep)
+    const binauralTimers = [
+      setTimeout(() => {
+        audioRef.current?.shiftPitch(95, 30);
+        audioRef.current?.setBinauralBeat(2.8, 30);
+      }, 60000),   // 1 min
+      setTimeout(() => {
+        audioRef.current?.shiftPitch(88, 40);
+        audioRef.current?.setBinauralBeat(2.4, 40);
+      }, 180000),  // 3 min
+      setTimeout(() => {
+        audioRef.current?.shiftPitch(82, 50);
+        audioRef.current?.setBinauralBeat(2.0, 50);
+      }, 360000),  // 6 min
+      setTimeout(() => {
+        audioRef.current?.shiftPitch(76, 60);
+        audioRef.current?.setBinauralBeat(1.8, 60);
+      }, 600000),  // 10 min
+      setTimeout(() => {
+        audioRef.current?.shiftPitch(72, 60);
+        audioRef.current?.setBinauralBeat(1.5, 60);
+      }, 900000),  // 15 min
+    ];
+
     const runNextCue = () => {
       const idx = sustainIndexRef.current % sustainCues.length;
       const cue = sustainCues[idx];
@@ -212,7 +238,10 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     };
 
     const timers = runNextCue();
-    return () => timers.forEach(clearTimeout);
+    return () => {
+      timers.forEach(clearTimeout);
+      binauralTimers.forEach(clearTimeout);
+    };
   }, [phase, speakNarration]);
 
   // ---- END MEDITATION (user-triggered) ----
