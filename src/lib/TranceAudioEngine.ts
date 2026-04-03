@@ -151,8 +151,8 @@ export class TranceAudioEngine {
     }
 
     env.gain.setValueAtTime(0, now);
-    env.gain.linearRampToValueAtTime(0.09, now + 0.15);
-    env.gain.linearRampToValueAtTime(0.07, now + 0.7);
+    env.gain.linearRampToValueAtTime(0.18, now + 0.15);
+    env.gain.linearRampToValueAtTime(0.14, now + 0.7);
     env.gain.linearRampToValueAtTime(0, now + 1.2);
 
     osc.connect(env);

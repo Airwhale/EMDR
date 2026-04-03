@@ -153,46 +153,36 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
         "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes...",
         "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes..."
       );
-      setCurrentNarration("Follow the dot with your eyes... keep your head still...");
     }, 2000));
-    timers.push(setTimeout(() => setCurrentNarration(null), 12000));
 
     timers.push(setTimeout(() => {
       speakNarration(
-        "Now watch the circle... as it expands... breathe in slowly through your nose...",
-        "Now watch the circle... as it expands... breathe in slowly through your nose..."
+        "As the sounds rise... breathe in slowly through your nose...",
+        "As the sounds rise... breathe in slowly through your nose..."
       );
-      setCurrentNarration("As the circle expands... breathe in...");
     }, 16000));
-    timers.push(setTimeout(() => setCurrentNarration(null), 26000));
 
     timers.push(setTimeout(() => {
       speakNarration(
-        "As the circle holds... hold your breath gently...",
-        "As the circle holds... hold your breath gently..."
+        "As they hold steady... hold your breath gently...",
+        "As they hold steady... hold your breath gently..."
       );
-      setCurrentNarration("As it holds... hold your breath...");
     }, 30000));
-    timers.push(setTimeout(() => setCurrentNarration(null), 38000));
 
     timers.push(setTimeout(() => {
       speakNarration(
-        "And as it contracts... breathe out slowly through your mouth... letting everything release...",
-        "And as it contracts... breathe out slowly through your mouth... letting everything release..."
+        "And as they fall... breathe out slowly through your mouth... letting everything release...",
+        "And as they fall... breathe out slowly through your mouth... letting everything release..."
       );
-      setCurrentNarration("As it contracts... breathe out...");
     }, 42000));
-    timers.push(setTimeout(() => setCurrentNarration(null), 52000));
 
     timers.push(setTimeout(() => {
       speakNarration(
-        "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot...",
-        "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot..."
+        "That's it... synchronize your breathing with the rhythm you hear... and allow the breathing to become automatic... keeping your eyes on the dot...",
+        "That's it... synchronize your breathing with the rhythm you hear... and allow the breathing to become automatic... keeping your eyes on the dot..."
       );
-      setCurrentNarration("Breathe with the circle... eyes on the dot...");
     }, 56000));
     timers.push(setTimeout(() => {
-      setCurrentNarration(null);
       setPhase("fixation");
     }, 66000));
 
@@ -467,13 +457,9 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       )}
 
       <AnimatePresence mode="wait">
-        {/* CENTERING — breathing instructions below circle */}
+        {/* CENTERING — voice only, no text */}
         {phase === "centering" && (
-          <motion.div key="med-centering" className="absolute inset-0 flex items-end justify-center pb-[18%] z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            {currentNarration && (
-              <p className="narration-text text-glow text-xl text-[#e8e0d4]/70 text-center max-w-lg px-4">{currentNarration}</p>
-            )}
-          </motion.div>
+          <motion.div key="med-centering" className="absolute inset-0 z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} />
         )}
 
         {/* FIXATION — no extra overlay needed, dot + circle are persistent */}

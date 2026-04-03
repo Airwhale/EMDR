@@ -53,7 +53,7 @@ export const sessionScript: PhaseConfig[] = [
       },
       {
         text: "Notice the sounds that rise and fall... let them guide your breathing...",
-        spoken: "Notice the sounds that rise and fall... let them guide your breathing... matching the circle... expanding as you breathe in... releasing as you breathe out...",
+        spoken: "Notice the sounds that rise and fall... let them guide your breathing... breathing in as they rise... breathing out as they fall...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },

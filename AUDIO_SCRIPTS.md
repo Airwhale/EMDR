@@ -17,7 +17,7 @@ Place generated files in the matching `public/audio/<mode>/` folder.
 trance-entry-01.mp3: "Find a comfortable position. Put on headphones for the full experience."
 
 trance-fixation-01.mp3: "Follow the dot with your eyes... keep your head still... just your eyes... gently... back and forth... that's right..."
-trance-fixation-02.mp3: "Notice the sounds that rise and fall... let them guide your breathing... matching the circle... expanding as you breathe in... releasing as you breathe out..."
+trance-fixation-02.mp3: "Notice the sounds that rise and fall... let them guide your breathing... breathing in as they rise... breathing out as they fall..."
 trance-fixation-03.mp3: "Your breathing finds its own perfect rhythm now... effortless... automatic... and with each breath... you can feel yourself becoming more comfortable..."
 trance-fixation-04.mp3: "Your eyelids are becoming pleasantly heavy... and that feels good... a welcome heaviness... that tells you everything is exactly as it should be..."
 trance-fixation-05.mp3: "Comfort is spreading through you now... all by itself... you can feel it happening... and you can enjoy how easy it is... to simply allow this..."
@@ -126,10 +126,10 @@ art-closing-01.mp3: "Take a deep breath... think back to the original memory... 
 ## public/audio/meditation/
 
 meditation-centering-01.mp3: "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes..."
-meditation-centering-02.mp3: "Now watch the circle... as it expands... breathe in slowly through your nose..."
-meditation-centering-03.mp3: "As the circle holds... hold your breath gently..."
-meditation-centering-04.mp3: "And as it contracts... breathe out slowly through your mouth... letting everything release..."
-meditation-centering-05.mp3: "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot..."
+meditation-centering-02.mp3: "As the sounds rise... breathe in slowly through your nose..."
+meditation-centering-03.mp3: "As they hold steady... hold your breath gently..."
+meditation-centering-04.mp3: "And as they fall... breathe out slowly through your mouth... letting everything release..."
+meditation-centering-05.mp3: "That's it... synchronize your breathing with the rhythm you hear... and allow the breathing to become automatic... keeping your eyes on the dot..."
 
 meditation-sustain-01.mp3: "And you can feel that contentment now... growing with every breath... deeper... and more satisfying..."
 meditation-sustain-02.mp3: "The sounds around you welcome you deeper... the gentle tones cradle you... you belong here... in this comfort..."
