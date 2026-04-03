@@ -14,7 +14,7 @@ export default function SafetyGate({ onContinue, onBack }: SafetyGateProps) {
       role="dialog"
       aria-labelledby="safety-gate-title"
       aria-describedby="safety-gate-description"
-      className="w-full h-full flex items-center justify-center px-6"
+      className="w-full h-screen flex items-center justify-center px-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
