@@ -22,25 +22,27 @@ interface MeditationSessionProps {
 
 // Extended deepening narration — cycles through these during the sustained phase
 const sustainCues: NarrationCue[] = [
-  { text: "deeper", spoken: "Sinking deeper... with every breath... that's right...", delay: 25000, duration: 6000 },
-  { text: "stillness", spoken: "You are exactly where you need to be... surrounded by stillness...", delay: 25000, duration: 6000 },
-  { text: "deeper", spoken: "Each exhale takes you further down... deeper... and deeper...", delay: 30000, duration: 6000 },
-  { text: "peace", spoken: "Your mind is quiet... your body is soft... everything... is at peace...", delay: 30000, duration: 6000 },
-  { text: "drifting", spoken: "You might notice how far you've drifted... and that's perfectly fine...", delay: 30000, duration: 6000 },
-  { text: "deeper", spoken: "Deeper still... every sound around you... takes you further in...", delay: 25000, duration: 6000 },
-  { text: "let go", spoken: "Let go of the last thread of effort... there is only calm...", delay: 30000, duration: 6000 },
-  { text: "relaxed", spoken: "You are deeply... profoundly... relaxed...", delay: 30000, duration: 6000 },
-  { text: "rest", spoken: "Rest here... in this deep... comfortable place...", delay: 35000, duration: 6000 },
-  { text: "peaceful", spoken: "With each breath... deeper... and more peaceful...", delay: 30000, duration: 6000 },
+  { text: "contentment", spoken: "And you can feel that contentment now... growing with every breath... deeper... and more satisfying...", delay: 25000, duration: 6000 },
+  { text: "exactly right", spoken: "Everything is exactly as it should be... and you are exactly where you want to be... surrounded by comfort...", delay: 25000, duration: 6000 },
+  { text: "deeper", spoken: "Each breath carries you deeper... into this beautiful feeling... and the deeper you go... the better it feels...", delay: 30000, duration: 6000 },
+  { text: "peace", spoken: "Your mind is beautifully still... your body perfectly at ease... and there is such deep peace... in this moment...", delay: 30000, duration: 6000 },
+  { text: "gratitude", spoken: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace...", delay: 30000, duration: 6000 },
+  { text: "belonging", spoken: "The sounds around you welcome you deeper... the gentle tones cradle you... you belong here... in this comfort...", delay: 25000, duration: 6000 },
+  { text: "ease", spoken: "And it becomes so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000 },
+  { text: "wellbeing", spoken: "A profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace...", delay: 30000, duration: 6000 },
+  { text: "safe", spoken: "Rest here... in this beautiful place... knowing that you are safe... you are whole... you are at peace...", delay: 35000, duration: 6000 },
+  { text: "joy", spoken: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that comes from deep within...", delay: 30000, duration: 6000 },
+  { text: "flowing", spoken: "Everything is flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly...", delay: 30000, duration: 6000 },
+  { text: "deeper still", spoken: "Deeper still... and with each moment... you discover even more comfort... even more peace... than you knew was possible...", delay: 30000, duration: 6000 },
 ];
 
 const emergenceCues: NarrationCue[] = [
-  { text: "In a moment, you'll begin to return... there's no rush...", spoken: "In a moment... you'll begin to return... there's no rush...", delay: 2000, duration: 8000 },
-  { text: "1 — a gentle stirring of awareness...", spoken: "One... a gentle stirring of awareness...", delay: 8000, duration: 6000 },
-  { text: "2 — becoming more aware of your surroundings...", spoken: "Two... becoming more aware... of your surroundings...", delay: 7000, duration: 6000 },
-  { text: "3 — energy returning to your body...", spoken: "Three... feeling energy returning to your body...", delay: 7000, duration: 6000 },
-  { text: "4 — almost there... take a deep breath...", spoken: "Four... almost there... take a deep breath in...", delay: 7000, duration: 6000 },
-  { text: "5 — eyes open, fully alert, feeling refreshed.", spoken: "Five... eyes open... wide awake... fully alert... feeling wonderful... refreshed... and clear.", delay: 7000, duration: 8000 },
+  { text: "When you're ready... you'll begin to return... carrying this peace with you...", spoken: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you...", delay: 2000, duration: 8000 },
+  { text: "1 — a gentle brightening... feeling so content...", spoken: "One... a gentle brightening... feeling so content... so grateful for this time...", delay: 8000, duration: 6000 },
+  { text: "2 — more present now... this peace travels with you...", spoken: "Two... becoming more present now... and this deep peace... it travels with you...", delay: 7000, duration: 6000 },
+  { text: "3 — energy and vitality returning... feeling wonderful...", spoken: "Three... energy and vitality returning to your body... feeling wonderful... refreshed...", delay: 7000, duration: 6000 },
+  { text: "4 — almost there... a deep, satisfying breath...", spoken: "Four... almost there... take a deep... satisfying breath... feeling clear... feeling content...", delay: 7000, duration: 6000 },
+  { text: "5 — eyes open, fully present, deeply at peace.", spoken: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you.", delay: 7000, duration: 8000 },
 ];
 
 export default function MeditationSession({ onComplete, onExit }: MeditationSessionProps) {
@@ -301,12 +303,17 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
         </div>
       )}
 
+      {/* Persistent EMDR dot — visible throughout induction phases */}
+      {(phase === "fixation" || phase === "deepening" || phase === "staircase" || phase === "sustain") && (
+        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <EmdrDot cycleDuration={phase === "sustain" ? 5 : 4} size={18} rangeVw={35} />
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
-        {/* FIXATION — dot + narration overlay */}
+        {/* FIXATION — no extra overlay needed, dot + circle are persistent */}
         {phase === "fixation" && (
-          <motion.div key="med-fixation" className="absolute inset-0 flex flex-col items-center justify-center z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <EmdrDot cycleDuration={4} size={18} rangeVw={35} />
-          </motion.div>
+          <motion.div key="med-fixation" className="absolute inset-0 z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} />
         )}
 
         {/* DEEPENING — narration below circle */}

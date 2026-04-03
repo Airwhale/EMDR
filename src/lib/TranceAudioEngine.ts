@@ -151,16 +151,6 @@ export class TranceAudioEngine {
 
     osc.start(now);
     osc.stop(now + 1.3);
-
-    // Spoken cue via Speech API
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      const word = phase === "inhale" ? "breathe in" : phase === "exhale" ? "breathe out" : "hold";
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.rate = 0.55;
-      utterance.pitch = 0.65;
-      utterance.volume = 0.25;
-      window.speechSynthesis.speak(utterance);
-    }
   }
 
   /** Modulate binaural drone volume to follow the breathing cycle.
