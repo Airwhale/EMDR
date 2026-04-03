@@ -133,14 +133,24 @@ export default function LearnContent({ onBack, onReady }: LearnContentProps) {
           transition={{ delay: 1.5, duration: 0.8 }}
           className="mt-16 pt-8 border-t border-gold/20 text-center"
         >
-          <button
-            onClick={onReady}
-            className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
-                       hover:border-gold/70 hover:text-gold transition-all duration-700
-                       ui-text"
-          >
-            I&apos;m ready to begin
-          </button>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button
+              onClick={onReady}
+              className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
+                         hover:border-gold/70 hover:text-gold transition-all duration-700
+                         ui-text"
+            >
+              I&apos;m ready to begin
+            </button>
+            <a
+              href="/about"
+              className="px-8 py-4 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/50
+                         hover:border-[#e8e0d4]/40 hover:text-[#e8e0d4]/80 transition-all duration-700
+                         ui-text"
+            >
+              The science behind it
+            </a>
+          </div>
         </motion.div>
       </div>
     </div>
