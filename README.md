@@ -1,27 +1,101 @@
-# EMDR/ ARM self-administered experience
+# EMDR / ART Self-Administered Experience
 
-The EMDR/ ARM self-administered experience is a browser-based guided self-regulation experience built with Next.js. It includes:
+A browser-based guided self-regulation tool using evidence-based therapeutic techniques. Built with Next.js 14.
 
-- **TRANCE mode** (guided hypnotic relaxation + suggestibility experiments)
-- **EMDR-inspired stabilization mode** (resource-focused, non-trauma reprocessing)
-- **ART-inspired processing mode** (mild-stress scene processing and replacement)
+> **This is a wellness and educational tool, not a substitute for professional therapy.**
 
-> This project is educational/wellness-oriented and not a substitute for clinical care.
+## Modes
 
-## Safety first
+- **EMDR** — Resource-building stabilization (safe place, butterfly hug, container, resource installation)
+- **ART** — Scene processing and voluntary image rescripting
+- **Meditation** — Extended guided deep meditation (~30 min) with suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing
+- **Trance** — Full guided self-hypnosis with suggestibility experiments
 
-- Use this app only when you can sit/lie down safely.
-- If distress increases, stop and ground.
-- For urgent emotional crisis support in the US, call or text **988**.
+## Techniques used to induce altered states
+
+This app layers 40 techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories:
+
+### Audio (8 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Binaural beats (primary) | Different frequencies in L/R ears create a perceived beat that entrains brainwave frequency | All |
+| Second binaural layer | Harmonic layer at 2x base frequency reinforcing the primary beat | Trance, Meditation |
+| Pink noise | Filtered noise masking environmental sounds | All |
+| Isochronic pulses | Rhythmic amplitude modulation at theta frequency (6Hz) | Trance, Meditation |
+| Sub-bass heartbeat | 40Hz oscillation modulated at resting heart rate, progressively slowing from 60→45bpm | Trance, Meditation |
+| Breath-cue chimes | Rising/falling/steady tones panned L/R/center matching inhale/hold/exhale | Trance, Meditation |
+| Binaural drone modulation | Drone volume rises and falls in sync with the breathing cycle | Trance, Meditation |
+| Bilateral ping tones | Short L/R panned taps accompanying each direction change of the eye-tracking dot | EMDR, ART |
+
+### Visual (8 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Breathing guide circle | Expanding/contracting ring with spring physics guiding 4-4-6 breathing | Trance, Meditation |
+| EMDR horizontal dot | Smooth bilateral eye-tracking dot moving across 84% of viewport | All |
+| Hypnotic spiral | Canvas-rendered 5-arm logarithmic spiral rotating at ~10°/s | Trance, Meditation |
+| Photic flicker | Full-screen luminance oscillation at alpha/theta frequencies (5-8Hz) | Trance, Meditation |
+| Binaural pulse | Full-screen opacity pulse synced exactly to the binaural beat frequency | Meditation |
+| Vignette (tunnel vision) | Progressive radial darkening simulating the narrowed focus of deep trance | All |
+| Staircase particles | Downward-drifting particles with dissolving countdown numbers (10→1) | Trance, Meditation |
+| Bilateral stimulation dot | Full-width dot at configurable speeds (EMDR: 1Hz, ART: 1.4Hz) with trail | EMDR, ART |
+
+### Language & narration (9 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Embedded commands | Imperative suggestions hidden within permissive sentences | Trance, Meditation |
+| Ericksonian permissive language | Indirect suggestions using "perhaps," "might," "can" to bypass resistance | Trance, Meditation |
+| Confusion technique | Paradoxical statements that short-circuit analytical thinking | Trance |
+| Fractionation | Brief alert-then-deepen cycles that amplify subjective depth | Trance, Meditation |
+| Deepening challenges | Presuppositional challenges ("I wonder if you can go even deeper...") | Meditation |
+| Dissociation language | Mind-body separation suggestions ("your body is here... your mind can float freely") | Meditation |
+| Anchoring | Physical gesture (thumb-forefinger press) paired with deep relaxation for future recall | Trance, Meditation |
+| Presuppositions | Statements assuming forward progress ("the deeper you go, the more content you feel") | Trance, Meditation |
+| NLP sensory patterns | Rich multisensory imagery (warmth, heaviness, floating, honey, sunlight) | Trance, Meditation |
+
+### Breathing (2 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| 4-4-6 extended exhale pattern | 4s inhale, 4s hold, 6s exhale — activates vagal tone and parasympathetic response | Trance, Meditation |
+| Progressive breath slowdown | Cycle duration gradually increases from 14s to 27s over the session | Trance, Meditation |
+
+### Bilateral stimulation (3 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| EMDR bilateral stimulation | Slow horizontal eye movements (~1Hz) following a dot | EMDR |
+| ART bilateral stimulation | Faster eye movements (~1.4Hz) for accelerated processing | ART |
+| Butterfly hug tapping | Self-administered alternating fingertip taps on upper chest at ~1Hz | EMDR |
+
+### Body-based (6 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Progressive body scan | Systematic attention from feet to head, noticing warmth/comfort spreading | Trance, Meditation |
+| 5-4-3-2-1 grounding | Sensory anchoring exercise (see/touch/hear/smell/taste) | EMDR, ART |
+| Arm levitation (ideomotor) | Balloon imagery inducing unconscious hand movement | Trance |
+| Chevreul pendulum (ideomotor) | Thought-directed pendulum swing demonstrating unconscious motor control | Trance |
+| Time distortion | Altered time perception measurement in trance state | Trance |
+| Sensory amplification | Warmth suggestion demonstrating somatic suggestibility | Trance |
+
+### Emergence (3 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Emergence sequence | Counting 1→5 with progressive reorientation and positive anchoring | Trance, Meditation |
+| Audio pitch brightening | Binaural frequency shifts upward to alpha during emergence | Trance, Meditation |
+| Vignette lightening | Progressive reduction of tunnel-vision darkening | All |
+
+## Safety
+
+- Use only when seated or lying down safely in a private setting
+- If distress increases, stop and ground yourself
+- SUD (distress) monitoring with automatic grounding redirects in EMDR/ART
+- In the US, call or text **988** for 24/7 mental health crisis support
 
 ## Tech stack
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Web Audio API (generative audio)
-- Web Speech API (narration, with text fallback)
+- Next.js 14 (App Router), TypeScript, Tailwind CSS
+- Framer Motion for animations
+- Web Audio API — all audio generated in-browser (no audio files required)
+- Web Speech API — narration with smart voice selection (falls back to text)
+- Pre-generated audio support via ElevenLabs (optional, see AUDIO_SCRIPTS.md)
 
 ## Local development
 
@@ -30,40 +104,8 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000`. Headphones recommended.
 
-## Scripts
+## Data storage
 
-- `npm run dev` — local dev server
-- `npm run build` — production build
-- `npm run start` — run production build
-- `npm run lint` — Next.js lint
-- `npm run test` — run lightweight Node-based project checks
-
-## Architecture notes
-
-- `src/app/page.tsx` orchestrates global app state and mode routing.
-- `src/components/TranceSession.tsx` handles the trance flow and experiments.
-- `src/components/emdr/EmdrSession.tsx` and `src/components/art/ArtSession.tsx` manage session-specific state machines.
-- `src/lib/TranceAudioEngine.ts` generates immersive audio entirely in-browser.
-- `src/lib/TranceVoice.ts` wraps speech synthesis and handles voice selection.
-- `src/lib/sessionPersistence.ts` stores snapshots, summaries, and user preferences.
-
-## Persistence behavior
-
-The app stores lightweight local data in `localStorage`:
-
-- latest summary + summary history
-- app snapshot (for resuming, expires after 24 hours)
-- simple user preferences (e.g., voice on/off)
-- safety acknowledgement flag (so repeat users can skip repeated gate copy)
-
-No backend storage is required for these features.
-
-## Testing
-
-Tests use Node's built-in test runner and cover persistence-core helper behavior plus key navigation wiring:
-
-```bash
-npm run test
-```
+All data stored in browser `localStorage`. Nothing sent to any server.
