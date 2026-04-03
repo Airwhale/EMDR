@@ -119,7 +119,7 @@ export class TranceVoice {
     }
   }
 
-  speak(text: string, options?: { rate?: number; pitch?: number }): void {
+  speak(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
     if (!this.synth || !this.ready || !this.enabled) return;
 
     this.synth.cancel();
@@ -128,7 +128,7 @@ export class TranceVoice {
     utterance.voice = this.voice;
     utterance.rate = options?.rate ?? this.tuning.rate;
     utterance.pitch = options?.pitch ?? this.tuning.pitch;
-    utterance.volume = this.tuning.volume;
+    utterance.volume = options?.volume ?? this.tuning.volume;
     this.currentUtterance = utterance;
     this.synth.speak(utterance);
   }
