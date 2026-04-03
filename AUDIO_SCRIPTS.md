@@ -43,6 +43,7 @@ trance-deepening-12.mp3: "Now... gently press your thumb and forefinger together
 
 trance-staircase-01.mp3: "In your mind... a beautiful staircase appears... leading down into the most comfortable... most peaceful place... you have ever known..."
 trance-staircase-02.mp3: "Each step might bring twice as much comfort... twice as much peace... and with each step... you may feel that contentment doubling..."
+trance-staircase-countdown-intro.mp3: "In a moment... you will see and hear some numbers... counting down from ten to one... and you may find yourself dropping more and more into relaxation... as each number takes you deeper..."
 trance-staircase-03.mp3: "For just a moment... notice how good you already feel... notice the sounds around you... the surface supporting you... appreciate how comfortable you are..."
 trance-staircase-04.mp3: "...and now... allow yourself to go twice as deep into that comfort... that's right... so much deeper... so much more peaceful..."
 trance-staircase-10.mp3: "ten"
@@ -194,11 +195,11 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 109 audio files
+## Total: 110 audio files
 
 | Folder | Count |
 |--------|-------|
-| trance/ | 39 |
+| trance/ | 40 |
 | emdr/ | 21 |
 | art/ | 16 |
 | meditation/ | 28 |

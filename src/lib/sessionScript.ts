@@ -215,6 +215,13 @@ export const sessionScript: PhaseConfig[] = [
         delay: 7000,
         duration: 8000,
       },
+      // Countdown preparation
+      {
+        text: "You will hear numbers counting down... and with each number you can find yourself dropping deeper...",
+        spoken: "In a moment... you will see and hear some numbers... counting down from ten to one... and you may find yourself dropping more and more into relaxation... as each number takes you deeper...",
+        delay: 7000,
+        duration: 10000,
+      },
       // Fractionation — positive framing
       {
         text: "For just a moment... notice how good you already feel...",
