@@ -195,14 +195,14 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 110 audio files
+## Total: 137 audio files
 
 | Folder | Count |
 |--------|-------|
-| trance/ | 40 |
-| emdr/ | 21 |
+| trance/ | 46 |
+| emdr/ | 24 |
 | art/ | 16 |
 | meditation/ | 28 |
 | grounding/ | 7 |
-| experiments/ | 14 |
+| experiments/ | 13 |
 | breath/ | 3 |
