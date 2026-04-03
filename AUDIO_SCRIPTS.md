@@ -132,17 +132,21 @@ meditation-centering-04.mp3: "And as it contracts... breathe out slowly through 
 meditation-centering-05.mp3: "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot..."
 
 meditation-sustain-01.mp3: "And you can feel that contentment now... growing with every breath... deeper... and more satisfying..."
-meditation-sustain-02.mp3: "Everything is exactly as it should be... and you are exactly where you want to be... surrounded by comfort..."
-meditation-sustain-03.mp3: "Each breath carries you deeper... into this beautiful feeling... and the deeper you go... the better it feels..."
+meditation-sustain-02.mp3: "The sounds around you welcome you deeper... the gentle tones cradle you... you belong here... in this comfort..."
+meditation-sustain-03.mp3: "I wonder if you can go even deeper than this... and I think you can... because you already have... and it feels so good..."
 meditation-sustain-04.mp3: "Your mind is beautifully still... your body perfectly at ease... and there is such deep peace... in this moment..."
-meditation-sustain-05.mp3: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace..."
-meditation-sustain-06.mp3: "The sounds around you welcome you deeper... the gentle tones cradle you... you belong here... in this comfort..."
-meditation-sustain-07.mp3: "And it becomes so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy..."
+meditation-sustain-05.mp3: "Your body is here... comfortable and safe... but your mind can float freely... drifting... weightless... free..."
+meditation-sustain-06.mp3: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace..."
+meditation-sustain-07.mp3: "And you can go even deeper still... deeper than you thought possible... and each new depth brings even more contentment... even more joy..."
 meditation-sustain-08.mp3: "A profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace..."
-meditation-sustain-09.mp3: "Rest here... in this beautiful place... knowing that you are safe... you are whole... you are at peace..."
+meditation-sustain-09.mp3: "Your body rests here... warm and safe... while your mind is somewhere beautiful... somewhere peaceful... somewhere that is entirely yours..."
 meditation-sustain-10.mp3: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that comes from deep within..."
-meditation-sustain-11.mp3: "Everything is flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly..."
-meditation-sustain-12.mp3: "Deeper still... and with each moment... you discover even more comfort... even more peace... than you knew was possible..."
+meditation-sustain-11.mp3: "And it becomes so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy..."
+meditation-sustain-12.mp3: "How deep can you go... there is no limit... your mind is vast and open... and every moment here... brings more comfort... more peace... more contentment..."
+meditation-sustain-13.mp3: "Everything is exactly as it should be... and you are exactly where you want to be... you belong here... in this warmth..."
+meditation-sustain-14.mp3: "The boundary between you and this peace... is dissolving... you are becoming the calm itself... the stillness itself..."
+meditation-sustain-15.mp3: "Rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you..."
+meditation-sustain-16.mp3: "Everything is flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly..."
 
 meditation-emergence-intro.mp3: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you..."
 meditation-emergence-01.mp3: "One... a gentle brightening... feeling so content... so grateful for this time..."
@@ -188,14 +192,14 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 104 audio files
+## Total: 108 audio files
 
 | Folder | Count |
 |--------|-------|
 | trance/ | 39 |
 | emdr/ | 21 |
 | art/ | 16 |
-| meditation/ | 23 |
+| meditation/ | 27 |
 | grounding/ | 7 |
 | experiments/ | 14 |
 | breath/ | 3 |

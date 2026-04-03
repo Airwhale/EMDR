@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
+import BinauralPulse from "@/components/BinauralPulse";
 import { TranceVoice } from "@/lib/TranceVoice";
 import { sessionScript, NarrationCue } from "@/lib/sessionScript";
 import BreathingGuide from "@/components/BreathingGuide";
@@ -20,20 +21,42 @@ interface MeditationSessionProps {
   onExit: () => void;
 }
 
-// Extended deepening narration — cycles through these during the sustained phase
+// Extended deepening narration — cycles through these during the sustained phase.
+// Themes: contentment, belonging, joy, gratitude, wellbeing, safety, ease.
+// Techniques: deepening challenges, dissociation language, presuppositions.
 const sustainCues: NarrationCue[] = [
+  // Contentment
   { text: "contentment", spoken: "And you can feel that contentment now... growing with every breath... deeper... and more satisfying...", delay: 25000, duration: 6000 },
-  { text: "exactly right", spoken: "Everything is exactly as it should be... and you are exactly where you want to be... surrounded by comfort...", delay: 25000, duration: 6000 },
-  { text: "deeper", spoken: "Each breath carries you deeper... into this beautiful feeling... and the deeper you go... the better it feels...", delay: 30000, duration: 6000 },
-  { text: "peace", spoken: "Your mind is beautifully still... your body perfectly at ease... and there is such deep peace... in this moment...", delay: 30000, duration: 6000 },
-  { text: "gratitude", spoken: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace...", delay: 30000, duration: 6000 },
+  // Belonging
   { text: "belonging", spoken: "The sounds around you welcome you deeper... the gentle tones cradle you... you belong here... in this comfort...", delay: 25000, duration: 6000 },
-  { text: "ease", spoken: "And it becomes so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000 },
+  // Deepening challenge
+  { text: "deeper", spoken: "I wonder if you can go even deeper than this... and I think you can... because you already have... and it feels so good...", delay: 30000, duration: 6000 },
+  // Peace
+  { text: "peace", spoken: "Your mind is beautifully still... your body perfectly at ease... and there is such deep peace... in this moment...", delay: 30000, duration: 6000 },
+  // Dissociation
+  { text: "floating", spoken: "Your body is here... comfortable and safe... but your mind can float freely... drifting... weightless... free...", delay: 30000, duration: 6000 },
+  // Gratitude
+  { text: "gratitude", spoken: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace...", delay: 25000, duration: 6000 },
+  // Deepening challenge + contentment
+  { text: "even deeper", spoken: "And you can go even deeper still... deeper than you thought possible... and each new depth brings even more contentment... even more joy...", delay: 30000, duration: 6000 },
+  // Wellbeing
   { text: "wellbeing", spoken: "A profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace...", delay: 30000, duration: 6000 },
-  { text: "safe", spoken: "Rest here... in this beautiful place... knowing that you are safe... you are whole... you are at peace...", delay: 35000, duration: 6000 },
+  // Dissociation + safety
+  { text: "free", spoken: "Your body rests here... warm and safe... while your mind is somewhere beautiful... somewhere peaceful... somewhere that is entirely yours...", delay: 35000, duration: 6000 },
+  // Joy
   { text: "joy", spoken: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that comes from deep within...", delay: 30000, duration: 6000 },
+  // Ease
+  { text: "ease", spoken: "And it becomes so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000 },
+  // Deepening challenge + dissociation
+  { text: "boundless", spoken: "How deep can you go... there is no limit... your mind is vast and open... and every moment here... brings more comfort... more peace... more contentment...", delay: 30000, duration: 6000 },
+  // Contentment + belonging
+  { text: "exactly right", spoken: "Everything is exactly as it should be... and you are exactly where you want to be... you belong here... in this warmth...", delay: 30000, duration: 6000 },
+  // Dissociation + wellbeing
+  { text: "dissolving", spoken: "The boundary between you and this peace... is dissolving... you are becoming the calm itself... the stillness itself...", delay: 30000, duration: 6000 },
+  // Safety + joy
+  { text: "safe", spoken: "Rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you...", delay: 35000, duration: 6000 },
+  // Flowing + contentment
   { text: "flowing", spoken: "Everything is flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly...", delay: 30000, duration: 6000 },
-  { text: "deeper still", spoken: "Deeper still... and with each moment... you discover even more comfort... even more peace... than you knew was possible...", delay: 30000, duration: 6000 },
 ];
 
 const emergenceCues: NarrationCue[] = [
@@ -52,6 +75,7 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
   const [breathSlowdown, setBreathSlowdown] = useState(1.0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [elapsed, setElapsed] = useState(0);
+  const [currentBeatFreq, setCurrentBeatFreq] = useState(3);
 
   const audioRef = useRef<TranceAudioEngine | null>(null);
   const voiceRef = useRef<TranceVoice | null>(null);
@@ -251,29 +275,40 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     setVignetteIntensity(0.7);
     setBreathSlowdown(1.9);
 
-    // Progressive binaural reduction over sustain phase:
-    // Start: 100Hz base, ~3Hz beat (deep theta)
-    // Gradually drop to 70Hz base, ~1.5Hz beat (deep delta, near sleep)
+    // Progressive deepening over sustain phase:
+    // Binaural: 100Hz/3Hz → 72Hz/1.5Hz (theta → delta)
+    // Heartbeat: 60bpm → 45bpm (resting → deep relaxation)
+    // Both layers shift together for coherent descent
     const binauralTimers = [
       setTimeout(() => {
         audioRef.current?.shiftPitch(95, 30);
         audioRef.current?.setBinauralBeat(2.8, 30);
+        audioRef.current?.setHeartbeatRate(57, 30);
+        setCurrentBeatFreq(2.8);
       }, 60000),   // 1 min
       setTimeout(() => {
         audioRef.current?.shiftPitch(88, 40);
         audioRef.current?.setBinauralBeat(2.4, 40);
+        audioRef.current?.setHeartbeatRate(54, 40);
+        setCurrentBeatFreq(2.4);
       }, 180000),  // 3 min
       setTimeout(() => {
         audioRef.current?.shiftPitch(82, 50);
         audioRef.current?.setBinauralBeat(2.0, 50);
+        audioRef.current?.setHeartbeatRate(51, 50);
+        setCurrentBeatFreq(2.0);
       }, 360000),  // 6 min
       setTimeout(() => {
         audioRef.current?.shiftPitch(76, 60);
         audioRef.current?.setBinauralBeat(1.8, 60);
+        audioRef.current?.setHeartbeatRate(48, 60);
+        setCurrentBeatFreq(1.8);
       }, 600000),  // 10 min
       setTimeout(() => {
         audioRef.current?.shiftPitch(72, 60);
         audioRef.current?.setBinauralBeat(1.5, 60);
+        audioRef.current?.setHeartbeatRate(45, 60);
+        setCurrentBeatFreq(1.5);
       }, 900000),  // 15 min
     ];
 
@@ -374,6 +409,7 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       style={{ backgroundColor: bgColors[phase] || "#0a0a0f" }}
     >
       <Vignette intensity={vignetteIntensity} />
+      <BinauralPulse active={phase === "sustain" || phase === "staircase"} frequency={currentBeatFreq} intensity={0.035} />
       <PhoticFlicker active={showPhotic} frequency={phase === "sustain" ? 5 : phase === "staircase" ? 6 : 8} intensity={phase === "sustain" ? 0.025 : 0.03} />
 
       {/* Persistent breathing guide — never unmounts, so animation is continuous */}
