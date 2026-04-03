@@ -148,6 +148,10 @@ meditation-sustain-14.mp3: "The boundary between you and this peace... is dissol
 meditation-sustain-15.mp3: "Rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you..."
 meditation-sustain-16.mp3: "Everything is flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly..."
 
+meditation-anchor-01.mp3: "Gently press your thumb and forefinger together... feel this deep contentment lock into place... this feeling is yours... whenever you press these fingers together... this peace returns..."
+meditation-anchor-02.mp3: "Press your thumb and forefinger together again now... notice how much deeper this feeling has become... your anchor grows stronger each time... this profound peace... this contentment... stored in this simple touch..."
+meditation-anchor-03.mp3: "One last time... press your thumb and forefinger together... at this deepest point... seal this feeling in... this is the deepest peace you have felt... and it is always here for you... always available... with this simple touch..."
+
 meditation-emergence-intro.mp3: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you..."
 meditation-emergence-01.mp3: "One... a gentle brightening... feeling so content... so grateful for this time..."
 meditation-emergence-02.mp3: "Two... becoming more present now... and this deep peace... it travels with you..."
@@ -192,14 +196,14 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 108 audio files
+## Total: 111 audio files
 
 | Folder | Count |
 |--------|-------|
 | trance/ | 39 |
 | emdr/ | 21 |
 | art/ | 16 |
-| meditation/ | 27 |
+| meditation/ | 30 |
 | grounding/ | 7 |
 | experiments/ | 14 |
 | breath/ | 3 |

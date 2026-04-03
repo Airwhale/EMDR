@@ -312,6 +312,37 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       }, 900000),  // 15 min
     ];
 
+    // Anchoring reinforcement — timed to coincide with deepest binaural shifts
+    const anchoringTimers = [
+      // Right after staircase (~30s into sustain) — first anchor
+      setTimeout(() => {
+        speakNarration(
+          "Gently press your thumb and forefinger together... feel this deep contentment lock into place... this feeling is yours... whenever you press these fingers together... this peace returns...",
+          "Gently press your thumb and forefinger together... feel this deep contentment lock into place... this feeling is yours... whenever you press these fingers together... this peace returns..."
+        );
+        setCurrentNarration("anchor");
+        setTimeout(() => setCurrentNarration(null), 6000);
+      }, 30000),
+      // ~10 min — reinforcement at deepening wave
+      setTimeout(() => {
+        speakNarration(
+          "Press your thumb and forefinger together again now... notice how much deeper this feeling has become... your anchor grows stronger each time... this profound peace... this contentment... stored in this simple touch...",
+          "Press your thumb and forefinger together again now... notice how much deeper this feeling has become... your anchor grows stronger each time... this profound peace... this contentment... stored in this simple touch..."
+        );
+        setCurrentNarration("anchor");
+        setTimeout(() => setCurrentNarration(null), 6000);
+      }, 620000),  // ~10 min 20s (just after the 10min binaural shift)
+      // ~15 min — final reinforcement at deepest point
+      setTimeout(() => {
+        speakNarration(
+          "One last time... press your thumb and forefinger together... at this deepest point... seal this feeling in... this is the deepest peace you have felt... and it is always here for you... always available... with this simple touch...",
+          "One last time... press your thumb and forefinger together... at this deepest point... seal this feeling in... this is the deepest peace you have felt... and it is always here for you... always available... with this simple touch..."
+        );
+        setCurrentNarration("anchor");
+        setTimeout(() => setCurrentNarration(null), 6000);
+      }, 920000),  // ~15 min 20s (just after the 15min binaural shift)
+    ];
+
     const runNextCue = () => {
       const idx = sustainIndexRef.current % sustainCues.length;
       const cue = sustainCues[idx];
@@ -335,6 +366,7 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     return () => {
       timers.forEach(clearTimeout);
       binauralTimers.forEach(clearTimeout);
+      anchoringTimers.forEach(clearTimeout);
     };
   }, [phase, speakNarration]);
 
