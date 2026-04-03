@@ -13,9 +13,10 @@ interface ButterflyHugProps {
 }
 
 const narration = [
-  { text: "Cross your arms over your chest, placing each hand on the opposite shoulder...", delay: 0, duration: 9000 },
-  { text: "Now use your fingertips to gently tap your shoulders — alternating left, right, left, right...", delay: 10000, duration: 9000 },
-  { text: "Keep tapping your shoulders with your fingertips... gently and steadily...", delay: 10000, duration: 8000 },
+  { text: "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone...", delay: 0, duration: 10000 },
+  { text: "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone...", delay: 11000, duration: 10000 },
+  { text: "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...", delay: 11000, duration: 9000 },
+  { text: "Keep tapping steadily on your upper chest... each tap light and rhythmic...", delay: 10000, duration: 8000 },
   { text: "Notice any sensations in your body as you tap... just observe them...", delay: 9000, duration: 8000 },
   { text: "Continue tapping for a few more moments... feeling calmer with each tap...", delay: 9000, duration: 8000 },
 ];
@@ -43,11 +44,11 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
       cumulative = hide;
     });
 
-    // Show pose image during first cue, then switch to tapping animation
+    // Show pose during first two cues (placement), then switch to tapping
     timers.push(setTimeout(() => {
       setShowPose(false);
       setTapping(true);
-    }, 9000));
+    }, 21000));
     timers.push(setTimeout(() => {
       setTapping(false);
       onComplete();
@@ -79,7 +80,7 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 px-4">
-      {/* Crossed-arms pose illustration (shown during first cue) */}
+      {/* Crossed-arms pose illustration (shown during placement cues) */}
       {showPose && !tapping && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -87,76 +88,128 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
           className="relative flex items-center justify-center"
-          style={{ width: 280, height: 220 }}
+          style={{ width: 300, height: 240 }}
         >
-          {/* Body/torso */}
-          <div
-            className="absolute rounded-full"
-            style={{
-              width: 70,
-              height: 100,
-              border: "1.5px solid rgba(201, 169, 110, 0.35)",
-              top: 55,
-            }}
-          />
           {/* Head */}
           <div
             className="absolute rounded-full"
             style={{
-              width: 40,
-              height: 40,
-              border: "1.5px solid rgba(201, 169, 110, 0.35)",
-              top: 10,
+              width: 44,
+              height: 44,
+              border: "1.5px solid rgba(201, 169, 110, 0.4)",
+              top: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
             }}
           />
-          {/* Left arm crossing to right shoulder */}
+          {/* Neck */}
           <div
             className="absolute"
             style={{
-              width: 90,
+              width: 2,
+              height: 14,
+              background: "rgba(201, 169, 110, 0.3)",
+              top: 44,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          />
+          {/* Torso */}
+          <div
+            className="absolute rounded-[35px]"
+            style={{
+              width: 80,
+              height: 120,
+              border: "1.5px solid rgba(201, 169, 110, 0.35)",
+              top: 58,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          />
+          {/* Shoulders — horizontal line across top of torso */}
+          <div
+            className="absolute"
+            style={{
+              width: 120,
               height: 2,
-              background: "rgba(201, 169, 110, 0.4)",
-              top: 85,
-              left: 55,
-              transform: "rotate(-35deg)",
+              background: "rgba(201, 169, 110, 0.3)",
+              top: 68,
+              left: "50%",
+              transform: "translateX(-50%)",
+              borderRadius: 1,
+            }}
+          />
+          {/* Left arm crossing to right upper chest */}
+          <div
+            className="absolute"
+            style={{
+              width: 80,
+              height: 2.5,
+              background: "rgba(201, 169, 110, 0.45)",
+              top: 80,
+              left: 72,
+              transform: "rotate(-30deg)",
               transformOrigin: "right center",
               borderRadius: 1,
             }}
           />
-          {/* Right arm crossing to left shoulder */}
+          {/* Right arm crossing to left upper chest */}
           <div
             className="absolute"
             style={{
-              width: 90,
-              height: 2,
-              background: "rgba(201, 169, 110, 0.4)",
-              top: 85,
-              right: 55,
-              transform: "rotate(35deg)",
+              width: 80,
+              height: 2.5,
+              background: "rgba(201, 169, 110, 0.45)",
+              top: 80,
+              right: 72,
+              transform: "rotate(30deg)",
               transformOrigin: "left center",
               borderRadius: 1,
             }}
           />
-          {/* Left hand on right shoulder */}
+          {/* Left hand on right upper chest (below collarbone) */}
           <div
             className="absolute rounded-full"
             style={{
-              width: 14,
-              height: 14,
-              background: "rgba(201, 169, 110, 0.5)",
-              top: 62,
-              right: 88,
+              width: 16,
+              height: 16,
+              background: "rgba(201, 169, 110, 0.6)",
+              boxShadow: "0 0 8px rgba(201, 169, 110, 0.2)",
+              top: 68,
+              right: 100,
             }}
           />
-          {/* Right hand on left shoulder */}
+          {/* Right hand on left upper chest (below collarbone) */}
           <div
             className="absolute rounded-full"
             style={{
-              width: 14,
-              height: 14,
-              background: "rgba(201, 169, 110, 0.5)",
-              top: 62,
-              left: 88,
+              width: 16,
+              height: 16,
+              background: "rgba(201, 169, 110, 0.6)",
+              boxShadow: "0 0 8px rgba(201, 169, 110, 0.2)",
+              top: 68,
+              left: 100,
+            }}
+          />
+          {/* Tap zone indicators — subtle circles on upper chest */}
+          <div
+            className="absolute rounded-full border border-dashed"
+            style={{
+              width: 30,
+              height: 30,
+              borderColor: "rgba(201, 169, 110, 0.15)",
+              top: 61,
+              right: 93,
+            }}
+          />
+          <div
+            className="absolute rounded-full border border-dashed"
+            style={{
+              width: 30,
+              height: 30,
+              borderColor: "rgba(201, 169, 110, 0.15)",
+              top: 61,
+              left: 93,
             }}
           />
         </motion.div>
@@ -169,61 +222,77 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           className="relative flex items-center justify-center"
-          style={{ width: 280, height: 200 }}
+          style={{ width: 300, height: 220 }}
         >
-          {/* Body/torso — brighter */}
-          <div
-            className="absolute rounded-full"
-            style={{
-              width: 70,
-              height: 100,
-              border: "1.5px solid rgba(201, 169, 110, 0.45)",
-              top: 40,
-              boxShadow: "0 0 15px rgba(201, 169, 110, 0.08)",
-            }}
-          />
           {/* Head */}
           <div
             className="absolute rounded-full"
             style={{
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               border: "1.5px solid rgba(201, 169, 110, 0.35)",
-              top: -5,
+              top: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
             }}
           />
-          {/* Left hand/tap indicator */}
+          {/* Torso */}
+          <div
+            className="absolute rounded-[35px]"
+            style={{
+              width: 80,
+              height: 110,
+              border: "1.5px solid rgba(201, 169, 110, 0.45)",
+              top: 55,
+              left: "50%",
+              transform: "translateX(-50%)",
+              boxShadow: "0 0 15px rgba(201, 169, 110, 0.06)",
+            }}
+          />
+          {/* Shoulders */}
+          <div
+            className="absolute"
+            style={{
+              width: 120,
+              height: 2,
+              background: "rgba(201, 169, 110, 0.25)",
+              top: 65,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          />
+          {/* Left hand/tap indicator — on right upper chest */}
           <motion.div
             className="absolute rounded-full"
             style={{
-              width: 28,
-              height: 28,
+              width: 30,
+              height: 30,
               background: tapSide === "left"
                 ? "rgba(201, 169, 110, 0.7)"
                 : "rgba(201, 169, 110, 0.2)",
               boxShadow: tapSide === "left"
                 ? "0 0 20px rgba(201, 169, 110, 0.4)"
                 : "none",
-              left: 68,
-              top: 40,
+              right: 82,
+              top: 57,
             }}
             animate={{ scale: tapSide === "left" ? [1, 1.3, 1] : 1 }}
             transition={{ duration: 0.3 }}
           />
-          {/* Right hand/tap indicator */}
+          {/* Right hand/tap indicator — on left upper chest */}
           <motion.div
             className="absolute rounded-full"
             style={{
-              width: 28,
-              height: 28,
+              width: 30,
+              height: 30,
               background: tapSide === "right"
                 ? "rgba(201, 169, 110, 0.7)"
                 : "rgba(201, 169, 110, 0.2)",
               boxShadow: tapSide === "right"
                 ? "0 0 20px rgba(201, 169, 110, 0.4)"
                 : "none",
-              right: 68,
-              top: 40,
+              left: 82,
+              top: 57,
             }}
             animate={{ scale: tapSide === "right" ? [1, 1.3, 1] : 1 }}
             transition={{ duration: 0.3 }}
