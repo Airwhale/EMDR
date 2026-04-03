@@ -16,7 +16,7 @@ Place generated files in the matching `public/audio/<mode>/` folder.
 
 trance-entry-01.mp3: "Find a comfortable position. Put on headphones for the full experience."
 
-trance-fixation-01.mp3: "Let your eyes follow the dot... gently... naturally... back and forth... that's right..."
+trance-fixation-01.mp3: "Follow the dot with your eyes... keep your head still... just your eyes... gently... back and forth... that's right..."
 trance-fixation-02.mp3: "Notice the sounds that rise and fall... let them guide your breathing... matching the circle... expanding as you breathe in... releasing as you breathe out..."
 trance-fixation-03.mp3: "Your breathing finds its own perfect rhythm now... effortless... automatic... and with each breath... you can feel yourself becoming more comfortable..."
 trance-fixation-04.mp3: "Your eyelids are becoming pleasantly heavy... and that feels good... a welcome heaviness... that tells you everything is exactly as it should be..."
@@ -74,7 +74,7 @@ emdr-safeplace-01.mp3: "In your mind... think of a place... where you feel compl
 emdr-safeplace-02.mp3: "Notice the colors... the sounds... and the temperature of this place... in your mind..."
 emdr-safeplace-03.mp3: "Choose a single word... that represents this safe place..."
 emdr-safeplace-04.mp3: "Hold that image and word in mind..."
-emdr-safeplace-bls.mp3: "Follow the dot... while holding your safe place in mind..."
+emdr-safeplace-bls.mp3: "Follow the dot with your eyes... keep your head still... just your eyes... holding your safe place in mind..."
 
 emdr-butterfly-01.mp3: "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone..."
 emdr-butterfly-02.mp3: "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone..."
@@ -106,7 +106,7 @@ art-centering-02.mp3: "Let your body relax... feel the ground beneath you..."
 art-scene-01.mp3: "Think of something stressful... you don't need to describe it... just bring it to mind..."
 art-scene-02.mp3: "See it like a scene in a movie... in your mind... notice the details..."
 
-art-processing-01.mp3: "Hold that scene in mind... follow the dot..."
+art-processing-01.mp3: "Hold that scene in mind... follow the dot with your eyes... keep your head still... just your eyes..."
 art-processing-02.mp3: "Keep following... let whatever comes up... just be there..."
 art-processing-return-01.mp3: "Bring the original scene back to mind... how it was... before you changed it..."
 art-processing-return-02.mp3: "Follow the dot... notice what's still there..."
@@ -124,6 +124,12 @@ art-bodyscan-02.mp3: "Observe... with appreciation..."
 art-closing-01.mp3: "Take a deep breath... think back to the original memory... notice how different it feels now..."
 
 ## public/audio/meditation/
+
+meditation-centering-01.mp3: "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes..."
+meditation-centering-02.mp3: "Now watch the circle... as it expands... breathe in slowly through your nose..."
+meditation-centering-03.mp3: "As the circle holds... hold your breath gently..."
+meditation-centering-04.mp3: "And as it contracts... breathe out slowly through your mouth... letting everything release..."
+meditation-centering-05.mp3: "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot..."
 
 meditation-sustain-01.mp3: "And you can feel that contentment now... growing with every breath... deeper... and more satisfying..."
 meditation-sustain-02.mp3: "Everything is exactly as it should be... and you are exactly where you want to be... surrounded by comfort..."
@@ -182,14 +188,14 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 99 audio files
+## Total: 104 audio files
 
 | Folder | Count |
 |--------|-------|
 | trance/ | 39 |
 | emdr/ | 21 |
 | art/ | 16 |
-| meditation/ | 18 |
+| meditation/ | 23 |
 | grounding/ | 7 |
 | experiments/ | 14 |
 | breath/ | 3 |

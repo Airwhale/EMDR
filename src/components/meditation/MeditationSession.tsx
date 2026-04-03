@@ -13,7 +13,7 @@ import PhoticFlicker from "@/components/PhoticFlicker";
 import Vignette from "@/components/Vignette";
 import Staircase from "@/components/Staircase";
 
-type MedPhase = "fixation" | "deepening" | "staircase" | "sustain" | "emergence" | "complete";
+type MedPhase = "centering" | "fixation" | "deepening" | "staircase" | "sustain" | "emergence" | "complete";
 
 interface MeditationSessionProps {
   onComplete: () => void;
@@ -46,7 +46,7 @@ const emergenceCues: NarrationCue[] = [
 ];
 
 export default function MeditationSession({ onComplete, onExit }: MeditationSessionProps) {
-  const [phase, setPhase] = useState<MedPhase>("fixation");
+  const [phase, setPhase] = useState<MedPhase>("centering");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
   const [breathSlowdown, setBreathSlowdown] = useState(1.0);
@@ -115,6 +115,65 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
     },
     [speakNarration]
   );
+
+  // ---- CENTERING (breathing instructions) ----
+  useEffect(() => {
+    if (phase !== "centering") return;
+    setVignetteIntensity(0.1);
+    setBreathSlowdown(1.0);
+
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    // Delay first cue to let voice engine initialize
+    timers.push(setTimeout(() => {
+      speakNarration(
+        "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes...",
+        "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes..."
+      );
+      setCurrentNarration("Follow the dot with your eyes... keep your head still...");
+    }, 2000));
+    timers.push(setTimeout(() => setCurrentNarration(null), 12000));
+
+    timers.push(setTimeout(() => {
+      speakNarration(
+        "Now watch the circle... as it expands... breathe in slowly through your nose...",
+        "Now watch the circle... as it expands... breathe in slowly through your nose..."
+      );
+      setCurrentNarration("As the circle expands... breathe in...");
+    }, 16000));
+    timers.push(setTimeout(() => setCurrentNarration(null), 26000));
+
+    timers.push(setTimeout(() => {
+      speakNarration(
+        "As the circle holds... hold your breath gently...",
+        "As the circle holds... hold your breath gently..."
+      );
+      setCurrentNarration("As it holds... hold your breath...");
+    }, 30000));
+    timers.push(setTimeout(() => setCurrentNarration(null), 38000));
+
+    timers.push(setTimeout(() => {
+      speakNarration(
+        "And as it contracts... breathe out slowly through your mouth... letting everything release...",
+        "And as it contracts... breathe out slowly through your mouth... letting everything release..."
+      );
+      setCurrentNarration("As it contracts... breathe out...");
+    }, 42000));
+    timers.push(setTimeout(() => setCurrentNarration(null), 52000));
+
+    timers.push(setTimeout(() => {
+      speakNarration(
+        "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot...",
+        "That's it... let the circle guide you... breathe with it... and allow the rhythm to become yours... keeping your eyes on the dot..."
+      );
+      setCurrentNarration("Breathe with the circle... eyes on the dot...");
+    }, 56000));
+    timers.push(setTimeout(() => {
+      setCurrentNarration(null);
+      setPhase("fixation");
+    }, 66000));
+
+    return () => timers.forEach(clearTimeout);
+  }, [phase, speakNarration]);
 
   // ---- FIXATION (reuse trance script) ----
   useEffect(() => {
@@ -298,7 +357,7 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
   };
 
   const showPhotic = phase === "deepening" || phase === "staircase" || phase === "sustain";
-  const showEndButton = phase === "sustain" || phase === "staircase" || phase === "deepening";
+  const showEndButton = phase !== "emergence" && phase !== "complete";
 
   const bgColors: Record<string, string> = {
     fixation: "#0a0a14",
@@ -333,13 +392,22 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
       )}
 
       {/* Persistent EMDR dot — visible throughout induction phases */}
-      {(phase === "fixation" || phase === "deepening" || phase === "staircase" || phase === "sustain") && (
+      {(phase === "centering" || phase === "fixation" || phase === "deepening" || phase === "staircase" || phase === "sustain") && (
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
           <EmdrDot cycleDuration={phase === "sustain" ? 5 : 4} size={18} rangeVw={35} />
         </div>
       )}
 
       <AnimatePresence mode="wait">
+        {/* CENTERING — breathing instructions below circle */}
+        {phase === "centering" && (
+          <motion.div key="med-centering" className="absolute inset-0 flex items-end justify-center pb-[18%] z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+            {currentNarration && (
+              <p className="narration-text text-glow text-xl text-[#e8e0d4]/70 text-center max-w-lg px-4">{currentNarration}</p>
+            )}
+          </motion.div>
+        )}
+
         {/* FIXATION — no extra overlay needed, dot + circle are persistent */}
         {phase === "fixation" && (
           <motion.div key="med-fixation" className="absolute inset-0 z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} />

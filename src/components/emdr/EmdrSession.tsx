@@ -120,8 +120,8 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
     if (phase !== "safe-place-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot while holding your safe place in mind...", 6000,
-      "Follow the dot... while holding your safe place in mind...");
+    showNarr("Follow the dot with your eyes... keep your head still... hold your safe place in mind...", 7000,
+      "Follow the dot with your eyes... keep your head still... just your eyes... holding your safe place in mind...");
     // Safe place: minimum 20s (~20 slow passes) before continue appears
     const t = setTimeout(() => setShowBlsContinue(true), 20000);
     return () => clearTimeout(t);

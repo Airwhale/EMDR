@@ -134,8 +134,8 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
           "Follow the dot... notice what's still there...");
       }, 10000));
     } else {
-      timers.push(showNarr("Hold that scene in mind... follow the dot...", 5000,
-        "Hold that scene in mind... follow the dot..."));
+      timers.push(showNarr("Hold that scene in mind... follow the dot with your eyes... keep your head still...", 6000,
+        "Hold that scene in mind... follow the dot with your eyes... keep your head still... just your eyes..."));
       timers.push(setTimeout(() => {
         showNarr("Keep following... let whatever comes up just be there...", 5000,
           "Keep following... let whatever comes up... just be there...");

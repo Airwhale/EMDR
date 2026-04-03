@@ -46,8 +46,8 @@ export const sessionScript: PhaseConfig[] = [
     id: "fixation",
     narration: [
       {
-        text: "Let your eyes follow the dot... gently... naturally...",
-        spoken: "Let your eyes follow the dot... gently... naturally... back and forth... that's right...",
+        text: "Follow the dot with your eyes... keep your head still...",
+        spoken: "Follow the dot with your eyes... keep your head still... just your eyes... gently... back and forth... that's right...",
         delay: 3000,
         duration: BREATH_CYCLE,
       },
