@@ -70,8 +70,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
       {
-        text: "You don't need to try to relax... relaxation is already happening...",
-        spoken: "You don't need to try to relax... relaxation is already happening... all by itself... let go completely...",
+        text: "Relaxation is already happening... all by itself...",
+        spoken: "Relaxation is already happening... all by itself... let go completely...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
@@ -88,8 +88,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: BREATH_CYCLE,
       },
       {
-        text: "There's nothing you need to do... nowhere you need to be...",
-        spoken: "There's nothing you need to do... nowhere you need to be... just this moment... drifting... deeper and deeper...",
+        text: "You are free to simply be here... in this moment...",
+        spoken: "You are free to simply be here... in this moment... drifting... deeper and deeper...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
@@ -129,7 +129,7 @@ export const sessionScript: PhaseConfig[] = [
       },
       {
         text: "That feeling can drift upward, at whatever pace feels right...",
-        spoken: "That feeling... can drift upward... at whatever pace feels right for you... there is no hurry...",
+        spoken: "That feeling... can drift upward... at whatever pace feels right for you... take all the time you need...",
         delay: 7000,
         duration: 8000,
       },
@@ -140,8 +140,8 @@ export const sessionScript: PhaseConfig[] = [
         duration: 8000,
       },
       {
-        text: "Some people feel it as warmth... others as lightness... there's no wrong way...",
-        spoken: "Some people feel it as warmth... others as lightness... there's no wrong way... your unconscious mind knows exactly what to do...",
+        text: "Some people feel it as warmth... others as lightness... every way is the right way...",
+        spoken: "Some people feel it as warmth... others as lightness... every way is the right way... your unconscious mind knows exactly what to do...",
         delay: 7000,
         duration: 8000,
       },

@@ -25,7 +25,11 @@ const EXPERIMENT_ORDER: ExperimentId[] = ["arm", "time", "sensory", "pendulum"];
 
 type TrancePhase = Exclude<PhaseId, "entry">;
 
-export default function TranceSession() {
+interface TranceSessionProps {
+  onExit?: () => void;
+}
+
+export default function TranceSession({ onExit }: TranceSessionProps) {
   const [phase, setPhase] = useState<TrancePhase>("fixation");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [experimentIndex, setExperimentIndex] = useState(0);
@@ -293,6 +297,26 @@ export default function TranceSession() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Exit button */}
+      {onExit && phase !== "summary" && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.2 }}
+          whileHover={{ opacity: 0.6 }}
+          transition={{ duration: 0.8 }}
+          onClick={() => {
+            audioRef.current?.fadeOut(3);
+            setTimeout(() => audioRef.current?.stop(), 3500);
+            voiceRef.current?.stop();
+            onExit();
+          }}
+          className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
+                     hover:text-[#e8e0d4]/60 transition-colors duration-500"
+        >
+          ← exit
+        </motion.button>
+      )}
 
       <div className="fixed bottom-4 left-0 right-0 flex justify-between px-4 z-50">
         {phase !== "summary" && (

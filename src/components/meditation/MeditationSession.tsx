@@ -23,7 +23,7 @@ interface MeditationSessionProps {
 // Extended deepening narration — cycles through these during the sustained phase
 const sustainCues: NarrationCue[] = [
   { text: "deeper", spoken: "Sinking deeper... with every breath... that's right...", delay: 25000, duration: 6000 },
-  { text: "stillness", spoken: "There's nowhere to go... nothing to do... just this stillness...", delay: 25000, duration: 6000 },
+  { text: "stillness", spoken: "You are exactly where you need to be... surrounded by stillness...", delay: 25000, duration: 6000 },
   { text: "deeper", spoken: "Each exhale takes you further down... deeper... and deeper...", delay: 30000, duration: 6000 },
   { text: "peace", spoken: "Your mind is quiet... your body is soft... everything... is at peace...", delay: 30000, duration: 6000 },
   { text: "drifting", spoken: "You might notice how far you've drifted... and that's perfectly fine...", delay: 30000, duration: 6000 },
@@ -297,21 +297,32 @@ export default function MeditationSession({ onComplete, onExit }: MeditationSess
           </motion.div>
         )}
 
-        {/* DEEPENING */}
+        {/* DEEPENING — large circle stays centered, narration below */}
         {phase === "deepening" && (
-          <motion.div key="med-deepening" className="flex flex-col items-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
-            {showSpiral && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><HypnoticSpiral opacity={0.04} speed={8} size={600} /></div>}
-            <div className="flex-1 flex items-center justify-center"><NarrationDisplay text={currentNarration} size="large" /></div>
+          <motion.div key="med-deepening" className="flex flex-col items-center justify-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+            <div className="relative flex items-center justify-center">
+              {showSpiral && <HypnoticSpiral opacity={0.04} speed={8} size={600} />}
+              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
+            </div>
+            {currentNarration && (
+              <p className="narration-text text-glow text-xl text-[#e8e0d4]/60 mt-6 text-center max-w-xl px-4">{currentNarration}</p>
+            )}
           </motion.div>
         )}
 
-        {/* STAIRCASE */}
+        {/* STAIRCASE — large circle stays, numbers overlay on it */}
         {phase === "staircase" && (
-          <motion.div key="med-staircase" className="w-full h-full flex flex-col items-center z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <div className="absolute top-12"><BreathingGuide isActive={true} size="small" slowdown={breathSlowdown} /></div>
-            <div className="absolute top-32 z-10"><NarrationDisplay text={currentNarration} /></div>
-            <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
+          <motion.div key="med-staircase" className="flex flex-col items-center justify-center w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
+            <div className="relative flex items-center justify-center">
+              <BreathingGuide isActive={true} size="large" showSpiral={true} slowdown={breathSlowdown} />
+              {/* Staircase numbers overlaid on the circle */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Staircase isActive={true} onComplete={handleStaircaseComplete} onStep={handleStaircaseStep} />
+              </div>
+            </div>
+            {currentNarration && (
+              <p className="narration-text text-glow text-xl text-[#e8e0d4]/50 mt-6 text-center">{currentNarration}</p>
+            )}
           </motion.div>
         )}
 

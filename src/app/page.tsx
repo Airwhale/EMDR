@@ -274,7 +274,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <TranceSession />
+            <TranceSession onExit={handleStartNewSession} />
           </motion.div>
         )}
 
@@ -298,7 +298,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <EmdrSession onComplete={handleEmdrComplete} />
+            <EmdrSession onComplete={handleEmdrComplete} onExit={handleStartNewSession} />
           </motion.main>
         )}
 
@@ -310,7 +310,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <ArtSession onComplete={handleArtComplete} />
+            <ArtSession onComplete={handleArtComplete} onExit={handleStartNewSession} />
           </motion.main>
         )}
 

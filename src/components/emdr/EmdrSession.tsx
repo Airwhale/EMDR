@@ -27,6 +27,7 @@ type EmdrPhase =
 
 interface EmdrSessionProps {
   onComplete: (data: EmdrSummaryData) => void;
+  onExit?: () => void;
 }
 
 export interface EmdrSummaryData {
@@ -35,7 +36,7 @@ export interface EmdrSummaryData {
   exercisesCompleted: string[];
 }
 
-export default function EmdrSession({ onComplete }: EmdrSessionProps) {
+export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
   const [phase, setPhase] = useState<EmdrPhase>("sud-check");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
@@ -267,6 +268,26 @@ export default function EmdrSession({ onComplete }: EmdrSessionProps) {
             onContinue={blsContinueHandler}
           />
         </div>
+      )}
+
+      {/* Exit button */}
+      {onExit && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.2 }}
+          whileHover={{ opacity: 0.6 }}
+          transition={{ duration: 0.8 }}
+          onClick={() => {
+            audioRef.current?.fadeOut(3);
+            setTimeout(() => audioRef.current?.stop(), 3500);
+            voiceRef.current?.stop();
+            onExit();
+          }}
+          className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
+                     hover:text-[#e8e0d4]/60 transition-colors duration-500"
+        >
+          ← exit
+        </motion.button>
       )}
 
       <AnimatePresence mode="wait">

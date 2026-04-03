@@ -26,6 +26,7 @@ type ArtPhase =
 
 interface ArtSessionProps {
   onComplete: (data: ArtSummaryData) => void;
+  onExit?: () => void;
 }
 
 export interface ArtSummaryData {
@@ -40,7 +41,7 @@ const MAX_ROUNDS = 3;
 // Add buffer so user has time to settle — 35s before continue appears
 const ART_SET_DURATION = 35000;
 
-export default function ArtSession({ onComplete }: ArtSessionProps) {
+export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
   const [phase, setPhase] = useState<ArtPhase>("centering");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
@@ -279,6 +280,26 @@ export default function ArtSession({ onComplete }: ArtSessionProps) {
             onContinue={blsContinueHandler}
           />
         </div>
+      )}
+
+      {/* Exit button */}
+      {onExit && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.2 }}
+          whileHover={{ opacity: 0.6 }}
+          transition={{ duration: 0.8 }}
+          onClick={() => {
+            audioRef.current?.fadeOut(3);
+            setTimeout(() => audioRef.current?.stop(), 3500);
+            voiceRef.current?.stop();
+            onExit();
+          }}
+          className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
+                     hover:text-[#e8e0d4]/60 transition-colors duration-500"
+        >
+          ← exit
+        </motion.button>
       )}
 
       <AnimatePresence mode="wait">

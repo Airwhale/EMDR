@@ -41,7 +41,9 @@ export default function BreathingGuide({
   const glowControls = useAnimation();
   const dotControls = useAnimation();
 
-  const baseSize = size === "large" ? 350 : size === "full" ? 200 : 60;
+  // "large" uses viewport-relative sizing (40vh), "full" and "small" use fixed px
+  const isLarge = size === "large";
+  const baseSize = isLarge ? 0 : size === "full" ? 200 : 60;
 
   const runCycle = useCallback(async () => {
     if (!isActive) return;
@@ -98,19 +100,37 @@ export default function BreathingGuide({
     };
   }, [isActive, runCycle]);
 
+  // For "large" mode, sizes are viewport-relative strings; otherwise px numbers
+  const containerStyle = isLarge
+    ? { width: "80vmin", height: "80vmin" }
+    : { width: baseSize * 2, height: baseSize * 2 };
+  const ringSize = isLarge ? "40vmin" : `${baseSize}px`;
+  const glowSize = isLarge ? "60vmin" : `${baseSize * 1.5}px`;
+  const dotSize = isLarge ? "6vmin" : `${baseSize * 0.15}px`;
+  const spiralSize = isLarge ? "48vmin" : `${baseSize * 1.2}px`;
+
+  // Brighter colors for large/full modes
+  const ringBorder = isLarge || size === "full"
+    ? "rgba(201, 169, 110, 0.55)" : "rgba(201, 169, 110, 0.4)";
+  const ringShadow = isLarge || size === "full"
+    ? "0 0 40px rgba(201, 169, 110, 0.18), inset 0 0 40px rgba(201, 169, 110, 0.08)"
+    : "0 0 30px rgba(201, 169, 110, 0.1), inset 0 0 30px rgba(201, 169, 110, 0.05)";
+  const glowBg = isLarge || size === "full"
+    ? "radial-gradient(circle, rgba(201, 169, 110, 0.12) 0%, transparent 70%)"
+    : "radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%)";
+  const dotBg = isLarge || size === "full"
+    ? "radial-gradient(circle, rgba(201, 169, 110, 1) 0%, rgba(201, 169, 110, 0.3) 70%)"
+    : "radial-gradient(circle, rgba(201, 169, 110, 0.8) 0%, rgba(201, 169, 110, 0.2) 70%)";
+
   return (
-    <div
-      className="relative flex items-center justify-center"
-      style={{ width: baseSize * 2, height: baseSize * 2 }}
-    >
+    <div className="relative flex items-center justify-center" style={containerStyle}>
       {/* Outer glow */}
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: baseSize * 1.5,
-          height: baseSize * 1.5,
-          background:
-            "radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%)",
+          width: glowSize,
+          height: glowSize,
+          background: glowBg,
           willChange: "transform, opacity",
         }}
         animate={glowControls}
@@ -120,11 +140,10 @@ export default function BreathingGuide({
       <motion.div
         className="absolute rounded-full border"
         style={{
-          width: baseSize,
-          height: baseSize,
-          borderColor: "rgba(201, 169, 110, 0.4)",
-          boxShadow:
-            "0 0 30px rgba(201, 169, 110, 0.1), inset 0 0 30px rgba(201, 169, 110, 0.05)",
+          width: ringSize,
+          height: ringSize,
+          borderColor: ringBorder,
+          boxShadow: ringShadow,
           willChange: "transform, opacity",
         }}
         animate={controls}
@@ -134,10 +153,9 @@ export default function BreathingGuide({
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: baseSize * 0.15,
-          height: baseSize * 0.15,
-          background:
-            "radial-gradient(circle, rgba(201, 169, 110, 0.8) 0%, rgba(201, 169, 110, 0.2) 70%)",
+          width: dotSize,
+          height: dotSize,
+          background: dotBg,
           willChange: "transform, opacity",
         }}
         animate={dotControls}
@@ -147,8 +165,8 @@ export default function BreathingGuide({
       <motion.div
         className="absolute rounded-full spiral-texture"
         style={{
-          width: baseSize * 1.2,
-          height: baseSize * 1.2,
+          width: spiralSize,
+          height: spiralSize,
           willChange: "transform",
         }}
         animate={{ rotate: 360, opacity: showSpiral ? 1 : 0 }}
