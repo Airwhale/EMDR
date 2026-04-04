@@ -315,10 +315,25 @@ export default function App() {
                   </p>
                 </button>
               </div>
+
+              {/* Epilepsy/photosensitivity notice — meditation-specific */}
+              <p className="text-[10px] text-[#e8e0d4]/30 font-light text-center max-w-xs">
+                Meditation includes subtle visual flickering. If you have epilepsy or photosensitivity,
+                please{" "}
+                <button
+                  onClick={() => {
+                    sessionStorage.setItem("trance.photosensitive", "true");
+                  }}
+                  className="text-gold/50 underline hover:text-gold/80 transition-colors"
+                >
+                  click here to disable flickering effects
+                </button>.
+              </p>
+
               <button
                 onClick={() => setAppState("mode-select")}
                 className="ui-text text-[10px] text-[#e8e0d4]/30 hover:text-[#e8e0d4]/60
-                           transition-colors duration-500 mt-4"
+                           transition-colors duration-500"
               >
                 ← back
               </button>
