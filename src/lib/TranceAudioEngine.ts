@@ -163,6 +163,20 @@ export class TranceAudioEngine {
     osc.stop(now + 1.3);
   }
 
+  /** Mute binaural drone (set gain to 0) */
+  muteBinaural(): void {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    if (this.droneGain) {
+      this.droneGain.gain.setValueAtTime(this.droneGain.gain.value, now);
+      this.droneGain.gain.linearRampToValueAtTime(0, now + 2);
+    }
+    if (this.drone2Gain) {
+      this.drone2Gain.gain.setValueAtTime(this.drone2Gain.gain.value, now);
+      this.drone2Gain.gain.linearRampToValueAtTime(0, now + 2);
+    }
+  }
+
   /** Modulate binaural drone volume to follow the breathing cycle.
    *  scale: 0 = quieter (exhale/hold), 1 = louder (inhale peak) */
   setBreathDroneModulation(scale: number, duration: number = 2): void {
@@ -194,7 +208,7 @@ export class TranceAudioEngine {
     this.droneFilter.Q.value = 1;
 
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = this.mode === "trance" ? 0.4 : 0.3;
+    this.droneGain.gain.value = this.mode === "trance" ? 0.3 : 0.2;
 
     this.droneOscL = this.ctx.createOscillator();
     this.droneOscL.type = "sine";
@@ -293,7 +307,7 @@ export class TranceAudioEngine {
     this.drone2Filter.Q.value = 0.7;
 
     this.drone2Gain = this.ctx.createGain();
-    this.drone2Gain.gain.value = 0.12; // Quieter than primary layer
+    this.drone2Gain.gain.value = 0.08; // Quieter than primary layer
 
     this.drone2BaseFreq = 200;
 

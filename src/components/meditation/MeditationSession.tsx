@@ -21,6 +21,7 @@ interface MeditationSessionProps {
   onExit: () => void;
   /** If true, skip all voice narration and countdown — visual + audio only */
   silent?: boolean;
+  binauralEnabled?: boolean;
 }
 
 // Extended deepening narration — cycles through these during the sustained phase.
@@ -70,7 +71,7 @@ const emergenceCues: NarrationCue[] = [
   { text: "5 — eyes open, fully present, deeply at peace.", spoken: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you.", delay: 7000, duration: 8000 },
 ];
 
-export default function MeditationSession({ onComplete, onExit, silent = false }: MeditationSessionProps) {
+export default function MeditationSession({ onComplete, onExit, silent = false, binauralEnabled = true }: MeditationSessionProps) {
   const [phase, setPhase] = useState<MedPhase>(silent ? "sustain" : "centering");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
@@ -88,6 +89,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false }
   useEffect(() => {
     const audio = new TranceAudioEngine();
     audio.init("trance");
+    if (!binauralEnabled) audio.muteBinaural();
     audioRef.current = audio;
 
     if (silent) {

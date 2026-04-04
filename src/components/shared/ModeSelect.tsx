@@ -7,6 +7,8 @@ export type SessionMode = "trance" | "emdr" | "art" | "meditation" | "lateral";
 
 interface ModeSelectProps {
   onSelect: (mode: SessionMode) => void;
+  binauralEnabled: boolean;
+  onBinauralToggle: (enabled: boolean) => void;
 }
 
 const modes: { id: SessionMode; title: string; subtitle: string; description: string }[] = [
@@ -48,7 +50,7 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
   // },
 ];
 
-export default function ModeSelect({ onSelect }: ModeSelectProps) {
+export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle }: ModeSelectProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -118,6 +120,30 @@ export default function ModeSelect({ onSelect }: ModeSelectProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Binaural toggle */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.6 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+        className="flex items-center gap-3"
+      >
+        <button
+          onClick={() => onBinauralToggle(!binauralEnabled)}
+          className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
+            binauralEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
+          }`}
+        >
+          <div
+            className={`w-4 h-4 rounded-full bg-[#e8e0d4]/80 absolute top-0.5 transition-all duration-300 ${
+              binauralEnabled ? "left-5" : "left-0.5"
+            }`}
+          />
+        </button>
+        <span className="ui-text text-[10px] text-[#e8e0d4]/40">
+          binaural tones {binauralEnabled ? "on" : "off"}
+        </span>
+      </motion.div>
     </motion.div>
   );
 }

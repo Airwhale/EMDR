@@ -31,6 +31,7 @@ export default function App() {
   const [entryTextVisible, setEntryTextVisible] = useState(false);
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
   const [meditationSilent, setMeditationSilent] = useState(false);
+  const [binauralEnabled, setBinauralEnabled] = useState(true);
 
   // EMDR/ART summary data
   const [endSummary, setEndSummary] = useState<EndSummary | null>(null);
@@ -271,7 +272,7 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <ModeSelect onSelect={handleModeSelect} />
+            <ModeSelect onSelect={handleModeSelect} binauralEnabled={binauralEnabled} onBinauralToggle={setBinauralEnabled} />
           </motion.main>
         )}
 
@@ -347,7 +348,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} />
+            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} binauralEnabled={binauralEnabled} />
           </motion.div>
         )}
 
@@ -359,7 +360,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <EmdrSession onComplete={handleEmdrComplete} onExit={handleStartNewSession} />
+            <EmdrSession onComplete={handleEmdrComplete} onExit={handleStartNewSession} binauralEnabled={binauralEnabled} />
           </motion.main>
         )}
 
@@ -371,7 +372,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <ArtSession onComplete={handleArtComplete} onExit={handleStartNewSession} />
+            <ArtSession onComplete={handleArtComplete} onExit={handleStartNewSession} binauralEnabled={binauralEnabled} />
           </motion.main>
         )}
 

@@ -28,6 +28,7 @@ type EmdrPhase =
 interface EmdrSessionProps {
   onComplete: (data: EmdrSummaryData) => void;
   onExit?: () => void;
+  binauralEnabled?: boolean;
 }
 
 export interface EmdrSummaryData {
@@ -36,7 +37,7 @@ export interface EmdrSummaryData {
   exercisesCompleted: string[];
 }
 
-export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
+export default function EmdrSession({ onComplete, onExit, binauralEnabled = true }: EmdrSessionProps) {
   const [phase, setPhase] = useState<EmdrPhase>("sud-check");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
@@ -53,6 +54,7 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
     const audio = new TranceAudioEngine();
     audio.init("emdr");
     audio.fadeIn(8, 0.5);
+    if (!binauralEnabled) audio.muteBinaural();
     audioRef.current = audio;
 
     const voice = new TranceVoice();
@@ -83,16 +85,15 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "centering") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    // Small delay to ensure voice engine is ready
     timers.push(setTimeout(() => {
-      showNarr("Take a slow, deep breath... let your body settle...", 7000,
+      showNarr("Take a slow, deep breath... let your body settle...", 6000,
         "Take a slow... deep breath... let your body settle...");
     }, 1500));
     timers.push(setTimeout(() => {
-      showNarr("Feel the surface beneath you... notice the air on your skin...", 7000,
+      showNarr("Feel the surface beneath you... notice the air on your skin...", 6000,
         "Feel the surface beneath you... notice the air on your skin...");
-    }, 10500));
-    timers.push(setTimeout(() => setPhase("safe-place"), 21500));
+    }, 8500));
+    timers.push(setTimeout(() => setPhase("safe-place"), 16000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -100,18 +101,18 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "safe-place") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace...", 8000,
+    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace...", 7000,
       "In your mind... think of a place... where you feel completely safe... and at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 8000,
+      showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 7000,
         "Notice the colors... the sounds... and the temperature of this place... in your mind...");
-    }, 10000));
+    }, 8000));
     timers.push(setTimeout(() => {
-      showNarr("Choose a single word that represents this place...", 7000,
+      showNarr("Choose a single word that represents this place...", 6000,
         "Choose a single word... that represents this safe place...");
-    }, 20000));
-    timers.push(setTimeout(() => showNarr("Hold that image and word in mind...", 5000), 29000));
-    timers.push(setTimeout(() => setPhase("safe-place-bls"), 36000));
+    }, 16000));
+    timers.push(setTimeout(() => showNarr("Hold that image and word in mind...", 4000), 23000));
+    timers.push(setTimeout(() => setPhase("safe-place-bls"), 28000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -144,17 +145,17 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "container") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, imagine a strong container — a box, a vault, anything that locks securely...", 8000,
+    timers.push(showNarr("In your mind, imagine a strong container — a box, a vault, anything that locks securely...", 7000,
       "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."));
     timers.push(setTimeout(() => {
-      showNarr("Place anything that's been bothering you inside... close the lid firmly...", 8000,
+      showNarr("Place anything that's been bothering you inside... close the lid firmly...", 7000,
         "Place anything that's been bothering you inside... close the lid firmly...");
-    }, 10000));
+    }, 8000));
     timers.push(setTimeout(() => {
-      showNarr("It's held safely there. Not gone — just contained for now...", 7000,
+      showNarr("It's held safely there. Not gone — just contained for now...", 6000,
         "It's held safely there... not gone... just contained for now...");
-    }, 20000));
-    timers.push(setTimeout(() => setPhase("container-bls"), 29000));
+    }, 16000));
+    timers.push(setTimeout(() => setPhase("container-bls"), 23000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -181,17 +182,17 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "resource") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, think of a time you felt strong, capable, or deeply at peace...", 8000,
+    timers.push(showNarr("In your mind, think of a time you felt strong, capable, or deeply at peace...", 7000,
       "In your mind... think of a time... you felt strong... capable... or deeply at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("In your mind, step into that memory... feel it in your body...", 7000,
+      showNarr("In your mind, step into that memory... feel it in your body...", 6000,
         "In your mind... step into that memory... feel it... in your body...");
-    }, 10000));
+    }, 8000));
     timers.push(setTimeout(() => {
-      showNarr("Where in your body do you feel that strength or peace? Let the feeling expand...", 7000,
+      showNarr("Where in your body do you feel that strength or peace? Let the feeling expand...", 6000,
         "Where in your body do you feel that strength... or peace... let the feeling expand...");
-    }, 19000));
-    timers.push(setTimeout(() => setPhase("resource-bls"), 28000));
+    }, 15000));
+    timers.push(setTimeout(() => setPhase("resource-bls"), 22000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -218,13 +219,13 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
   useEffect(() => {
     if (phase !== "body-scan") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Scan your body from head to toe... notice how you feel now...", 8000,
+    timers.push(showNarr("Scan your body from head to toe... notice how you feel now...", 7000,
       "Scan your body from head to toe... notice how you feel now..."));
     timers.push(setTimeout(() => {
-      showNarr("Observe any changes without judgment...", 6000,
+      showNarr("Observe any changes without judgment...", 5000,
         "Observe any changes... without judgment...");
-    }, 10000));
-    timers.push(setTimeout(() => setPhase("closing"), 20000));
+    }, 8000));
+    timers.push(setTimeout(() => setPhase("closing"), 15000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -234,7 +235,7 @@ export default function EmdrSession({ onComplete, onExit }: EmdrSessionProps) {
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr("Take a deep breath... you can return to your safe place anytime you need...", 8000,
       "Take a deep breath... you can return to your safe place... anytime you need..."));
-    timers.push(setTimeout(() => { setNarration(null); setSudEnd(-1); }, 12000));
+    timers.push(setTimeout(() => { setNarration(null); setSudEnd(-1); }, 9000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 

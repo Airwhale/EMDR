@@ -27,6 +27,7 @@ type ArtPhase =
 interface ArtSessionProps {
   onComplete: (data: ArtSummaryData) => void;
   onExit?: () => void;
+  binauralEnabled?: boolean;
 }
 
 export interface ArtSummaryData {
@@ -41,7 +42,7 @@ const MAX_ROUNDS = 3;
 // Add buffer so user has time to settle — 35s before continue appears
 const ART_SET_DURATION = 35000;
 
-export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
+export default function ArtSession({ onComplete, onExit, binauralEnabled = true }: ArtSessionProps) {
   const [phase, setPhase] = useState<ArtPhase>("centering");
   const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
@@ -59,6 +60,7 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
     const audio = new TranceAudioEngine();
     audio.init("art");
     audio.fadeIn(6, 0.5);
+    if (!binauralEnabled) audio.muteBinaural();
     audioRef.current = audio;
 
     const voice = new TranceVoice();
@@ -85,12 +87,12 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
     const timers: ReturnType<typeof setTimeout>[] = [];
     // Small delay to let voice engine initialize before first spoken cue
     timers.push(setTimeout(() => {
-      showNarr("Take a deep breath... settle into this moment...", 7000);
+      showNarr("Take a deep breath... settle into this moment...", 6000);
     }, 1500));
     timers.push(setTimeout(() => {
-      showNarr("Let your body relax... feel the ground beneath you...", 7000);
-    }, 10500));
-    timers.push(setTimeout(() => setPhase("scene-select"), 21500));
+      showNarr("Let your body relax... feel the ground beneath you...", 6000);
+    }, 8500));
+    timers.push(setTimeout(() => setPhase("scene-select"), 16000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -99,13 +101,13 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
     if (phase !== "scene-select") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr(
-      "Think of something stressful. You don't need to describe it — just bring it to mind...", 8000,
+      "Think of something stressful. You don't need to describe it — just bring it to mind...", 7000,
       "Think of something stressful... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
-      showNarr("See it like a scene in a movie in your mind... notice the details...", 7000,
+      showNarr("See it like a scene in a movie in your mind... notice the details...", 6000,
         "See it like a scene in a movie... in your mind... notice the details...");
-    }, 10000));
-    timers.push(setTimeout(() => setPhase("sud-initial"), 20000));
+    }, 8000));
+    timers.push(setTimeout(() => setPhase("sud-initial"), 16000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -159,7 +161,7 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr("Where do you feel the tension or discomfort in your body? Focus on that place...", 7000,
       "Where do you feel the tension... or discomfort... in your body... focus on that place..."));
-    timers.push(setTimeout(() => setPhase("sensation-bls"), 9000));
+    timers.push(setTimeout(() => setPhase("sensation-bls"), 8000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -185,13 +187,13 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Now — in your mind, change the scene. You're in control of this image...", 7000,
+    timers.push(showNarr("Now — in your mind, change the scene. You're in control of this image...", 6000,
       "Now... in your mind... change the scene. You're in control of this image..."));
     timers.push(setTimeout(() => {
-      showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 8000,
+      showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 7000,
         "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
-    }, 9000));
-    timers.push(setTimeout(() => setPhase("vir-bls"), 18000));
+    }, 7000));
+    timers.push(setTimeout(() => setPhase("vir-bls"), 15000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -233,11 +235,11 @@ export default function ArtSession({ onComplete, onExit }: ArtSessionProps) {
   useEffect(() => {
     if (phase !== "body-scan") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Scan your body from head to toe... notice what has shifted...", 7000));
+    timers.push(showNarr("Scan your body from head to toe... notice what has shifted...", 6000));
     timers.push(setTimeout(() => {
-      showNarr("Observe without judgment...", 5000, "Observe... without judgment...");
-    }, 9000));
-    timers.push(setTimeout(() => setPhase("closing"), 18000));
+      showNarr("Observe without judgment...", 4000, "Observe... without judgment...");
+    }, 7000));
+    timers.push(setTimeout(() => setPhase("closing"), 13000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
