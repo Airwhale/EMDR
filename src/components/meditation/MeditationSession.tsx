@@ -375,8 +375,18 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
 
   // ---- END MEDITATION (user-triggered) ----
   const handleEndMeditation = useCallback(() => {
-    setPhase("emergence");
-  }, []);
+    if (silent) {
+      // Silent mode: skip emergence, go straight to exit
+      audioRef.current?.fadeOut(3);
+      setTimeout(() => {
+        audioRef.current?.stop();
+        voiceRef.current?.stop();
+        onExit();
+      }, 3500);
+    } else {
+      setPhase("emergence");
+    }
+  }, [silent, onExit]);
 
   // ---- EMERGENCE ----
   useEffect(() => {
