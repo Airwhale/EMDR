@@ -13,12 +13,12 @@ interface ButterflyHugProps {
 }
 
 const narration = [
-  { text: "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone...", delay: 0, duration: 10000 },
-  { text: "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone...", delay: 11000, duration: 10000 },
-  { text: "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...", delay: 11000, duration: 9000 },
-  { text: "Keep tapping steadily on your upper chest... each tap light and rhythmic...", delay: 10000, duration: 8000 },
-  { text: "Notice any sensations in your body as you tap... just observe them...", delay: 9000, duration: 8000 },
-  { text: "Continue tapping for a few more moments... feeling calmer with each tap...", delay: 9000, duration: 8000 },
+  { text: "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone...", delay: 0, duration: 7000 },
+  { text: "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone...", delay: 8000, duration: 7000 },
+  { text: "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...", delay: 8000, duration: 7000 },
+  { text: "Keep tapping steadily on your upper chest... each tap light and rhythmic...", delay: 8000, duration: 7000 },
+  { text: "Notice any sensations in your body as you tap... just observe them...", delay: 8000, duration: 7000 },
+  { text: "Continue tapping for a few more moments... feeling calmer with each tap...", delay: 8000, duration: 7000 },
 ];
 
 export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugProps) {
@@ -48,7 +48,7 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
     timers.push(setTimeout(() => {
       setShowPose(false);
       setTapping(true);
-    }, 21000));
+    }, 15000));
     timers.push(setTimeout(() => {
       setTapping(false);
       onComplete();
