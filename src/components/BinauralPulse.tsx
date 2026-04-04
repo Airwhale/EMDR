@@ -28,7 +28,10 @@ export default function BinauralPulse({
   intensityRef.current = intensity;
 
   useEffect(() => {
-    if (!active || !elRef.current) {
+    const reducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const photosensitive = typeof sessionStorage !== "undefined" && sessionStorage.getItem("trance.photosensitive") === "true";
+
+    if (!active || !elRef.current || reducedMotion || photosensitive) {
       if (elRef.current) elRef.current.style.opacity = "0";
       cancelAnimationFrame(rafRef.current);
       return;

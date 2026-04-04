@@ -43,10 +43,14 @@ export function loadAppSnapshot(): AppSnapshot | null {
 
 export function saveAppSnapshot(snapshot: AppSnapshot): void {
   if (!hasStorage()) return;
-  window.localStorage.setItem(APP_SNAPSHOT_KEY, JSON.stringify({
-    ...snapshot,
-    version: SNAPSHOT_VERSION,
-  }));
+  try {
+    window.localStorage.setItem(APP_SNAPSHOT_KEY, JSON.stringify({
+      ...snapshot,
+      version: SNAPSHOT_VERSION,
+    }));
+  } catch {
+    // QuotaExceededError or other storage failure — silently continue
+  }
 }
 
 export function clearAppSnapshot(): void {
@@ -56,7 +60,7 @@ export function clearAppSnapshot(): void {
 
 export function saveLatestEndSummary(summary: EndSummary): void {
   if (!hasStorage()) return;
-  window.localStorage.setItem(END_SUMMARY_KEY, JSON.stringify(summary));
+  try { window.localStorage.setItem(END_SUMMARY_KEY, JSON.stringify(summary)); } catch { /* quota */ }
 }
 
 export function loadLatestEndSummary(): EndSummary | null {
@@ -68,7 +72,7 @@ export function appendSummaryToHistory(summary: EndSummary, maxItems: number = 1
   if (!hasStorage()) return [];
   const existing = loadSummaryHistory();
   const next = clampHistory([summary, ...existing], maxItems);
-  window.localStorage.setItem(END_SUMMARY_HISTORY_KEY, JSON.stringify(next));
+  try { window.localStorage.setItem(END_SUMMARY_HISTORY_KEY, JSON.stringify(next)); } catch { /* quota */ }
   return next;
 }
 
@@ -90,7 +94,7 @@ export function loadTrancePrefs(): TrancePrefs {
 
 export function saveTrancePrefs(prefs: TrancePrefs): void {
   if (!hasStorage()) return;
-  window.localStorage.setItem(TRANCE_PREFS_KEY, JSON.stringify(prefs));
+  try { window.localStorage.setItem(TRANCE_PREFS_KEY, JSON.stringify(prefs)); } catch { /* quota */ }
 }
 
 export function hasAcknowledgedSafety(): boolean {
@@ -100,7 +104,7 @@ export function hasAcknowledgedSafety(): boolean {
 
 export function saveSafetyAcknowledged(): void {
   if (!hasStorage()) return;
-  window.localStorage.setItem(SAFETY_ACK_KEY, "true");
+  try { window.localStorage.setItem(SAFETY_ACK_KEY, "true"); } catch { /* quota exceeded */ }
 }
 
 export function clearAllSessionHistory(): void {

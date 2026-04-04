@@ -112,6 +112,17 @@ export default function SessionEndSummary({
             : "With ART, the original memory remains but the emotional charge often diminishes. The changed version of the scene you created can become the image your mind returns to when the memory arises."}
         </motion.p>
 
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.8, duration: 1.5 }}
+          className="text-xs text-[#e8e0d4]/35 font-light leading-relaxed text-center mb-8 max-w-md mx-auto"
+        >
+          Success looks different for everyone. You might notice the memory feels less vivid,
+          or a shift in how you think about it, or simply feeling calmer. Whatever you noticed is valid.
+          The effects tend to deepen with repeated sessions.
+        </motion.p>
+
         {history.length > 1 && (
           <motion.div
             initial={{ opacity: 0 }}

@@ -92,3 +92,16 @@ body {
   background: rgba(201, 169, 110, 0.2);
   color: #e8e0d4;
 }
+
+/* Reduced motion — disable photic flicker, spiral, pulse, particles */
+@media (prefers-reduced-motion: reduce) {
+  .particle { animation: none !important; }
+  .spiral-texture { animation: none !important; }
+}
+
+/* Focus visibility for keyboard navigation */
+:focus-visible {
+  outline: 2px solid rgba(201, 169, 110, 0.6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

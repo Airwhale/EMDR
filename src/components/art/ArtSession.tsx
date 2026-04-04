@@ -8,6 +8,7 @@ import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
+import AdverseEventFlow from "../shared/AdverseEventFlow";
 
 type ArtPhase =
   | "centering"
@@ -53,6 +54,8 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   const [readyTarget, setReadyTarget] = useState<ArtPhase | null>(null);
   const [showSudRecheck, setShowSudRecheck] = useState(false);
   const [showSudFinal, setShowSudFinal] = useState(false);
+  const [groundingAttempted, setGroundingAttempted] = useState(false);
+  const [showAdverseEvent, setShowAdverseEvent] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
   const audioRef = useRef<TranceAudioEngine | null>(null);
@@ -103,8 +106,8 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     if (phase !== "scene-select") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr(
-      "Think of something stressful. You don't need to describe it — just bring it to mind...", 7000,
-      "Think of something stressful... you don't need to describe it... just bring it to mind..."));
+      "Choose a specific stressful moment — a single scene you can picture, like a snapshot...", 7000,
+      "Choose a specific stressful moment... a single scene you can picture... like a snapshot... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
       showNarr("See it like a scene in a movie in your mind... notice the details...", 6000,
         "See it like a scene in a movie... in your mind... notice the details...");
@@ -116,9 +119,17 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- INITIAL SUD ----
   const handleSudInitial = useCallback((rating: number) => {
     setSudStart(rating);
-    if (rating > 6) { setPhase("grounding"); }
-    else { setRound(1); setPhase("processing"); }
-  }, []);
+    if (rating > 6) {
+      if (groundingAttempted && rating >= 9) {
+        setShowAdverseEvent(true);
+        return;
+      }
+      setPhase("grounding");
+    } else {
+      setRound(1);
+      setPhase("processing");
+    }
+  }, [groundingAttempted]);
 
   const handleReady = useCallback(() => {
     if (readyTarget) {
@@ -128,7 +139,11 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     }
   }, [readyTarget]);
 
-  const handleGroundingComplete = useCallback(() => setPhase("centering"), []);
+  const handleGroundingComplete = useCallback(() => {
+    setGroundingAttempted(true);
+    setPhase("sud-initial");
+    setSudStart(null);
+  }, []);
 
   // ---- PROCESSING (40 passes ≈ 28s, then continue button) ----
   useEffect(() => {
@@ -200,8 +215,8 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Now — in your mind, change the scene. You're in control of this image...", 6000,
-      "Now... in your mind... change the scene. You're in control of this image..."));
+    timers.push(showNarr("Now — imagine this moment going the way you wanted. Create a new version you can remember instead...", 7000,
+      "Now... imagine this moment going the way you wanted... you're in control of this image... create a new version... a new ending... that you can remember instead..."));
     timers.push(setTimeout(() => {
       showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 7000,
         "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
@@ -239,7 +254,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
   const handleSudRecheck = useCallback((rating: number) => {
     setShowSudRecheck(false);
-    if (rating > 2 && round < MAX_ROUNDS) {
+    if (rating > 2) {
       setRound((r) => r + 1);
       setPhase("processing");
     } else {
@@ -282,6 +297,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     : undefined;
 
   const isBls = blsActive;
+
+  if (showAdverseEvent) {
+    return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
+  }
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">

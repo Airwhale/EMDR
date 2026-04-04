@@ -25,7 +25,7 @@ const sections: Section[] = [
     title: "What is ART?",
     content:
       "ART (Accelerated Resolution Therapy) is a newer, directive therapy developed by Laney Rosenzweig. While both ART and EMDR use bilateral eye movements, they differ in important ways. EMDR uses shorter sets of eye movements and allows the mind to freely associate between memories — the process is open-ended and exploratory. ART, by contrast, is highly scripted and directive: it uses longer, faster sets of eye movements and follows a fixed sequence of steps. The most distinctive difference is ART's Voluntary Image Replacement technique — after processing a scene with eye movements, you are guided to change the scene in your mind. You might change what happens, who is there, how it looks, or how it ends. You are in control of the image, reshaping it into something that feels better. Another key difference: ART does not require you to describe or share what you're processing. You simply bring the scene to mind privately, process it, and change it. Our ART mode guides you through this process for stressful memories.",
-    link: { label: "Learn more about ART →", url: "https://acceleratedresolutiontherapy.com/about-art/" },
+    link: { label: "Learn more about ART →", url: "https://acceleratedresolutiontherapy.com/" },
   },
   {
     title: "Why would I want to do this?",

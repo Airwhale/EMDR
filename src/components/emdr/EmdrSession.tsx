@@ -8,6 +8,7 @@ import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
+import AdverseEventFlow from "../shared/AdverseEventFlow";
 import ButterflyHug from "./ButterflyHug";
 
 type EmdrPhase =
@@ -47,6 +48,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   const [showReady, setShowReady] = useState(false);
   const [readyTarget, setReadyTarget] = useState<EmdrPhase | null>(null);
   const [showBlsContinue, setShowBlsContinue] = useState(false);
+  const [groundingAttempted, setGroundingAttempted] = useState(false);
+  const [showAdverseEvent, setShowAdverseEvent] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
   const audioRef = useRef<TranceAudioEngine | null>(null);
@@ -81,8 +84,17 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- SUD CHECK (initial) ----
   const handleSudStart = useCallback((rating: number) => {
     setSudStart(rating);
-    setPhase(rating > 5 ? "grounding" : "centering");
-  }, []);
+    if (rating > 5) {
+      if (groundingAttempted && rating >= 9) {
+        // SUD still very high after grounding — trigger adverse event flow
+        setShowAdverseEvent(true);
+        return;
+      }
+      setPhase("grounding");
+    } else {
+      setPhase("centering");
+    }
+  }, [groundingAttempted]);
 
   // ---- CENTERING ----
   useEffect(() => {
@@ -105,7 +117,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "safe-place") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace...", 7000,
-      "In your mind... think of a place... where you feel completely safe... and at peace..."));
+      "In your mind... think of a place... where you feel completely safe... and at peace... It could be a real place... an imagined one... a color... or simply being with someone who makes you feel safe..."));
     timers.push(setTimeout(() => {
       showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 7000,
         "Notice the colors... the sounds... and the temperature of this place... in your mind...");
@@ -265,7 +277,11 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     }
   }, [readyTarget]);
 
-  const handleGroundingComplete = useCallback(() => setPhase("centering"), []);
+  const handleGroundingComplete = useCallback(() => {
+    setGroundingAttempted(true);
+    setPhase("sud-check");
+    setSudStart(null); // Re-prompt SUD after grounding
+  }, []);
 
   // Determine BLS continue handler based on current phase
   const blsContinueHandler =
@@ -273,6 +289,11 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     : phase === "container-bls" ? handleContainerContinue
     : phase === "resource-bls" ? handleResourceContinue
     : undefined;
+
+  // Adverse event flow
+  if (showAdverseEvent) {
+    return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
+  }
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">

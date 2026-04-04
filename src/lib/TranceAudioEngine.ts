@@ -57,7 +57,12 @@ export class TranceAudioEngine {
     if (this.ctx) return;
 
     this.mode = mode;
-    this.ctx = new AudioContext();
+    try {
+      this.ctx = new AudioContext();
+    } catch (e) {
+      console.warn("AudioContext initialization failed:", e);
+      return;
+    }
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0;
     this.masterGain.connect(this.ctx.destination);

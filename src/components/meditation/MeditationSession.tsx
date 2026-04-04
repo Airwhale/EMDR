@@ -365,11 +365,17 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       return [showTimer, hideTimer, nextTimer];
     };
 
+    // 2-hour session cap — auto-emerge
+    const sessionCapTimer = setTimeout(() => {
+      setPhase("emergence");
+    }, 7200000); // 2 hours
+
     const timers = runNextCue();
     return () => {
       timers.forEach(clearTimeout);
       binauralTimers.forEach(clearTimeout);
       anchoringTimers.forEach(clearTimeout);
+      clearTimeout(sessionCapTimer);
     };
   }, [phase, speakNarration]);
 

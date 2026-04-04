@@ -25,6 +25,14 @@ export default function SudCheck({
       <p className="narration-text text-xl text-[#e8e0d4]/80 text-center max-w-md">
         {prompt}
       </p>
+      {/* Anchor descriptions */}
+      <div className="flex justify-between w-full max-w-[460px] text-center">
+        <span className="ui-text text-[9px] text-[#e8e0d4]/35 w-16">calm</span>
+        <span className="ui-text text-[9px] text-[#e8e0d4]/35 w-16">mild</span>
+        <span className="ui-text text-[9px] text-[#e8e0d4]/35 w-16">moderate</span>
+        <span className="ui-text text-[9px] text-[#e8e0d4]/35 w-16">high</span>
+        <span className="ui-text text-[9px] text-[#e8e0d4]/35 w-16">severe</span>
+      </div>
       <div className="flex items-center gap-1">
         {Array.from({ length: 11 }, (_, i) => (
           <button
@@ -32,6 +40,7 @@ export default function SudCheck({
             onClick={() => onRate(i)}
             className="w-10 h-10 rounded-full border border-gold/35 text-gold/75 text-sm
                        hover:border-gold/70 hover:text-gold hover:bg-gold/5
+                       focus:outline-none focus:ring-2 focus:ring-gold/50
                        transition-all duration-300 flex items-center justify-center"
           >
             {i}

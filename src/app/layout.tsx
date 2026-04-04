@@ -15,6 +15,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-trance-dark text-foreground min-h-screen">
+        <noscript>
+          <div style={{ padding: "2rem", textAlign: "center", color: "#e8e0d4" }}>
+            <h1>JavaScript Required</h1>
+            <p>This experience requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+          </div>
+        </noscript>
         {children}
       </body>
     </html>
