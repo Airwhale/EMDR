@@ -137,14 +137,11 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       cues.forEach((cue) => {
         cumulative += cue.delay;
         const show = cumulative;
-        const hide = show + cue.duration;
         timers.push(setTimeout(() => {
-          if (narrationHideRef.current) clearTimeout(narrationHideRef.current);
           setCurrentNarration(cue.text);
           speakNarration(cue.text, cue.spoken);
-          narrationHideRef.current = setTimeout(() => setCurrentNarration(null), cue.duration);
         }, show));
-        cumulative = hide;
+        cumulative = show + cue.duration;
       });
 
       if (onDone) {

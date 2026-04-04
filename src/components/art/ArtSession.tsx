@@ -78,11 +78,9 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showNarr = useCallback((text: string, duration: number, spoken?: string) => {
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     setNarration(text);
     speak(spoken || text);
-    hideTimerRef.current = setTimeout(() => setNarration(null), duration);
-    return hideTimerRef.current;
+    return null as unknown as ReturnType<typeof setTimeout>;
   }, [speak]);
 
   // ---- CENTERING ----
