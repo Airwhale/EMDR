@@ -37,8 +37,6 @@ export interface ArtSummaryData {
   rounds: number;
 }
 
-const MAX_ROUNDS = 3;
-
 // ART uses ~40 passes per set at 0.35s half-cycle ≈ 28s minimum
 // Add buffer so user has time to settle — 35s before continue appears
 const ART_SET_DURATION = 35000;
