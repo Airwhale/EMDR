@@ -75,8 +75,6 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     voiceRef.current?.speak(text);
   }, []);
 
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const showNarr = useCallback((text: string, duration: number, spoken?: string) => {
     setNarration(text);
     speak(spoken || text);

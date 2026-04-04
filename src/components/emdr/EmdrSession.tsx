@@ -69,8 +69,6 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     voiceRef.current?.speak(text);
   }, []);
 
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const showNarr = useCallback((text: string, duration: number, spokenText?: string) => {
     setNarration(text);
     speak(spokenText || text);

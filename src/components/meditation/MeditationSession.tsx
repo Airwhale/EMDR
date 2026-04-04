@@ -127,8 +127,6 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     [voiceEnabled, silent]
   );
 
-  const narrationHideRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const scheduleNarrationCues = useCallback(
     (cues: NarrationCue[], onDone?: () => void) => {
       let cumulative = 0;
