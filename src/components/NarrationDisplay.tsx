@@ -14,19 +14,19 @@ export default function NarrationDisplay({
   const fontSize = size === "large" ? "text-3xl md:text-4xl" : "text-xl md:text-2xl";
 
   return (
-    <div className="flex items-center justify-center min-h-[120px] px-8 relative w-full">
-      <AnimatePresence>
+    <div
+      className="flex items-center justify-center px-8"
+      style={{ minHeight: 120 }}
+    >
+      <AnimatePresence mode="wait">
         {text && (
           <motion.p
             key={text}
-            className={`narration-text text-glow text-center w-full max-w-3xl px-4 ${fontSize} text-[#e8e0d4]/90 absolute left-1/2 -translate-x-1/2`}
+            className={`narration-text text-glow text-center ${fontSize} text-[#e8e0d4]/90`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
           >
             {text}
           </motion.p>
