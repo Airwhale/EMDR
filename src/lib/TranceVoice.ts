@@ -60,6 +60,8 @@ const VOICE_PRIORITY: [string, Partial<VoiceTuning>][] = [
 
 const DEFAULT_TUNING: VoiceTuning = { rate: 0.72, pitch: 0.85, volume: 0.7 };
 
+import { AUDIO_MAP } from "./audioMap";
+
 export class TranceVoice {
   private synth: SpeechSynthesis | null = null;
   private voice: SpeechSynthesisVoice | null = null;
@@ -68,6 +70,9 @@ export class TranceVoice {
   private enabled = true;
   private supported = false;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
+  private currentAudio: HTMLAudioElement | null = null;
+  private audioCache = new Map<string, HTMLAudioElement>();
+  private useAudioFiles = true;
 
   init(): void {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -117,11 +122,52 @@ export class TranceVoice {
     if (!this.ready) {
       this.synth.addEventListener("voiceschanged", pickVoice, { once: true });
     }
+
+    // Probe for audio files
+    this.probeAudioFiles();
+  }
+
+  private async probeAudioFiles(): Promise<void> {
+    try {
+      const resp = await fetch("/audio/breath/breath-in.mp3", { method: "HEAD" });
+      this.useAudioFiles = resp.ok;
+    } catch {
+      this.useAudioFiles = false;
+    }
   }
 
   speak(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
-    if (!this.synth || !this.ready || !this.enabled) return;
+    if (!this.enabled) return;
 
+    // Stop any current playback
+    this.stopCurrent();
+
+    // Try audio file first
+    if (this.useAudioFiles) {
+      const audioPath = AUDIO_MAP[text];
+      if (audioPath) {
+        let audio = this.audioCache.get(audioPath);
+        if (!audio) {
+          audio = new Audio(audioPath);
+          this.audioCache.set(audioPath, audio);
+        }
+        audio.volume = options?.volume ?? this.tuning.volume;
+        audio.currentTime = 0;
+        audio.play().catch(() => {
+          // File failed to load — fall back to speech synthesis
+          this.speakWithSynth(text, options);
+        });
+        this.currentAudio = audio;
+        return;
+      }
+    }
+
+    // Fall back to speech synthesis
+    this.speakWithSynth(text, options);
+  }
+
+  private speakWithSynth(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
+    if (!this.synth || !this.ready) return;
     this.synth.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -133,6 +179,16 @@ export class TranceVoice {
     this.synth.speak(utterance);
   }
 
+  private stopCurrent(): void {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
+    }
+    this.synth?.cancel();
+    this.currentUtterance = null;
+  }
+
   speakAlert(text: string, step: number): void {
     this.speak(text, {
       rate: this.tuning.rate + step * 0.06,
@@ -141,8 +197,7 @@ export class TranceVoice {
   }
 
   cancel(): void {
-    this.synth?.cancel();
-    this.currentUtterance = null;
+    this.stopCurrent();
   }
 
   setEnabled(on: boolean): void {
@@ -168,6 +223,7 @@ export class TranceVoice {
 
   stop(): void {
     this.cancel();
+    this.audioCache.clear();
     this.synth = null;
     this.ready = false;
   }
