@@ -44,6 +44,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   const [sudEnd, setSudEnd] = useState<number | null>(null);
   const [exercises, setExercises] = useState<string[]>([]);
   const [blsActive, setBlsActive] = useState(false);
+  const [showReady, setShowReady] = useState(false);
+  const [readyTarget, setReadyTarget] = useState<EmdrPhase | null>(null);
   const [showBlsContinue, setShowBlsContinue] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
 
@@ -113,7 +115,10 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
         "Choose a single word... that represents this safe place...");
     }, 16000));
     timers.push(setTimeout(() => showNarr("Hold that image and word in mind...", 4000), 23000));
-    timers.push(setTimeout(() => setPhase("safe-place-bls"), 28000));
+    timers.push(setTimeout(() => {
+      setShowReady(true);
+      setReadyTarget("safe-place-bls");
+    }, 28000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -156,7 +161,10 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       showNarr("It's held safely there. Not gone — just contained for now...", 6000,
         "It's held safely there... not gone... just contained for now...");
     }, 16000));
-    timers.push(setTimeout(() => setPhase("container-bls"), 23000));
+    timers.push(setTimeout(() => {
+      setShowReady(true);
+      setReadyTarget("container-bls");
+    }, 23000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -193,7 +201,10 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       showNarr("Where in your body do you feel that strength or peace? Let the feeling expand...", 6000,
         "Where in your body do you feel that strength... or peace... let the feeling expand...");
     }, 15000));
-    timers.push(setTimeout(() => setPhase("resource-bls"), 22000));
+    timers.push(setTimeout(() => {
+      setShowReady(true);
+      setReadyTarget("resource-bls");
+    }, 22000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -245,6 +256,14 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     audioRef.current?.fadeOut(8);
     onComplete({ sudStart, sudEnd: rating, exercisesCompleted: exercises });
   }, [sudStart, exercises, onComplete]);
+
+  const handleReady = useCallback(() => {
+    if (readyTarget) {
+      setShowReady(false);
+      setPhase(readyTarget);
+      setReadyTarget(null);
+    }
+  }, [readyTarget]);
 
   const handleGroundingComplete = useCallback(() => setPhase("centering"), []);
 
@@ -308,8 +327,22 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
         {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {!["sud-check", "grounding", "butterfly-hug"].includes(phase) &&
           sudEnd === null && narration && !blsActive && (
-          <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}>
+          <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}
+            className="flex flex-col items-center gap-6">
             <NarrationDisplay text={narration} size="large" />
+            {showReady && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                onClick={handleReady}
+                className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
+                           hover:border-gold/70 hover:text-gold hover:bg-gold/5
+                           transition-all duration-500 ui-text"
+              >
+                I&apos;m ready
+              </motion.button>
+            )}
           </motion.div>
         )}
 

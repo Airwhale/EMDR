@@ -49,6 +49,8 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   const [round, setRound] = useState(0);
   const [blsActive, setBlsActive] = useState(false);
   const [showBlsContinue, setShowBlsContinue] = useState(false);
+  const [showReady, setShowReady] = useState(false);
+  const [readyTarget, setReadyTarget] = useState<ArtPhase | null>(null);
   const [showSudRecheck, setShowSudRecheck] = useState(false);
   const [showSudFinal, setShowSudFinal] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(true);
@@ -118,6 +120,14 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     else { setRound(1); setPhase("processing"); }
   }, []);
 
+  const handleReady = useCallback(() => {
+    if (readyTarget) {
+      setShowReady(false);
+      setPhase(readyTarget);
+      setReadyTarget(null);
+    }
+  }, [readyTarget]);
+
   const handleGroundingComplete = useCallback(() => setPhase("centering"), []);
 
   // ---- PROCESSING (40 passes ≈ 28s, then continue button) ----
@@ -161,7 +171,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr("Where do you feel the tension or discomfort in your body? Focus on that place...", 7000,
       "Where do you feel the tension... or discomfort... in your body... focus on that place..."));
-    timers.push(setTimeout(() => setPhase("sensation-bls"), 8000));
+    timers.push(setTimeout(() => {
+      setShowReady(true);
+      setReadyTarget("sensation-bls");
+    }, 8000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -193,7 +206,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
       showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 7000,
         "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
     }, 7000));
-    timers.push(setTimeout(() => setPhase("vir-bls"), 15000));
+    timers.push(setTimeout(() => {
+      setShowReady(true);
+      setReadyTarget("vir-bls");
+    }, 15000));
     return () => timers.forEach(clearTimeout);
   }, [phase, showNarr]);
 
@@ -319,8 +335,22 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
         {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {narration && !showSudRecheck && !showSudFinal && !isBls && (
-          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}>
+          <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}
+            className="flex flex-col items-center gap-6">
             <NarrationDisplay text={narration} size="large" />
+            {showReady && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                onClick={handleReady}
+                className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
+                           hover:border-gold/70 hover:text-gold hover:bg-gold/5
+                           transition-all duration-500 ui-text"
+              >
+                I&apos;m ready
+              </motion.button>
+            )}
           </motion.div>
         )}
 
