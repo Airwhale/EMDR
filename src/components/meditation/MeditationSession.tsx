@@ -127,6 +127,8 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     [voiceEnabled, silent]
   );
 
+  const narrationHideRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const scheduleNarrationCues = useCallback(
     (cues: NarrationCue[], onDone?: () => void) => {
       let cumulative = 0;
@@ -137,10 +139,11 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         const show = cumulative;
         const hide = show + cue.duration;
         timers.push(setTimeout(() => {
+          if (narrationHideRef.current) clearTimeout(narrationHideRef.current);
           setCurrentNarration(cue.text);
           speakNarration(cue.text, cue.spoken);
+          narrationHideRef.current = setTimeout(() => setCurrentNarration(null), cue.duration);
         }, show));
-        timers.push(setTimeout(() => setCurrentNarration(null), hide));
         cumulative = hide;
       });
 

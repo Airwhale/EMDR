@@ -69,10 +69,15 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     voiceRef.current?.speak(text);
   }, []);
 
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showNarr = useCallback((text: string, duration: number, spokenText?: string) => {
+    // Cancel any pending hide from previous cue
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     setNarration(text);
     speak(spokenText || text);
-    return setTimeout(() => setNarration(null), duration);
+    hideTimerRef.current = setTimeout(() => setNarration(null), duration);
+    return hideTimerRef.current;
   }, [speak]);
 
   // ---- SUD CHECK (initial) ----
