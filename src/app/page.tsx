@@ -31,6 +31,7 @@ export default function App() {
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
   const [meditationSilent, setMeditationSilent] = useState(false);
   const [binauralEnabled, setBinauralEnabled] = useState(true);
+  const [flickerEnabled, setFlickerEnabled] = useState(true);
 
   // EMDR/ART summary data
   const [endSummary, setEndSummary] = useState<EndSummary | null>(null);
@@ -316,19 +317,33 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Epilepsy/photosensitivity notice — meditation-specific */}
-              <p className="text-[10px] text-[#e8e0d4]/30 font-light text-center max-w-xs">
-                Meditation includes subtle visual flickering. If you have epilepsy or photosensitivity,
-                please{" "}
+              {/* Flickering effects toggle */}
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => {
-                    sessionStorage.setItem("trance.photosensitive", "true");
+                    const next = !flickerEnabled;
+                    setFlickerEnabled(next);
+                    if (!next) {
+                      sessionStorage.setItem("trance.photosensitive", "true");
+                    } else {
+                      sessionStorage.removeItem("trance.photosensitive");
+                    }
                   }}
-                  className="text-gold/50 underline hover:text-gold/80 transition-colors"
+                  className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
+                    flickerEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
+                  }`}
                 >
-                  click here to disable flickering effects
-                </button>.
-              </p>
+                  <div
+                    className={`w-4 h-4 rounded-full bg-[#e8e0d4]/80 absolute top-0.5 transition-all duration-300 ${
+                      flickerEnabled ? "left-5" : "left-0.5"
+                    }`}
+                  />
+                </button>
+                <span className="ui-text text-[10px] text-[#e8e0d4]/40">
+                  visual flickering {flickerEnabled ? "on" : "off"}
+                  {!flickerEnabled && <span className="text-[#e8e0d4]/25"> (safer for photosensitivity)</span>}
+                </span>
+              </div>
 
               <button
                 onClick={() => setAppState("mode-select")}
