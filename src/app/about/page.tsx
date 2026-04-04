@@ -19,12 +19,12 @@ const sections: AboutSection[] = [
   {
     title: "How This Works",
     content:
-      "This experience layers 40 distinct techniques across six categories to guide you into an altered state. None of this is magic — it's applied psychology, rhythm, and focused attention. Here is everything this app does to create the experience:",
+      "This experience layers dozens of techniques from EMDR, ART, and clinical relaxation practices. None of this is magic — it's applied psychology, rhythm, and focused attention. Here is everything this app does to create the experience:",
   },
   {
     title: "All Techniques at a Glance",
     content:
-      "Audio: true binaural beats (two layers), pink noise masking, isochronic theta pulses, sub-bass heartbeat entrainment (progressively slowing from 60 to 45bpm), breath-synced tonal chimes panned L/R, binaural drone modulation that breathes with you, bilateral ping tones for EMDR/ART. Visual: animated breathing circle (4-4-6 pattern with progressive slowdown), bilateral eye-tracking dot, logarithmic hypnotic spiral, photic flicker at alpha/theta frequencies, full-screen opacity pulse synced to the binaural beat, progressive vignette simulating tunnel vision, staircase countdown with drifting particles. Language: Ericksonian permissive language, embedded commands, confusion technique (paradoxical statements), fractionation (alert-then-deepen cycles), deepening challenges, dissociation language (mind-body separation), kinesthetic anchoring, presuppositions, NLP sensory patterns. Breathing: 4-4-6 extended exhale pattern, progressive breath cycle slowdown (14s→27s). Bilateral: EMDR slow eye movements, ART fast eye movements, butterfly hug self-tapping. Body: progressive body scan, 5-4-3-2-1 grounding, arm levitation, Chevreul pendulum, time distortion, sensory amplification. Emergence: counting 1→5 with reorientation, audio pitch brightening, vignette lightening.",
+      "Audio: true binaural beats (two layers), pink noise masking, isochronic theta pulses, sub-bass heartbeat entrainment (progressively slowing from 60 to 45bpm), breath-synced tonal chimes panned L/R, binaural drone modulation that breathes with you, bilateral ping tones for EMDR/ART. Visual: animated breathing circle (4-4-6 pattern with progressive slowdown), bilateral eye-tracking dot, logarithmic hypnotic spiral, photic flicker at alpha/theta frequencies, full-screen opacity pulse synced to the binaural beat, progressive vignette simulating tunnel vision, staircase countdown with drifting particles. Language: Ericksonian permissive language, embedded commands, confusion technique (paradoxical statements), fractionation (alert-then-deepen cycles), deepening challenges, dissociation language (mind-body separation), kinesthetic anchoring, presuppositions, NLP sensory patterns. Breathing: 4-4-6 extended exhale pattern, progressive breath cycle slowdown (14s→27s). Bilateral: EMDR slow eye movements, ART fast eye movements, butterfly hug self-tapping. Body: progressive body scan, 5-4-3-2-1 grounding. Emergence: counting 1→5 with reorientation, audio pitch brightening, vignette lightening.",
   },
   {
     title: "EMDR-Style Eye Movement",
@@ -44,7 +44,7 @@ const sections: AboutSection[] = [
   {
     title: "Voice Synthesis",
     content:
-      "This experience uses your browser's speech synthesis to deliver narration in a slow, low-pitched voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled hypnotherapist. Spoken suggestions engage different processing pathways than written text, and the combination of reading and hearing the same content creates dual-channel reinforcement that deepens suggestibility.",
+      "This experience uses your browser's speech synthesis (or pre-generated audio files) to deliver narration in a slow, calm voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled therapist. Spoken guidance engages different processing pathways than written text, and the combination of hearing and seeing creates dual-channel reinforcement that deepens the effect.",
     evidence: [
       { label: "APA Dictionary: Suggestibility", href: "https://dictionary.apa.org/suggestibility" },
       { label: "Web Speech API (MDN)", href: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API" },
@@ -108,14 +108,9 @@ const sections: AboutSection[] = [
       "The narration uses rich, multi-sensory imagery drawn from Neuro-Linguistic Programming — warmth spreading through your body, muscles melting like warm honey, waves of comfort like sunlight, velvet heaviness in the eyelids. These sensory predicates engage the same neural pathways as actual physical sensation, deepening the somatic experience of relaxation and making the suggestions feel physically real.",
   },
   {
-    title: "The Suggestibility Experiments",
+    title: "Is This Real?",
     content:
-      "The arm levitation and Chevreul pendulum demonstrate the ideomotor effect — thinking about movement causes unconscious muscle activation. Time distortion exploits trance's effect on temporal processing. Sensory amplification tests somatic suggestibility — the ability of imagery to alter bodily sensations. These are all standard hypnotic phenomena used in clinical assessment.",
-  },
-  {
-    title: "Is This Real Hypnosis?",
-    content:
-      "Yes. This experience layers 40 distinct techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories — including binaural entrainment, Ericksonian language, photic driving, heartbeat entrainment, NLP patterns, deepening challenges, dissociation language, and more. Any one of these alone can induce trance in responsive individuals; together they create a robust multi-modal induction. However, it lacks the real-time adaptation of a live hypnotherapist. Suggestibility increases with repeated sessions.",
+      "Yes. This experience layers dozens of evidence-based techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories — including binaural entrainment, Ericksonian language, photic driving, heartbeat entrainment, NLP patterns, deepening challenges, and dissociation language. These techniques are drawn from clinical EMDR, ART, and hypnotherapy. Each one has measurable effects on its own; together they create a powerful multi-modal experience. However, this is a self-guided tool — it lacks the real-time adaptation of a live clinician. The effects tend to deepen with repeated sessions.",
     evidence: [{ label: "APA Dictionary: Hypnosis", href: "https://dictionary.apa.org/hypnosis" }],
   },
 ];

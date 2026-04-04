@@ -39,7 +39,6 @@ const sections: Section[] = [
       { label: "ART mode", time: "10–20 minutes", detail: "Centering, scene selection, 1–3 processing rounds with eye movements, guided scene change (voluntary image replacement), and body scan." },
       { label: "Meditation mode", time: "Up to 30 minutes", detail: "Choose guided (with voice narration and countdown) or silent (visual effects and binaural tones only). Includes suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing. End whenever you're ready." },
       { label: "Lateral eye movement tool", time: "Open-ended", detail: "A customizable bilateral eye movement tool with sliders for dot speed, binaural frequency, drone volume, and ping sound. Use it for your own practice or simply to relax." },
-      { label: "Trance mode", time: "15–25 minutes", detail: "Full guided self-hypnosis session with breathing induction, progressive relaxation, deepening, and interactive suggestibility experiments." },
     ],
   },
   {

@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-export type SessionMode = "trance" | "emdr" | "art" | "meditation" | "lateral";
+export type SessionMode = "emdr" | "art" | "meditation" | "lateral";
 
 interface ModeSelectProps {
   onSelect: (mode: SessionMode) => void;
@@ -40,14 +40,6 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
     description:
       "A simple, adjustable bilateral eye movement tool. Control the speed, sound, and binaural tone frequency with sliders. Use it however you like — on its own, alongside your own practice, or just to relax.",
   },
-  // Trance mode hidden from UI but code preserved
-  // {
-  //   id: "trance",
-  //   title: "TRANCE",
-  //   subtitle: "Deep relaxation & hypnotic exploration",
-  //   description:
-  //     "Best if you want to deeply unwind. A full guided self-hypnosis session with breathing synchronization, progressive relaxation, and interactive experiments that demonstrate what your mind can do in a relaxed state.",
-  // },
 ];
 
 export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle }: ModeSelectProps) {

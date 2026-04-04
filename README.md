@@ -9,7 +9,7 @@ A browser-based guided self-regulation tool using evidence-based therapeutic tec
 - **EMDR** — Resource-building stabilization (safe place, butterfly hug, container, resource installation)
 - **ART** — Scene processing and voluntary image rescripting
 - **Meditation** — Extended guided deep meditation (~30 min) with suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing
-- **Trance** — Full guided self-hypnosis with suggestibility experiments
+- **Lateral Eye Movement** — Customizable bilateral stimulation tool with adjustable speed, binaural frequency, and volume
 
 ## Techniques used to induce altered states
 
@@ -19,44 +19,44 @@ This app layers 40 techniques across audio, visual, language, breathing, bilater
 | Technique | Description | Modes |
 |-----------|-------------|-------|
 | Binaural beats (primary) | Different frequencies in L/R ears create a perceived beat that entrains brainwave frequency | All |
-| Second binaural layer | Harmonic layer at 2x base frequency reinforcing the primary beat | Trance, Meditation |
+| Second binaural layer | Harmonic layer at 2x base frequency reinforcing the primary beat | Meditation |
 | Pink noise | Filtered noise masking environmental sounds | All |
-| Isochronic pulses | Rhythmic amplitude modulation at theta frequency (6Hz) | Trance, Meditation |
-| Sub-bass heartbeat | 40Hz oscillation modulated at resting heart rate, progressively slowing from 60→45bpm | Trance, Meditation |
-| Breath-cue chimes | Rising/falling/steady tones panned L/R/center matching inhale/hold/exhale | Trance, Meditation |
-| Binaural drone modulation | Drone volume rises and falls in sync with the breathing cycle | Trance, Meditation |
+| Isochronic pulses | Rhythmic amplitude modulation at theta frequency (6Hz) | Meditation |
+| Sub-bass heartbeat | 40Hz oscillation modulated at resting heart rate, progressively slowing from 60→45bpm | Meditation |
+| Breath-cue chimes | Rising/falling/steady tones panned L/R/center matching inhale/hold/exhale | Meditation |
+| Binaural drone modulation | Drone volume rises and falls in sync with the breathing cycle | Meditation |
 | Bilateral ping tones | Short L/R panned taps accompanying each direction change of the eye-tracking dot | EMDR, ART |
 
 ### Visual (8 techniques)
 | Technique | Description | Modes |
 |-----------|-------------|-------|
-| Breathing guide circle | Expanding/contracting ring with spring physics guiding 4-4-6 breathing | Trance, Meditation |
+| Breathing guide circle | Expanding/contracting ring with spring physics guiding 4-4-6 breathing | Meditation |
 | EMDR horizontal dot | Smooth bilateral eye-tracking dot moving across 84% of viewport | All |
-| Hypnotic spiral | Canvas-rendered 5-arm logarithmic spiral rotating at ~10°/s | Trance, Meditation |
-| Photic flicker | Full-screen luminance oscillation at alpha/theta frequencies (5-8Hz) | Trance, Meditation |
+| Hypnotic spiral | Canvas-rendered 5-arm logarithmic spiral rotating at ~10°/s | Meditation |
+| Photic flicker | Full-screen luminance oscillation at alpha/theta frequencies (5-8Hz) | Meditation |
 | Binaural pulse | Full-screen opacity pulse synced exactly to the binaural beat frequency | Meditation |
 | Vignette (tunnel vision) | Progressive radial darkening simulating the narrowed focus of deep trance | All |
-| Staircase particles | Downward-drifting particles with dissolving countdown numbers (10→1) | Trance, Meditation |
+| Staircase particles | Downward-drifting particles with dissolving countdown numbers (10→1) | Meditation |
 | Bilateral stimulation dot | Full-width dot at configurable speeds (EMDR: 1Hz, ART: 1.4Hz) with trail | EMDR, ART |
 
 ### Language & narration (9 techniques)
 | Technique | Description | Modes |
 |-----------|-------------|-------|
-| Embedded commands | Imperative suggestions hidden within permissive sentences | Trance, Meditation |
-| Ericksonian permissive language | Indirect suggestions using "perhaps," "might," "can" to bypass resistance | Trance, Meditation |
-| Confusion technique | Paradoxical statements that short-circuit analytical thinking | Trance |
-| Fractionation | Brief alert-then-deepen cycles that amplify subjective depth | Trance, Meditation |
+| Embedded commands | Imperative suggestions hidden within permissive sentences | Meditation |
+| Ericksonian permissive language | Indirect suggestions using "perhaps," "might," "can" to bypass resistance | Meditation |
+| Confusion technique | Paradoxical statements that short-circuit analytical thinking | Meditation |
+| Fractionation | Brief alert-then-deepen cycles that amplify subjective depth | Meditation |
 | Deepening challenges | Presuppositional challenges ("I wonder if you can go even deeper...") | Meditation |
 | Dissociation language | Mind-body separation suggestions ("your body is here... your mind can float freely") | Meditation |
-| Anchoring | Physical gesture (thumb-forefinger press) paired with deep relaxation for future recall | Trance, Meditation |
-| Presuppositions | Statements assuming forward progress ("the deeper you go, the more content you feel") | Trance, Meditation |
-| NLP sensory patterns | Rich multisensory imagery (warmth, heaviness, floating, honey, sunlight) | Trance, Meditation |
+| Anchoring | Physical gesture (thumb-forefinger press) paired with deep relaxation for future recall | Meditation |
+| Presuppositions | Statements assuming forward progress ("the deeper you go, the more content you feel") | Meditation |
+| NLP sensory patterns | Rich multisensory imagery (warmth, heaviness, floating, honey, sunlight) | Meditation |
 
 ### Breathing (2 techniques)
 | Technique | Description | Modes |
 |-----------|-------------|-------|
-| 4-4-6 extended exhale pattern | 4s inhale, 4s hold, 6s exhale — activates vagal tone and parasympathetic response | Trance, Meditation |
-| Progressive breath slowdown | Cycle duration gradually increases from 14s to 27s over the session | Trance, Meditation |
+| 4-4-6 extended exhale pattern | 4s inhale, 4s hold, 6s exhale — activates vagal tone and parasympathetic response | Meditation |
+| Progressive breath slowdown | Cycle duration gradually increases from 14s to 27s over the session | Meditation |
 
 ### Bilateral stimulation (3 techniques)
 | Technique | Description | Modes |
@@ -68,18 +68,14 @@ This app layers 40 techniques across audio, visual, language, breathing, bilater
 ### Body-based (6 techniques)
 | Technique | Description | Modes |
 |-----------|-------------|-------|
-| Progressive body scan | Systematic attention from feet to head, noticing warmth/comfort spreading | Trance, Meditation |
+| Progressive body scan | Systematic attention from feet to head, noticing warmth/comfort spreading | Meditation |
 | 5-4-3-2-1 grounding | Sensory anchoring exercise (see/touch/hear/smell/taste) | EMDR, ART |
-| Arm levitation (ideomotor) | Balloon imagery inducing unconscious hand movement | Trance |
-| Chevreul pendulum (ideomotor) | Thought-directed pendulum swing demonstrating unconscious motor control | Trance |
-| Time distortion | Altered time perception measurement in trance state | Trance |
-| Sensory amplification | Warmth suggestion demonstrating somatic suggestibility | Trance |
 
 ### Emergence (3 techniques)
 | Technique | Description | Modes |
 |-----------|-------------|-------|
-| Emergence sequence | Counting 1→5 with progressive reorientation and positive anchoring | Trance, Meditation |
-| Audio pitch brightening | Binaural frequency shifts upward to alpha during emergence | Trance, Meditation |
+| Emergence sequence | Counting 1→5 with progressive reorientation and positive anchoring | Meditation |
+| Audio pitch brightening | Binaural frequency shifts upward to alpha during emergence | Meditation |
 | Vignette lightening | Progressive reduction of tunnel-vision darkening | All |
 
 ## Safety

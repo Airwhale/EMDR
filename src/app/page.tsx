@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import LearnContent from "@/components/shared/LearnContent";
 import EmdrDot from "@/components/EmdrDot";
-import TranceSession from "@/components/TranceSession";
 import MeditationSession from "@/components/meditation/MeditationSession";
 import LateralSession from "@/components/lateral/LateralSession";
 import EmdrSession, { EmdrSummaryData } from "@/components/emdr/EmdrSession";
@@ -328,17 +327,6 @@ export default function App() {
         )}
 
         {/* =================== SESSION =================== */}
-        {appState === "session" && selectedMode === "trance" && (
-          <motion.div
-            key="trance-session"
-            className="w-full h-screen"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-          >
-            <TranceSession onExit={handleStartNewSession} />
-          </motion.div>
-        )}
 
         {appState === "session" && selectedMode === "meditation" && (
           <motion.div
