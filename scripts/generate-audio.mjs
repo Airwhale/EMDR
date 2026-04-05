@@ -43,13 +43,13 @@ if (existsSync(envPath)) {
 
 const API_KEY = process.env.ELEVENLABS_API_KEY;
 const VOICE_ID = process.env.ELEVENLABS_VOICE_ID;
-const MODEL_ID = process.env.ELEVENLABS_MODEL_ID || "eleven_monolingual_v1";
+const MODEL_ID = process.env.ELEVENLABS_MODEL_ID || "eleven_turbo_v2_5";
 
-// Voice settings for calm, slow narration
+// Voice settings for calm, slow, consistent narration
 const VOICE_SETTINGS = {
-  stability: 0.65,
+  stability: 0.85,
   similarity_boost: 0.75,
-  style: 0.4,
+  style: 0.3,
   use_speaker_boost: true,
 };
 
