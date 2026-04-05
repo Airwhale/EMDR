@@ -30,7 +30,7 @@ export default function App() {
   const [entryTextVisible, setEntryTextVisible] = useState(false);
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
   const [meditationSilent, setMeditationSilent] = useState(false);
-  const [binauralEnabled, setBinauralEnabled] = useState(true);
+  const [binauralEnabled, setBinauralEnabled] = useState(false);
   const [flickerEnabled, setFlickerEnabled] = useState(true);
 
   // EMDR/ART summary data
