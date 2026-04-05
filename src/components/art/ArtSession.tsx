@@ -105,7 +105,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr(
       "Choose a specific stressful moment — a single scene you can picture, like a snapshot...", 7000,
-      "Choose a specific stressful moment... a single scene you can picture... like a snapshot... you don't need to describe it... just bring it to mind..."));
+      "Think of something stressful... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
       showNarr("See it like a scene in a movie in your mind... notice the details...", 6000,
         "See it like a scene in a movie... in your mind... notice the details...");
@@ -214,7 +214,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr("Now — imagine this moment going the way you wanted. Create a new version you can remember instead...", 7000,
-      "Now... imagine this moment going the way you wanted... you're in control of this image... create a new version... a new ending... that you can remember instead..."));
+      "Now... in your mind... change the scene. You're in control of this image..."));
     timers.push(setTimeout(() => {
       showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 7000,
         "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");

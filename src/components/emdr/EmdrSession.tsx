@@ -116,8 +116,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   useEffect(() => {
     if (phase !== "safe-place") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace...", 7000,
-      "In your mind... think of a place... where you feel completely safe... and at peace... It could be a real place... an imagined one... a color... or simply being with someone who makes you feel safe..."));
+    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace. It could be a real place, an imagined one, a color, or being with someone who makes you feel safe...", 7000,
+      "In your mind... think of a place... where you feel completely safe... and at peace..."));
     timers.push(setTimeout(() => {
       showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 7000,
         "Notice the colors... the sounds... and the temperature of this place... in your mind...");
