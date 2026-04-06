@@ -90,10 +90,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const timers: ReturnType<typeof setTimeout>[] = [];
     // Small delay to let voice engine initialize before first spoken cue
     timers.push(setTimeout(() => {
-      showNarr("Take a deep breath... settle into this moment...", 6000);
+      showNarr("Take a deep breath...", 6000);
     }, 1500));
     timers.push(setTimeout(() => {
-      showNarr("Let your body relax... feel the ground beneath you...", 6000);
+      showNarr("Let your body relax...", 6000);
     }, 8500));
     timers.push(setTimeout(() => setPhase("scene-select"), 16000));
     return () => timers.forEach(clearTimeout);
@@ -104,10 +104,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     if (phase !== "scene-select") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(showNarr(
-      "Choose a specific stressful moment — a single scene you can picture, like a snapshot...", 7000,
+      "Choose a specific moment...", 7000,
       "Think of something stressful... you don't need to describe it... just bring it to mind..."));
     timers.push(setTimeout(() => {
-      showNarr("See it like a scene in a movie in your mind... notice the details...", 6000,
+      showNarr("See it like a movie scene...", 6000,
         "See it like a scene in a movie... in your mind... notice the details...");
     }, 8000));
     timers.push(setTimeout(() => setPhase("sud-initial"), 16000));
@@ -152,17 +152,17 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
     if (round > 1) {
       // Returning for another round — explicitly bring back the original
-      timers.push(showNarr("Bring the original scene back to mind... how it was before you changed it...", 6000,
+      timers.push(showNarr("Bring the original scene back...", 6000,
         "Bring the original scene back to mind... how it was... before you changed it..."));
       timers.push(setTimeout(() => {
-        showNarr("Follow the dot... notice what's still there...", 5000,
+        showNarr("Follow the dot...", 5000,
           "Follow the dot... notice what's still there...");
       }, 10000));
     } else {
-      timers.push(showNarr("Hold that scene in mind... follow the dot with your eyes... keep your head still...", 6000,
+      timers.push(showNarr("Hold the scene... follow the dot...", 6000,
         "Hold that scene in mind... follow the dot with your eyes... keep your head still... just your eyes..."));
       timers.push(setTimeout(() => {
-        showNarr("Keep following... let whatever comes up just be there...", 5000,
+        showNarr("Keep following...", 5000,
           "Keep following... let whatever comes up... just be there...");
       }, 10000));
     }
@@ -182,7 +182,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   useEffect(() => {
     if (phase !== "sensation-check") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Where do you feel the tension or discomfort in your body? Focus on that place...", 7000,
+    timers.push(showNarr("Where do you feel it in your body?", 7000,
       "Where do you feel the tension... or discomfort... in your body... focus on that place..."));
     timers.push(setTimeout(() => {
       setShowReady(true);
@@ -197,7 +197,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setBlsActive(true);
     setShowBlsContinue(false);
 
-    showNarr("Follow the dot... focus on where you feel it in your body... let the feeling soften...", 5000,
+    showNarr("Follow the dot... let it soften...", 5000,
       "Follow the dot... focus on where you feel it in your body... let the feeling soften...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
@@ -213,10 +213,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Now — imagine this moment going the way you wanted. Create a new version you can remember instead...", 7000,
+    timers.push(showNarr("Create a new version of this moment...", 7000,
       "Now... in your mind... change the scene. You're in control of this image..."));
     timers.push(setTimeout(() => {
-      showNarr("Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...", 7000,
+      showNarr("Change what happens... make it yours...", 7000,
         "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
     }, 7000));
     timers.push(setTimeout(() => {
@@ -232,7 +232,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setBlsActive(true);
     setShowBlsContinue(false);
 
-    showNarr("Hold the changed scene in mind... follow the dot... let it settle in...", 6000,
+    showNarr("Hold the new scene... follow the dot...", 6000,
       "Hold the changed scene in mind... follow the dot... let it settle in...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
@@ -264,7 +264,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   useEffect(() => {
     if (phase !== "body-scan") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Scan your body from head to toe... notice what has shifted...", 6000));
+    timers.push(showNarr("Scan your body... notice what shifted...", 6000));
     timers.push(setTimeout(() => {
       showNarr("Observe without judgment...", 4000, "Observe... without judgment...");
     }, 7000));
@@ -276,7 +276,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   useEffect(() => {
     if (phase !== "closing") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Take a deep breath... think back to the original memory... notice how different it feels now...", 9000,
+    timers.push(showNarr("Think back to the original memory...", 9000,
       "Take a deep breath... think back to the original memory... notice how different it feels now..."));
     timers.push(setTimeout(() => setShowSudFinal(true), 12000));
     return () => timers.forEach(clearTimeout);

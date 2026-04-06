@@ -15,8 +15,8 @@ export default function NarrationDisplay({
 
   return (
     <div
-      className="flex items-center justify-center px-8"
-      style={{ minHeight: 120 }}
+      className="flex items-center justify-center px-8 w-full"
+      style={{ minHeight: 80 }}
     >
       <AnimatePresence mode="wait">
         {text && (

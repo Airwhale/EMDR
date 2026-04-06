@@ -101,11 +101,11 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "centering") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     timers.push(setTimeout(() => {
-      showNarr("Take a slow, deep breath... let your body settle...", 6000,
+      showNarr("Take a deep breath...", 6000,
         "Take a slow... deep breath... let your body settle...");
     }, 1500));
     timers.push(setTimeout(() => {
-      showNarr("Feel the surface beneath you... notice the air on your skin...", 6000,
+      showNarr("Feel the surface beneath you...", 6000,
         "Feel the surface beneath you... notice the air on your skin...");
     }, 8500));
     timers.push(setTimeout(() => setPhase("safe-place"), 16000));
@@ -116,17 +116,17 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   useEffect(() => {
     if (phase !== "safe-place") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, think of a place where you feel completely safe and at peace. It could be a real place, an imagined one, a color, or being with someone who makes you feel safe...", 7000,
+    timers.push(showNarr("Think of your safe place...", 7000,
       "In your mind... think of a place... where you feel completely safe... and at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("Notice the colors, sounds, and temperature of this place in your mind...", 7000,
+      showNarr("Notice its colors, sounds, and warmth...", 7000,
         "Notice the colors... the sounds... and the temperature of this place... in your mind...");
     }, 8000));
     timers.push(setTimeout(() => {
-      showNarr("Choose a single word that represents this place...", 6000,
+      showNarr("Choose one word for this place...", 6000,
         "Choose a single word... that represents this safe place...");
     }, 16000));
-    timers.push(setTimeout(() => showNarr("Hold that image and word in mind...", 4000), 23000));
+    timers.push(setTimeout(() => showNarr("Hold that image and word...", 4000), 23000));
     timers.push(setTimeout(() => {
       setShowReady(true);
       setReadyTarget("safe-place-bls");
@@ -139,7 +139,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "safe-place-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot with your eyes... keep your head still... hold your safe place in mind...", 7000,
+    showNarr("Follow the dot... hold your safe place...", 7000,
       "Follow the dot with your eyes... keep your head still... just your eyes... holding your safe place in mind...");
     // Safe place: minimum 20s (~20 slow passes) before continue appears
     const t = setTimeout(() => setShowBlsContinue(true), 20000);
@@ -163,14 +163,14 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   useEffect(() => {
     if (phase !== "container") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, imagine a strong container — a box, a vault, anything that locks securely...", 7000,
+    timers.push(showNarr("Imagine a strong container...", 7000,
       "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."));
     timers.push(setTimeout(() => {
-      showNarr("Place anything that's been bothering you inside... close the lid firmly...", 7000,
+      showNarr("Place what bothers you inside... close it...", 7000,
         "Place anything that's been bothering you inside... close the lid firmly...");
     }, 8000));
     timers.push(setTimeout(() => {
-      showNarr("It's held safely there. Not gone — just contained for now...", 6000,
+      showNarr("Safely contained for now...", 6000,
         "It's held safely there... not gone... just contained for now...");
     }, 16000));
     timers.push(setTimeout(() => {
@@ -185,7 +185,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "container-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Imagine the container sealing as you follow the dot... feeling it become more and more secure...", 7000,
+    showNarr("Follow the dot... feel it sealing...", 7000,
       "Imagine the container sealing... as you follow the dot... feeling it become more and more secure... with each movement of your eyes...");
     // Container: minimum 15s (~15 slow passes)
     const t = setTimeout(() => setShowBlsContinue(true), 15000);
@@ -203,14 +203,14 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   useEffect(() => {
     if (phase !== "resource") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("In your mind, think of a time you felt strong, capable, or deeply at peace...", 7000,
+    timers.push(showNarr("Think of a time you felt strong...", 7000,
       "In your mind... think of a time... you felt strong... capable... or deeply at peace..."));
     timers.push(setTimeout(() => {
-      showNarr("In your mind, step into that memory... feel it in your body...", 6000,
+      showNarr("Step into that memory...", 6000,
         "In your mind... step into that memory... feel it... in your body...");
     }, 8000));
     timers.push(setTimeout(() => {
-      showNarr("Where in your body do you feel that strength or peace? Let the feeling expand...", 6000,
+      showNarr("Where do you feel it? Let it expand...", 6000,
         "Where in your body do you feel that strength... or peace... let the feeling expand...");
     }, 15000));
     timers.push(setTimeout(() => {
@@ -225,7 +225,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "resource-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot... let the eye movements strengthen this feeling...", 6000,
+    showNarr("Follow the dot... strengthen this feeling...", 6000,
       "Follow the dot... let the eye movements strengthen this feeling...");
     // Resource installation: minimum 25s (~25 passes, longest EMDR set)
     const t = setTimeout(() => setShowBlsContinue(true), 25000);
@@ -243,10 +243,10 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   useEffect(() => {
     if (phase !== "body-scan") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Scan your body from head to toe... notice how you feel now...", 7000,
+    timers.push(showNarr("Scan your body... notice how you feel...", 7000,
       "Scan your body from head to toe... notice how you feel now..."));
     timers.push(setTimeout(() => {
-      showNarr("Observe any changes without judgment...", 5000,
+      showNarr("Observe without judgment...", 5000,
         "Observe any changes... without judgment...");
     }, 8000));
     timers.push(setTimeout(() => setPhase("closing"), 15000));
@@ -257,7 +257,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   useEffect(() => {
     if (phase !== "closing") return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Take a deep breath... you can return to your safe place anytime you need...", 8000,
+    timers.push(showNarr("You can return to your safe place anytime...", 8000,
       "Take a deep breath... you can return to your safe place... anytime you need..."));
     timers.push(setTimeout(() => { setNarration(null); setSudEnd(-1); }, 9000));
     return () => timers.forEach(clearTimeout);

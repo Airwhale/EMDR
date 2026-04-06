@@ -46,68 +46,68 @@ export const sessionScript: PhaseConfig[] = [
     id: "fixation",
     narration: [
       {
-        text: "Follow the dot with your eyes... keep your head still...",
+        text: "Follow the dot...",
         spoken: "Follow the dot with your eyes... keep your head still... just your eyes... gently... back and forth... that's right...",
         delay: 3000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "Notice the sounds that rise and fall... let them guide your breathing...",
+        text: "Let the sounds guide your breathing...",
         spoken: "Notice the sounds that rise and fall... let them guide your breathing... breathing in as they rise... breathing out as they fall...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "You might notice your breathing finding its own rhythm...",
+        text: "Your breathing finds its rhythm...",
         spoken: "You might notice your breathing finding its own perfect rhythm now... effortless... automatic... and with each breath... you may find yourself becoming more comfortable...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "Perhaps you can notice your eyelids becoming pleasantly heavy...",
+        text: "Eyelids becoming heavy...",
         spoken: "Perhaps you can notice... your eyelids becoming pleasantly heavy... and that feels good... a welcome heaviness... that tells you everything is exactly as it should be...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "Some people begin to notice a comfort spreading through them...",
+        text: "Comfort spreading through you...",
         spoken: "Some people begin to notice a comfort spreading through them... all by itself... and you may find it happening to you now... and you can enjoy how easy it is... to simply allow this...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "Perhaps you can sense a beautiful stillness opening up inside...",
+        text: "A stillness opening inside...",
         spoken: "Perhaps you can sense a beautiful stillness... opening up inside you... and in that stillness... there might be such deep contentment... such quiet satisfaction...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "You may notice each breath carrying you a little deeper...",
+        text: "Each breath carries you deeper...",
         spoken: "You may notice each breath carrying you a little deeper... into this feeling of wellbeing... that's right... deeper now... and it can feel wonderful...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "And you may realize... you are exactly where you want to be...",
+        text: "You are exactly where you want to be...",
         spoken: "And you may realize... you are exactly where you want to be... right here... right now... and that knowing can bring such peace... such contentment...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "Just the gentle movement... the soft sounds... and this growing ease...",
+        text: "Just the sounds and this growing ease...",
         spoken: "Just the gentle movement... the soft sounds... and this growing sense of ease... everything else can simply drift away... because you are safe... and you are at peace...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       // Confusion technique with positive framing
       {
-        text: "Perhaps the relaxation is finding you... or perhaps you are finding it...",
+        text: "Relaxation is finding you...",
         spoken: "Perhaps the relaxation is finding you... or perhaps you are finding it... and it's a lovely thing... that either way... this comfort can grow deeper...",
         delay: 4000,
         duration: BREATH_CYCLE,
       },
       {
-        text: "And the deeper you go... the more content you might feel...",
+        text: "Deeper... more content...",
         spoken: "And the deeper you go... the more content you might feel... and the more content you feel... the deeper you can go... such a wonderful cycle...",
         delay: 4000,
         duration: BREATH_CYCLE,
@@ -122,74 +122,74 @@ export const sessionScript: PhaseConfig[] = [
     id: "deepening",
     narration: [
       {
-        text: "You might notice a warm, pleasant glow beginning in your feet...",
+        text: "A warm glow in your feet...",
         spoken: "You might notice... a warm... pleasant glow beginning in your feet... and as you notice it... it can begin to grow...",
         delay: 3000,
         duration: 8000,
       },
       {
-        text: "That warmth might drift upward... bringing comfort wherever it goes...",
+        text: "Warmth drifting upward...",
         spoken: "That warmth might drift upward... bringing comfort wherever it goes... at its own perfect pace... and you can enjoy every moment of this journey...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "Perhaps through your legs... a beautiful softness spreading...",
+        text: "Softness spreading...",
         spoken: "Perhaps through your legs... a beautiful softness spreading... as if your muscles are melting into warm honey... so comfortable... so at ease...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "Your body knows exactly how to do this... you can trust it completely...",
+        text: "Your body knows what to do...",
         spoken: "Your body knows exactly how to do this... you can trust it completely... your deeper mind is already guiding you... into exactly the right state...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "You might notice your hands feeling wonderfully comfortable...",
+        text: "Hands wonderfully comfortable...",
         spoken: "You might notice your hands feeling wonderfully comfortable... perfectly placed... and you can notice how good it feels... to simply let them rest...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "Perhaps waves of comfort flowing through your arms... into your shoulders...",
+        text: "Comfort flowing into your shoulders...",
         spoken: "Perhaps waves of comfort flowing through your arms... into your shoulders... like warm sunlight spreading through you... bringing such contentment...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "You may notice your shoulders softening... releasing into comfort...",
+        text: "Shoulders softening...",
         spoken: "You may notice your shoulders softening... releasing into comfort... and you can feel how good that release feels... allowing yourself to enjoy it fully...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "Perhaps your neck is finding its perfect position of ease...",
+        text: "Neck finding ease...",
         spoken: "Perhaps your neck is finding its perfect position of ease... and with that ease can come a beautiful feeling of freedom... and lightness...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "You might notice the delicate muscles around your eyes becoming soft...",
+        text: "Eyes becoming soft...",
         spoken: "You might notice the delicate muscles around your eyes... becoming so soft... so smooth... and your eyelids may feel wonderfully heavy... pleasantly closed...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "Perhaps your whole face is beginning to radiate calm...",
+        text: "Face radiating calm...",
         spoken: "Perhaps your whole face is beginning to radiate calm... smooth and serene... and there can be something so deeply satisfying about this... this complete peace...",
         delay: 7000,
         duration: 8000,
       },
       {
-        text: "You might notice a wave of pure contentment washing over you...",
+        text: "A wave of contentment...",
         spoken: "You might notice a wave of pure contentment washing over you... from head to toe... every part of you... deeply... perfectly... at peace...",
         delay: 7000,
         duration: 8000,
       },
       // Anchoring
       {
-        text: "Gently press your thumb and forefinger together... anchoring this feeling...",
+        text: "Press thumb and forefinger... anchor this feeling...",
         spoken: "Now... gently press your thumb and forefinger together... and let this touch become your anchor... this feeling of deep contentment... is yours to return to... whenever you choose... simply by pressing these fingers together...",
         delay: 7000,
         duration: 10000,
@@ -204,33 +204,33 @@ export const sessionScript: PhaseConfig[] = [
     id: "staircase",
     narration: [
       {
-        text: "In your mind... a beautiful staircase appears... leading down into warmth...",
+        text: "A staircase leading down...",
         spoken: "In your mind... a beautiful staircase appears... leading down into the most comfortable... most peaceful place... you have ever known...",
         delay: 2000,
         duration: 8000,
       },
       {
-        text: "Each step might bring twice as much comfort... twice as much peace...",
+        text: "Each step... twice as deep...",
         spoken: "Each step might bring twice as much comfort... twice as much peace... and with each step... you may feel that contentment doubling...",
         delay: 7000,
         duration: 8000,
       },
       // Countdown preparation
       {
-        text: "You will hear numbers counting down... and with each number you can find yourself dropping deeper...",
+        text: "Numbers counting down... dropping deeper...",
         spoken: "In a moment... you will see and hear some numbers... counting down from ten to one... and you may find yourself dropping more and more into relaxation... as each number takes you deeper...",
         delay: 7000,
         duration: 10000,
       },
       // Fractionation — positive framing
       {
-        text: "For just a moment... notice how good you already feel...",
+        text: "Notice how good you feel...",
         spoken: "For just a moment... notice how good you already feel... notice the sounds around you... the surface supporting you... appreciate how comfortable you are...",
         delay: 7000,
         duration: 6000,
       },
       {
-        text: "...and now allow yourself to go twice as deep into that comfort...",
+        text: "Twice as deep...",
         spoken: "...and now... allow yourself to go twice as deep into that comfort... that's right... so much deeper... so much more peaceful...",
         delay: 5000,
         duration: 8000,
@@ -245,7 +245,7 @@ export const sessionScript: PhaseConfig[] = [
     id: "experiments",
     narration: [
       {
-        text: "You are deeply at peace. Let's explore what your mind can do...",
+        text: "Let's explore what your mind can do...",
         spoken: "You are deeply at peace... and from this beautiful place of comfort... let's explore... the wonderful things your mind can do...",
         delay: 2000,
         duration: 6000,
@@ -260,7 +260,7 @@ export const sessionScript: PhaseConfig[] = [
     id: "emergence",
     narration: [
       {
-        text: "In a moment, I'll count from 1 to 5... bringing you back feeling wonderful...",
+        text: "Counting from 1 to 5...",
         spoken: "In a moment... I'll count from 1 to 5... and with each number... you'll feel more alert... more present... carrying this feeling of contentment with you...",
         delay: 2000,
         duration: 8000,
@@ -285,31 +285,31 @@ export const emergenceNumbers = [1, 2, 3, 4, 5];
 
 export const emergenceNarration: NarrationCue[] = [
   {
-    text: "1 — a gentle brightening of awareness...",
+    text: "1...",
     spoken: "One... a gentle brightening of awareness... feeling so good...",
     delay: 0,
     duration: 6000,
   },
   {
-    text: "2 — becoming more present... carrying this peace with you...",
+    text: "2...",
     spoken: "Two... becoming more present... carrying this deep peace with you... it stays with you...",
     delay: 7000,
     duration: 6000,
   },
   {
-    text: "3 — energy and vitality returning... feeling wonderful...",
+    text: "3...",
     spoken: "Three... energy and vitality returning to your body... feeling wonderful... refreshed...",
     delay: 7000,
     duration: 6000,
   },
   {
-    text: "4 — almost there... taking a deep, satisfying breath...",
+    text: "4...",
     spoken: "Four... almost there... take a deep, satisfying breath... feeling clear... feeling content...",
     delay: 7000,
     duration: 6000,
   },
   {
-    text: "5 — eyes open, fully alert, feeling wonderful and at peace.",
+    text: "5 — fully alert, at peace.",
     spoken: "Five... eyes open... wide awake... fully alert... feeling wonderful... refreshed... and deeply at peace.",
     delay: 7000,
     duration: 8000,
