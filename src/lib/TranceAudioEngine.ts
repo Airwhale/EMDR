@@ -44,6 +44,10 @@ export class TranceAudioEngine {
   private heartbeatLfo: OscillatorNode | null = null;
   private heartbeatLfoGain: GainNode | null = null;
 
+  // Ping gain — separate from master so ping volume slider is independent
+  private pingGain: GainNode | null = null;
+  private pingVolume = 0.25;
+
   private isRunning = false;
   private baseFreq = 100;
   private binauralBeat = 4;
@@ -66,6 +70,11 @@ export class TranceAudioEngine {
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0;
     this.masterGain.connect(this.ctx.destination);
+
+    // Separate gain for ping sounds so volume is independently controllable
+    this.pingGain = this.ctx.createGain();
+    this.pingGain.gain.value = this.pingVolume;
+    this.pingGain.connect(this.ctx.destination);
 
     // Set mode-specific binaural frequency
     if (mode === "emdr") {
@@ -96,7 +105,7 @@ export class TranceAudioEngine {
 
   /** Play a bilateral ping/tap sound panned to one side. */
   playPing(side: "left" | "right"): void {
-    if (!this.ctx || !this.masterGain) return;
+    if (!this.ctx || !this.pingGain) return;
 
     const now = this.ctx.currentTime;
 
@@ -121,10 +130,17 @@ export class TranceAudioEngine {
     osc.connect(filter);
     filter.connect(env);
     env.connect(pan);
-    pan.connect(this.masterGain);
+    pan.connect(this.pingGain);
 
     osc.start(now);
     osc.stop(now + 0.15);
+  }
+
+  setPingVolume(volume: number): void {
+    if (!this.ctx || !this.pingGain) return;
+    this.pingVolume = volume;
+    this.pingGain.gain.setValueAtTime(this.pingGain.gain.value, this.ctx.currentTime);
+    this.pingGain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.1);
   }
 
   /** Play a breath cue: tonal chime panned L/R + spoken word.

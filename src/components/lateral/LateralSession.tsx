@@ -54,6 +54,11 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
     audioRef.current.setBinauralBeat(binauralHz, 2);
   }, [binauralHz]);
 
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.setPingVolume(soundVol);
+  }, [soundVol]);
+
   const handleExit = useCallback(() => {
     audioRef.current?.fadeOut(2);
     setTimeout(() => {
