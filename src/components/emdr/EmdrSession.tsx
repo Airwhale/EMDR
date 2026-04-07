@@ -38,6 +38,9 @@ export interface EmdrSummaryData {
   exercisesCompleted: string[];
 }
 
+// Small pause between sequential narration cues (ms)
+const CUE_PAUSE = 600;
+
 export default function EmdrSession({ onComplete, onExit, binauralEnabled = true }: EmdrSessionProps) {
   const [phase, setPhase] = useState<EmdrPhase>("sud-check");
   const [narration, setNarration] = useState<string | null>(null);
@@ -70,23 +73,20 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     return () => { audio.stop(); voice.stop(); };
   }, []);
 
-  const speak = useCallback((text: string) => {
-    voiceRef.current?.speak(text);
-  }, []);
+  // Helpers used inside phase effects
+  const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  const showNarr = useCallback((text: string, duration: number, spokenText?: string) => {
-    setNarration(text);
-    speak(spokenText || text);
-    // Don't auto-hide — the next showNarr or phase transition clears it
-    return null as unknown as ReturnType<typeof setTimeout>;
-  }, [speak]);
+  const say = useCallback(async (display: string, spoken?: string) => {
+    setNarration(display);
+    if (voiceRef.current) await voiceRef.current.speakAsync(spoken ?? display);
+    await delay(CUE_PAUSE);
+  }, []);
 
   // ---- SUD CHECK (initial) ----
   const handleSudStart = useCallback((rating: number) => {
     setSudStart(rating);
     if (rating > 5) {
       if (groundingAttempted && rating >= 9) {
-        // SUD still very high after grounding — trigger adverse event flow
         setShowAdverseEvent(true);
         return;
       }
@@ -99,52 +99,52 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- CENTERING ----
   useEffect(() => {
     if (phase !== "centering") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(setTimeout(() => {
-      showNarr("Take a deep breath...", 6000,
-        "Take a slow... deep breath... let your body settle...");
-    }, 1500));
-    timers.push(setTimeout(() => {
-      showNarr("Feel the surface beneath you...", 6000,
-        "Feel the surface beneath you... notice the air on your skin...");
-    }, 8500));
-    timers.push(setTimeout(() => setPhase("safe-place"), 16000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await delay(1500);
+      if (cancelled) return;
+      await say("Take a deep breath...", "Take a slow... deep breath... let your body settle...");
+      if (cancelled) return;
+      await say("Feel the surface beneath you...", "Feel the surface beneath you... notice the air on your skin...");
+      if (cancelled) return;
+      setPhase("safe-place");
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   // ---- SAFE PLACE ----
   useEffect(() => {
     if (phase !== "safe-place") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think of your safe place...", 7000,
-      "In your mind... think of a place... where you feel completely safe... and at peace..."));
-    timers.push(setTimeout(() => {
-      showNarr("Notice its colors, sounds, and warmth...", 7000,
-        "Notice the colors... the sounds... and the temperature of this place... in your mind...");
-    }, 8000));
-    timers.push(setTimeout(() => {
-      showNarr("Choose one word for this place...", 6000,
-        "Choose a single word... that represents this safe place...");
-    }, 16000));
-    timers.push(setTimeout(() => showNarr("Hold that image and word...", 4000), 23000));
-    timers.push(setTimeout(() => {
+    let cancelled = false;
+    const run = async () => {
+      await say("Think of your safe place...", "In your mind... think of a place... where you feel completely safe... and at peace...");
+      if (cancelled) return;
+      await say("Notice its colors, sounds, and warmth...", "Notice the colors... the sounds... and the temperature of this place... in your mind...");
+      if (cancelled) return;
+      await say("Choose one word for this place...", "Choose a single word... that represents this safe place...");
+      if (cancelled) return;
+      await say("Hold that image and word...", "Hold that image and word in mind...");
+      if (cancelled) return;
       setShowReady(true);
       setReadyTarget("safe-place-bls");
-    }, 28000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ---- SAFE PLACE BLS (4-6 slow passes ≈ 6s, then continue button) ----
+  // ---- SAFE PLACE BLS ----
   useEffect(() => {
     if (phase !== "safe-place-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot... hold your safe place...", 7000,
-      "Follow the dot with your eyes... keep your head still... just your eyes... holding your safe place in mind...");
-    // Safe place: minimum 20s (~20 slow passes) before continue appears
+    voiceRef.current?.speakAsync(
+      "Follow the dot with your eyes... keep your head still... just your eyes... holding your safe place in mind..."
+    );
+    setNarration("Follow the dot... hold your safe place...");
     const t = setTimeout(() => setShowBlsContinue(true), 20000);
     return () => clearTimeout(t);
-  }, [phase, showNarr]);
+  }, [phase]);
 
   const handleSafePlaceContinue = useCallback(() => {
     setBlsActive(false);
@@ -162,35 +162,33 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- CONTAINER ----
   useEffect(() => {
     if (phase !== "container") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Imagine a strong container...", 7000,
-      "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."));
-    timers.push(setTimeout(() => {
-      showNarr("Place what bothers you inside... close it...", 7000,
-        "Place anything that's been bothering you inside... close the lid firmly...");
-    }, 8000));
-    timers.push(setTimeout(() => {
-      showNarr("Safely contained for now...", 6000,
-        "It's held safely there... not gone... just contained for now...");
-    }, 16000));
-    timers.push(setTimeout(() => {
+    let cancelled = false;
+    const run = async () => {
+      await say("Imagine a strong container...", "In your mind... imagine a strong container... a box... a vault... anything that locks securely...");
+      if (cancelled) return;
+      await say("Place what bothers you inside... close it...", "Place anything that's been bothering you inside... close the lid firmly...");
+      if (cancelled) return;
+      await say("Safely contained for now...", "It's held safely there... not gone... just contained for now...");
+      if (cancelled) return;
       setShowReady(true);
       setReadyTarget("container-bls");
-    }, 23000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ---- CONTAINER BLS (4-6 passes ≈ 6s, then continue) ----
+  // ---- CONTAINER BLS ----
   useEffect(() => {
     if (phase !== "container-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot... feel it sealing...", 7000,
-      "Imagine the container sealing... as you follow the dot... feeling it become more and more secure... with each movement of your eyes...");
-    // Container: minimum 15s (~15 slow passes)
+    voiceRef.current?.speakAsync(
+      "Imagine the container sealing... as you follow the dot... feeling it become more and more secure... with each movement of your eyes..."
+    );
+    setNarration("Follow the dot... feel it sealing...");
     const t = setTimeout(() => setShowBlsContinue(true), 15000);
     return () => clearTimeout(t);
-  }, [phase, showNarr]);
+  }, [phase]);
 
   const handleContainerContinue = useCallback(() => {
     setBlsActive(false);
@@ -202,35 +200,31 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- RESOURCE INSTALLATION ----
   useEffect(() => {
     if (phase !== "resource") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think of a time you felt strong...", 7000,
-      "In your mind... think of a time... you felt strong... capable... or deeply at peace..."));
-    timers.push(setTimeout(() => {
-      showNarr("Step into that memory...", 6000,
-        "In your mind... step into that memory... feel it... in your body...");
-    }, 8000));
-    timers.push(setTimeout(() => {
-      showNarr("Where do you feel it? Let it expand...", 6000,
-        "Where in your body do you feel that strength... or peace... let the feeling expand...");
-    }, 15000));
-    timers.push(setTimeout(() => {
+    let cancelled = false;
+    const run = async () => {
+      await say("Think of a time you felt strong...", "In your mind... think of a time... you felt strong... capable... or deeply at peace...");
+      if (cancelled) return;
+      await say("Step into that memory...", "In your mind... step into that memory... feel it... in your body...");
+      if (cancelled) return;
+      await say("Where do you feel it? Let it expand...", "Where in your body do you feel that strength... or peace... let the feeling expand...");
+      if (cancelled) return;
       setShowReady(true);
       setReadyTarget("resource-bls");
-    }, 22000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ---- RESOURCE BLS (6-12 passes ≈ 12s, then continue) ----
+  // ---- RESOURCE BLS ----
   useEffect(() => {
     if (phase !== "resource-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    showNarr("Follow the dot... strengthen this feeling...", 6000,
-      "Follow the dot... let the eye movements strengthen this feeling...");
-    // Resource installation: minimum 25s (~25 passes, longest EMDR set)
+    voiceRef.current?.speakAsync("Follow the dot... let the eye movements strengthen this feeling...");
+    setNarration("Follow the dot... strengthen this feeling...");
     const t = setTimeout(() => setShowBlsContinue(true), 25000);
     return () => clearTimeout(t);
-  }, [phase, showNarr]);
+  }, [phase]);
 
   const handleResourceContinue = useCallback(() => {
     setBlsActive(false);
@@ -242,26 +236,31 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- BODY SCAN ----
   useEffect(() => {
     if (phase !== "body-scan") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Scan your body... notice how you feel...", 7000,
-      "Scan your body from head to toe... notice how you feel now..."));
-    timers.push(setTimeout(() => {
-      showNarr("Observe without judgment...", 5000,
-        "Observe any changes... without judgment...");
-    }, 8000));
-    timers.push(setTimeout(() => setPhase("closing"), 15000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await say("Scan your body... notice how you feel...", "Scan your body from head to toe... notice how you feel now...");
+      if (cancelled) return;
+      await say("Observe without judgment...", "Observe any changes... without judgment...");
+      if (cancelled) return;
+      setPhase("closing");
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   // ---- CLOSING ----
   useEffect(() => {
     if (phase !== "closing") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("You can return to your safe place anytime...", 8000,
-      "Take a deep breath... you can return to your safe place... anytime you need..."));
-    timers.push(setTimeout(() => { setNarration(null); setSudEnd(-1); }, 9000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await say("You can return to your safe place anytime...", "Take a deep breath... you can return to your safe place... anytime you need...");
+      if (cancelled) return;
+      setNarration(null);
+      setSudEnd(-1);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   const handleSudEnd = useCallback((rating: number) => {
     setSudEnd(rating);
@@ -280,24 +279,21 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   const handleGroundingComplete = useCallback(() => {
     setGroundingAttempted(true);
     setPhase("sud-check");
-    setSudStart(null); // Re-prompt SUD after grounding
+    setSudStart(null);
   }, []);
 
-  // Determine BLS continue handler based on current phase
   const blsContinueHandler =
     phase === "safe-place-bls" ? handleSafePlaceContinue
     : phase === "container-bls" ? handleContainerContinue
     : phase === "resource-bls" ? handleResourceContinue
     : undefined;
 
-  // Adverse event flow
   if (showAdverseEvent) {
     return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
   }
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {/* BLS dot — centered vertically in upper portion, full width */}
       {blsActive && (
         <div className="absolute top-[30%] w-full">
           <BilateralDot
@@ -312,7 +308,6 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
         </div>
       )}
 
-      {/* Exit button */}
       {onExit && (
         <motion.button
           initial={{ opacity: 0 }}
@@ -345,7 +340,6 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
           </motion.div>
         )}
 
-        {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {!["sud-check", "grounding", "butterfly-hug"].includes(phase) &&
           sudEnd === null && narration && !blsActive && (
           <motion.div key={`narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}

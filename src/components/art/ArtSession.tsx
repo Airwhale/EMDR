@@ -41,6 +41,9 @@ export interface ArtSummaryData {
 // Add buffer so user has time to settle — 35s before continue appears
 const ART_SET_DURATION = 35000;
 
+// Small pause between sequential narration cues (ms)
+const CUE_PAUSE = 600;
+
 export default function ArtSession({ onComplete, onExit, binauralEnabled = true }: ArtSessionProps) {
   const [phase, setPhase] = useState<ArtPhase>("centering");
   const [narration, setNarration] = useState<string | null>(null);
@@ -74,45 +77,51 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     return () => { audio.stop(); voice.stop(); };
   }, []);
 
-  const speak = useCallback((text: string) => {
-    voiceRef.current?.speak(text);
-  }, []);
+  const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  const showNarr = useCallback((text: string, duration: number, spoken?: string) => {
-    setNarration(text);
-    speak(spoken || text);
-    return null as unknown as ReturnType<typeof setTimeout>;
-  }, [speak]);
+  const say = useCallback(async (display: string, spoken?: string) => {
+    setNarration(display);
+    if (voiceRef.current) await voiceRef.current.speakAsync(spoken ?? display);
+    await delay(CUE_PAUSE);
+  }, []);
 
   // ---- CENTERING ----
   useEffect(() => {
     if (phase !== "centering") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    // Small delay to let voice engine initialize before first spoken cue
-    timers.push(setTimeout(() => {
-      showNarr("Take a deep breath...", 6000);
-    }, 1500));
-    timers.push(setTimeout(() => {
-      showNarr("Let your body relax...", 6000);
-    }, 8500));
-    timers.push(setTimeout(() => setPhase("scene-select"), 16000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await delay(1500);
+      if (cancelled) return;
+      await say("Take a deep breath...");
+      if (cancelled) return;
+      await say("Let your body relax...");
+      if (cancelled) return;
+      setPhase("scene-select");
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   // ---- SCENE SELECT ----
   useEffect(() => {
     if (phase !== "scene-select") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr(
-      "Choose a specific moment...", 7000,
-      "Think of something stressful... you don't need to describe it... just bring it to mind..."));
-    timers.push(setTimeout(() => {
-      showNarr("See it like a movie scene...", 6000,
-        "See it like a scene in a movie... in your mind... notice the details...");
-    }, 8000));
-    timers.push(setTimeout(() => setPhase("sud-initial"), 16000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await say(
+        "Choose a specific moment...",
+        "Think of something stressful... you don't need to describe it... just bring it to mind..."
+      );
+      if (cancelled) return;
+      await say(
+        "See it like a movie scene...",
+        "See it like a scene in a movie... in your mind... notice the details..."
+      );
+      if (cancelled) return;
+      setPhase("sud-initial");
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   // ---- INITIAL SUD ----
   const handleSudInitial = useCallback((rating: number) => {
@@ -143,34 +152,34 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setSudStart(null);
   }, []);
 
-  // ---- PROCESSING (40 passes ≈ 28s, then continue button) ----
+  // ---- PROCESSING ----
   useEffect(() => {
     if (phase !== "processing") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    const timers: ReturnType<typeof setTimeout>[] = [];
 
-    if (round > 1) {
-      // Returning for another round — explicitly bring back the original
-      timers.push(showNarr("Bring the original scene back...", 6000,
-        "Bring the original scene back to mind... how it was... before you changed it..."));
-      timers.push(setTimeout(() => {
-        showNarr("Follow the dot...", 5000,
-          "Follow the dot... notice what's still there...");
-      }, 10000));
-    } else {
-      timers.push(showNarr("Hold the scene... follow the dot...", 6000,
-        "Hold that scene in mind... follow the dot with your eyes... keep your head still... just your eyes..."));
-      timers.push(setTimeout(() => {
-        showNarr("Keep following...", 5000,
-          "Keep following... let whatever comes up... just be there...");
-      }, 10000));
-    }
-    // Show continue after ~40 passes
-    timers.push(setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION));
+    const run = async () => {
+      if (round > 1) {
+        await voiceRef.current?.speakAsync(
+          "Bring the original scene back to mind... how it was... before you changed it..."
+        );
+        setNarration("Bring the original scene back...");
+        await voiceRef.current?.speakAsync("Follow the dot... notice what's still there...");
+        setNarration("Follow the dot...");
+      } else {
+        await voiceRef.current?.speakAsync(
+          "Hold that scene in mind... follow the dot with your eyes... keep your head still... just your eyes..."
+        );
+        setNarration("Hold the scene... follow the dot...");
+        await voiceRef.current?.speakAsync("Keep following... let whatever comes up... just be there...");
+        setNarration("Keep following...");
+      }
+    };
+    run();
 
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+  }, [phase]);
 
   const handleProcessingContinue = useCallback(() => {
     setBlsActive(false);
@@ -181,27 +190,32 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- SENSATION CHECK ----
   useEffect(() => {
     if (phase !== "sensation-check") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Where do you feel it in your body?", 7000,
-      "Where do you feel the tension... or discomfort... in your body... focus on that place..."));
-    timers.push(setTimeout(() => {
+    let cancelled = false;
+    const run = async () => {
+      await say(
+        "Where do you feel it in your body?",
+        "Where do you feel the tension... or discomfort... in your body... focus on that place..."
+      );
+      if (cancelled) return;
       setShowReady(true);
       setReadyTarget("sensation-bls");
-    }, 8000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ---- SENSATION BLS (40 passes ≈ 28s, then continue) ----
+  // ---- SENSATION BLS ----
   useEffect(() => {
     if (phase !== "sensation-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-
-    showNarr("Follow the dot... let it soften...", 5000,
-      "Follow the dot... focus on where you feel it in your body... let the feeling soften...");
+    voiceRef.current?.speakAsync(
+      "Follow the dot... focus on where you feel it in your body... let the feeling soften..."
+    );
+    setNarration("Follow the dot... let it soften...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
-  }, [phase, showNarr]);
+  }, [phase]);
 
   const handleSensationContinue = useCallback(() => {
     setBlsActive(false);
@@ -212,31 +226,35 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- VOLUNTARY IMAGE REPLACEMENT prompt ----
   useEffect(() => {
     if (phase !== "vir-prompt") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Create a new version of this moment...", 7000,
-      "Now... in your mind... change the scene. You're in control of this image..."));
-    timers.push(setTimeout(() => {
-      showNarr("Change what happens... make it yours...", 7000,
-        "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be...");
-    }, 7000));
-    timers.push(setTimeout(() => {
+    let cancelled = false;
+    const run = async () => {
+      await say(
+        "Create a new version of this moment...",
+        "Now... in your mind... change the scene. You're in control of this image..."
+      );
+      if (cancelled) return;
+      await say(
+        "Change what happens... make it yours...",
+        "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be..."
+      );
+      if (cancelled) return;
       setShowReady(true);
       setReadyTarget("vir-bls");
-    }, 15000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ---- VIR BLS (40 passes to install the changed scene, then continue) ----
+  // ---- VIR BLS ----
   useEffect(() => {
     if (phase !== "vir-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-
-    showNarr("Hold the new scene... follow the dot...", 6000,
-      "Hold the changed scene in mind... follow the dot... let it settle in...");
+    voiceRef.current?.speakAsync("Hold the changed scene in mind... follow the dot... let it settle in...");
+    setNarration("Hold the new scene... follow the dot...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => clearTimeout(t);
-  }, [phase, showNarr]);
+  }, [phase]);
 
   const handleVirContinue = useCallback(() => {
     setBlsActive(false);
@@ -258,36 +276,44 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     } else {
       setPhase("body-scan");
     }
-  }, [round]);
+  }, []);
 
   // ---- BODY SCAN ----
   useEffect(() => {
     if (phase !== "body-scan") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Scan your body... notice what shifted...", 6000));
-    timers.push(setTimeout(() => {
-      showNarr("Observe without judgment...", 4000, "Observe... without judgment...");
-    }, 7000));
-    timers.push(setTimeout(() => setPhase("closing"), 13000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await say("Scan your body... notice what shifted...");
+      if (cancelled) return;
+      await say("Observe without judgment...", "Observe... without judgment...");
+      if (cancelled) return;
+      setPhase("closing");
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   // ---- CLOSING ----
   useEffect(() => {
     if (phase !== "closing") return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(showNarr("Think back to the original memory...", 9000,
-      "Take a deep breath... think back to the original memory... notice how different it feels now..."));
-    timers.push(setTimeout(() => setShowSudFinal(true), 12000));
-    return () => timers.forEach(clearTimeout);
-  }, [phase, showNarr]);
+    let cancelled = false;
+    const run = async () => {
+      await say(
+        "Think back to the original memory...",
+        "Take a deep breath... think back to the original memory... notice how different it feels now..."
+      );
+      if (cancelled) return;
+      setShowSudFinal(true);
+    };
+    run();
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   const handleSudFinal = useCallback((rating: number) => {
     audioRef.current?.fadeOut(8);
     onComplete({ sudStart, sudEnd: rating, rounds: round });
   }, [sudStart, round, onComplete]);
 
-  // BLS continue handler based on phase
   const blsContinueHandler =
     phase === "processing" ? handleProcessingContinue
     : phase === "sensation-bls" ? handleSensationContinue
@@ -302,7 +328,6 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {/* BLS dot — full width, faster for ART */}
       {isBls && (
         <div className="absolute top-[30%] w-full">
           <BilateralDot
@@ -317,7 +342,6 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
         </div>
       )}
 
-      {/* Exit button */}
       {onExit && (
         <motion.button
           initial={{ opacity: 0 }}
@@ -350,7 +374,6 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
           </motion.div>
         )}
 
-        {/* Narration — hidden during BLS (dot should be the only thing on screen) */}
         {narration && !showSudRecheck && !showSudFinal && !isBls && (
           <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}
             className="flex flex-col items-center gap-6">

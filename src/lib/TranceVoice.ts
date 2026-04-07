@@ -73,6 +73,8 @@ export class TranceVoice {
   private currentAudio: HTMLAudioElement | null = null;
   private audioCache = new Map<string, HTMLAudioElement>();
   private useAudioFiles = true;
+  /** Resolve callback for any in-flight speakAsync promise */
+  private pendingResolve: (() => void) | null = null;
 
   init(): void {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -138,11 +140,8 @@ export class TranceVoice {
 
   speak(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
     if (!this.enabled) return;
-
-    // Stop any current playback
     this.stopCurrent();
 
-    // Try audio file first
     if (this.useAudioFiles) {
       const audioPath = AUDIO_MAP[text];
       if (audioPath) {
@@ -153,17 +152,66 @@ export class TranceVoice {
         }
         audio.volume = options?.volume ?? this.tuning.volume;
         audio.currentTime = 0;
-        audio.play().catch(() => {
-          // File failed to load — fall back to speech synthesis
-          this.speakWithSynth(text, options);
-        });
+        audio.play().catch(() => { this.speakWithSynth(text, options); });
         this.currentAudio = audio;
         return;
       }
     }
 
-    // Fall back to speech synthesis
     this.speakWithSynth(text, options);
+  }
+
+  /**
+   * Like speak(), but returns a Promise that resolves when the audio (or
+   * speech synthesis) finishes. Resolves immediately if voice is disabled.
+   * If cancel() is called before the audio ends, the promise resolves early.
+   */
+  speakAsync(text: string, options?: { rate?: number; pitch?: number; volume?: number }): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (!this.enabled) { resolve(); return; }
+
+      // Resolve any previous pending speakAsync promise
+      this._resolvePending();
+      this.stopCurrent();
+      this.pendingResolve = resolve;
+
+      const done = () => {
+        if (this.pendingResolve === resolve) this.pendingResolve = null;
+        resolve();
+      };
+
+      if (this.useAudioFiles) {
+        const audioPath = AUDIO_MAP[text];
+        if (audioPath) {
+          let audio = this.audioCache.get(audioPath);
+          if (!audio) {
+            audio = new Audio(audioPath);
+            this.audioCache.set(audioPath, audio);
+          }
+          audio.volume = options?.volume ?? this.tuning.volume;
+          audio.currentTime = 0;
+          audio.addEventListener("ended", done, { once: true });
+          audio.addEventListener("error", done, { once: true });
+          audio.play().catch(() => {
+            audio!.removeEventListener("ended", done);
+            audio!.removeEventListener("error", done);
+            this.speakWithSynthAsync(text, options, done);
+          });
+          this.currentAudio = audio;
+          return;
+        }
+      }
+
+      this.speakWithSynthAsync(text, options, done);
+    });
+  }
+
+  private _resolvePending(): void {
+    if (this.pendingResolve) {
+      const r = this.pendingResolve;
+      this.pendingResolve = null;
+      r();
+    }
   }
 
   private speakWithSynth(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
@@ -175,6 +223,25 @@ export class TranceVoice {
     utterance.rate = options?.rate ?? this.tuning.rate;
     utterance.pitch = options?.pitch ?? this.tuning.pitch;
     utterance.volume = options?.volume ?? this.tuning.volume;
+    this.currentUtterance = utterance;
+    this.synth.speak(utterance);
+  }
+
+  private speakWithSynthAsync(
+    text: string,
+    options: { rate?: number; pitch?: number; volume?: number } | undefined,
+    onDone: () => void
+  ): void {
+    if (!this.synth || !this.ready) { onDone(); return; }
+    this.synth.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = this.voice;
+    utterance.rate = options?.rate ?? this.tuning.rate;
+    utterance.pitch = options?.pitch ?? this.tuning.pitch;
+    utterance.volume = options?.volume ?? this.tuning.volume;
+    utterance.onend = onDone;
+    utterance.onerror = onDone;
     this.currentUtterance = utterance;
     this.synth.speak(utterance);
   }
@@ -197,6 +264,7 @@ export class TranceVoice {
   }
 
   cancel(): void {
+    this._resolvePending();
     this.stopCurrent();
   }
 
@@ -222,6 +290,7 @@ export class TranceVoice {
   }
 
   stop(): void {
+    this._resolvePending();
     this.cancel();
     this.audioCache.clear();
     this.synth = null;

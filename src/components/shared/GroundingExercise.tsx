@@ -24,36 +24,41 @@ export default function GroundingExercise({ voice, onComplete }: GroundingExerci
   const [stepIndex, setStepIndex] = useState(-1);
 
   useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    let cancelled = false;
+    const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-    // Intro
-    timers.push(
-      setTimeout(() => {
-        voice?.speak("Let's pause and ground yourself. This is a simple exercise to bring you back to the present moment.", { rate: 0.8 });
-      }, 500)
-    );
-
-    // Schedule each step
-    let cumulative = 6000;
-    steps.forEach((step, i) => {
-      timers.push(
-        setTimeout(() => {
-          setStepIndex(i);
-          voice?.speak(step.prompt, { rate: 0.8 });
-        }, cumulative)
+    const run = async () => {
+      // Intro — let voice engine warm up first
+      await delay(500);
+      if (cancelled) return;
+      await voice?.speakAsync(
+        "Let's pause and ground yourself. This is a simple exercise to bring you back to the present moment.",
+        { rate: 0.8 }
       );
-      cumulative += 10000;
-    });
+      if (cancelled) return;
+      await delay(800);
 
-    // Complete
-    timers.push(
-      setTimeout(() => {
-        voice?.speak("Good. Take a deep breath. You're here, you're safe.", { rate: 0.75 });
-      }, cumulative)
-    );
-    timers.push(setTimeout(onComplete, cumulative + 6000));
+      for (let i = 0; i < steps.length; i++) {
+        if (cancelled) return;
+        setStepIndex(i);
+        await voice?.speakAsync(steps[i].prompt, { rate: 0.8 });
+        if (cancelled) return;
+        // Give the user time to do each step even if the spoken cue is short
+        await delay(4000);
+      }
 
-    return () => timers.forEach(clearTimeout);
+      if (cancelled) return;
+      await voice?.speakAsync("Good. Take a deep breath. You're here, you're safe.", { rate: 0.75 });
+      if (cancelled) return;
+      await delay(1000);
+      if (!cancelled) onComplete();
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+      voice?.cancel();
+    };
   }, [voice, onComplete]);
 
   return (

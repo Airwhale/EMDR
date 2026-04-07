@@ -12,13 +12,13 @@ interface ButterflyHugProps {
   onComplete: () => void;
 }
 
-const narration = [
-  { text: "Cross arms over your upper chest...", delay: 0, duration: 7000 },
-  { text: "Fingertips pointing toward your neck...", delay: 8000, duration: 7000 },
-  { text: "Tap gently — left, right, left, right...", delay: 8000, duration: 7000 },
-  { text: "Keep tapping steadily...", delay: 8000, duration: 7000 },
-  { text: "Notice any sensations...", delay: 8000, duration: 7000 },
-  { text: "Feeling calmer with each tap...", delay: 8000, duration: 7000 },
+const cues = [
+  "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone...",
+  "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone...",
+  "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...",
+  "Keep tapping steadily on your upper chest... each tap light and rhythmic...",
+  "Notice any sensations in your body as you tap... just observe them...",
+  "Continue tapping for a few more moments... feeling calmer with each tap...",
 ];
 
 export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugProps) {
@@ -29,32 +29,45 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
   const tapIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    let cumulative = 0;
+    let cancelled = false;
+    const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-    narration.forEach((cue) => {
-      cumulative += cue.delay;
-      const show = cumulative;
-      const hide = show + cue.duration;
-      timers.push(setTimeout(() => {
-        setCurrentText(cue.text);
-        voice?.speak(cue.text);
-      }, show));
-      timers.push(setTimeout(() => setCurrentText(null), hide));
-      cumulative = hide;
-    });
+    const run = async () => {
+      // Placement cues (show pose image during these)
+      for (let i = 0; i < 2; i++) {
+        if (cancelled) return;
+        setCurrentText(cues[i]);
+        await voice?.speakAsync(cues[i]) ?? delay(0);
+        if (cancelled) return;
+        await delay(400);
+      }
 
-    // Show pose during first two cues (placement), then switch to tapping
-    timers.push(setTimeout(() => {
+      // Switch to tapping animation
+      if (cancelled) return;
       setShowPose(false);
       setTapping(true);
-    }, 15000));
-    timers.push(setTimeout(() => {
-      setTapping(false);
-      onComplete();
-    }, cumulative + 3000));
 
-    return () => timers.forEach(clearTimeout);
+      // Tapping cues
+      for (let i = 2; i < cues.length; i++) {
+        if (cancelled) return;
+        setCurrentText(cues[i]);
+        await voice?.speakAsync(cues[i]) ?? delay(0);
+        if (cancelled) return;
+        await delay(400);
+      }
+
+      if (cancelled) return;
+      setCurrentText(null);
+      setTapping(false);
+      await delay(1500);
+      if (!cancelled) onComplete();
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+      voice?.cancel();
+    };
   }, [voice, onComplete]);
 
   // Tapping rhythm at ~1Hz
@@ -80,7 +93,6 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 px-4">
-      {/* Reference photos (shown during placement cues) */}
       {showPose && !tapping && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -106,7 +118,6 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
         </motion.div>
       )}
 
-      {/* Alternating tapping animation (shown during tapping cues) */}
       {tapping && (
         <motion.div
           initial={{ opacity: 0 }}
