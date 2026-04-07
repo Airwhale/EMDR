@@ -25,6 +25,8 @@ const EXPERIMENT_ORDER: ExperimentId[] = ["arm", "time", "sensory", "pendulum"];
 
 type TrancePhase = Exclude<PhaseId, "entry">;
 
+const numberWords = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+
 interface TranceSessionProps {
   onExit?: () => void;
 }
@@ -149,7 +151,6 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
   }, [phase, schedulePhaseNarration]);
 
   // ---- STAIRCASE ----
-  const numberWords = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
   const handleStaircaseStep = useCallback((step: number) => {
     const pitchOffset = (10 - step) * 2;
     audioRef.current?.shiftPitch(100 - pitchOffset, 3);

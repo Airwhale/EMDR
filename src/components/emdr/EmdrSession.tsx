@@ -71,6 +71,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     setVoiceAvailable(voice.isSupported());
 
     return () => { audio.stop(); voice.stop(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Helpers used inside phase effects

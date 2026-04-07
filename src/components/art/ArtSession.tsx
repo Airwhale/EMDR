@@ -75,6 +75,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setVoiceAvailable(voice.isSupported());
 
     return () => { audio.stop(); voice.stop(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -183,6 +184,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   const handleProcessingContinue = useCallback(() => {

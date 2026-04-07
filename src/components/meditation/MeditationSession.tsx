@@ -16,6 +16,8 @@ import Staircase from "@/components/Staircase";
 
 type MedPhase = "centering" | "fixation" | "deepening" | "staircase" | "sustain" | "emergence" | "complete";
 
+const NUMBER_WORDS = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+
 interface MeditationSessionProps {
   onComplete: () => void;
   onExit: () => void;
@@ -109,6 +111,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     startTimeRef.current = Date.now();
 
     return () => { audio.stop(); voice.stop(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Elapsed time tracker
@@ -228,7 +231,6 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
   }, [phase, scheduleNarrationCues]);
 
   // ---- STAIRCASE ----
-  const numberWords = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
   const handleStaircaseStep = useCallback((step: number) => {
     const pitchOffset = (10 - step) * 2;
     audioRef.current?.shiftPitch(100 - pitchOffset, 3);
@@ -236,7 +238,8 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     audioRef.current?.setMasterVolume(0.65 + (10 - step) * 0.012, 3);
     setVignetteIntensity(0.55 + (10 - step) * 0.035);
     // Speak the number
-    speakNarration(numberWords[step] || String(step));
+    speakNarration(NUMBER_WORDS[step] || String(step));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speakNarration]);
 
   const handleStaircaseComplete = useCallback(() => {
@@ -377,6 +380,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       anchoringTimers.forEach(clearTimeout);
       clearTimeout(sessionCapTimer);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, speakNarration]);
 
   // ---- END MEDITATION (user-triggered) ----
