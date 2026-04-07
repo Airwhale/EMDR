@@ -68,14 +68,12 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
                        hover:border-gold/60 hover:bg-gold/[0.02] transition-all duration-700
                        group"
           >
-            <div className="flex items-baseline gap-3">
-              <span className="ui-text text-sm text-gold/80 group-hover:text-gold transition-colors duration-500">
-                {mode.title}
-              </span>
-              <span className="narration-text text-sm text-[#e8e0d4]/40">
-                {mode.subtitle}
-              </span>
-            </div>
+            <span className="ui-text text-sm text-gold/80 group-hover:text-gold transition-colors duration-500">
+              {mode.title}
+            </span>
+            <span className="narration-text text-sm text-[#e8e0d4]/40 mt-1 block">
+              {mode.subtitle}
+            </span>
           </motion.button>
         ))}
       </div>
