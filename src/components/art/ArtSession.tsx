@@ -43,6 +43,8 @@ const ART_SET_DURATION = 35000;
 
 // Small pause between sequential narration cues (ms)
 const CUE_PAUSE = 600;
+// Minimum time any narration cue stays visible, even if audio is shorter
+const MIN_CUE_DISPLAY = 3000;
 
 export default function ArtSession({ onComplete, onExit, binauralEnabled = true }: ArtSessionProps) {
   const [phase, setPhase] = useState<ArtPhase>("centering");
@@ -81,9 +83,13 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
   const say = useCallback(async (display: string, spoken?: string) => {
+    const start = Date.now();
     setNarration(display);
     if (voiceRef.current) await voiceRef.current.speakAsync(spoken ?? display);
-    await delay(CUE_PAUSE);
+    // Ensure the cue stays visible for at least MIN_CUE_DISPLAY ms total
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(CUE_PAUSE, MIN_CUE_DISPLAY - elapsed);
+    await delay(remaining);
   }, []);
 
   // ---- CENTERING ----
@@ -220,7 +226,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     );
     setNarration("Follow the dot... let it soften...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleSensationContinue = useCallback(() => {
@@ -261,7 +267,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     voiceRef.current?.speakAsync("Hold the changed scene in mind... follow the dot... let it settle in...");
     setNarration("Hold the new scene... follow the dot...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleVirContinue = useCallback(() => {

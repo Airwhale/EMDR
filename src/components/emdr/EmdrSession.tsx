@@ -40,6 +40,8 @@ export interface EmdrSummaryData {
 
 // Small pause between sequential narration cues (ms)
 const CUE_PAUSE = 600;
+// Minimum time any narration cue stays visible, even if audio is shorter
+const MIN_CUE_DISPLAY = 3000;
 
 export default function EmdrSession({ onComplete, onExit, binauralEnabled = true }: EmdrSessionProps) {
   const [phase, setPhase] = useState<EmdrPhase>("sud-check");
@@ -78,9 +80,13 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
   const say = useCallback(async (display: string, spoken?: string) => {
+    const start = Date.now();
     setNarration(display);
     if (voiceRef.current) await voiceRef.current.speakAsync(spoken ?? display);
-    await delay(CUE_PAUSE);
+    // Ensure the cue stays visible for at least MIN_CUE_DISPLAY ms total
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(CUE_PAUSE, MIN_CUE_DISPLAY - elapsed);
+    await delay(remaining);
   }, []);
 
   // ---- SUD CHECK (initial) ----
@@ -150,7 +156,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     );
     setNarration("Follow the dot... hold your safe place...");
     const t = setTimeout(() => setShowBlsContinue(true), 20000);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleSafePlaceContinue = useCallback(() => {
@@ -200,7 +206,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     );
     setNarration("Follow the dot... feel it sealing...");
     const t = setTimeout(() => setShowBlsContinue(true), 15000);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleContainerContinue = useCallback(() => {
@@ -240,7 +246,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     voiceRef.current?.speakAsync("Follow the dot... let the eye movements strengthen this feeling...");
     setNarration("Follow the dot... strengthen this feeling...");
     const t = setTimeout(() => setShowBlsContinue(true), 25000);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleResourceContinue = useCallback(() => {

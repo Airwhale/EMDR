@@ -75,6 +75,8 @@ export class TranceVoice {
   private useAudioFiles = true;
   /** Resolve callback for any in-flight speakAsync promise */
   private pendingResolve: (() => void) | null = null;
+  /** Current done callback, so stopCurrent can remove event listeners */
+  private pendingDone: (() => void) | null = null;
 
   init(): void {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -177,8 +179,10 @@ export class TranceVoice {
 
       const done = () => {
         if (this.pendingResolve === resolve) this.pendingResolve = null;
+        if (this.pendingDone === done) this.pendingDone = null;
         resolve();
       };
+      this.pendingDone = done;
 
       if (this.useAudioFiles) {
         const audioPath = AUDIO_MAP[text];
@@ -248,6 +252,12 @@ export class TranceVoice {
 
   private stopCurrent(): void {
     if (this.currentAudio) {
+      // Remove stale event listeners so they don't fire on next reuse
+      if (this.pendingDone) {
+        this.currentAudio.removeEventListener("ended", this.pendingDone);
+        this.currentAudio.removeEventListener("error", this.pendingDone);
+        this.pendingDone = null;
+      }
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
       this.currentAudio = null;
