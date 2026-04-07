@@ -1,7 +1,10 @@
 /**
- * TranceVoice — Web Speech API wrapper for hypnotic narration.
- * Aggressively selects the most natural-sounding voice available on the
- * user's OS/browser, with per-voice rate/pitch tuning.
+ * TranceVoice — Narration engine with ElevenLabs MP3 playback and
+ * Web Speech API fallback.
+ *
+ * New API: callers pass an MP3 file path directly. If the file plays,
+ * great. If it fails (404, network error, etc.), falls back to Web
+ * Speech synthesis with the provided text.
  */
 
 interface VoiceTuning {
@@ -10,19 +13,7 @@ interface VoiceTuning {
   volume: number;
 }
 
-/**
- * Voice priority list. Order matters — first match wins.
- * Each entry: [name substring to match, tuning overrides].
- *
- * Strategy:
- *  1. Premium neural/enhanced OS voices (macOS, iOS, Edge Online)
- *  2. Good-quality standard OS voices
- *  3. Google voices (Chrome)
- *  4. Any English voice as fallback
- */
 const VOICE_PRIORITY: [string, Partial<VoiceTuning>][] = [
-  // ---- macOS / iOS neural voices (best quality on Apple devices) ----
-  // "Enhanced" or "Premium" suffix = downloaded neural voice
   ["Samantha (Enhanced)", { rate: 0.74, pitch: 0.9, volume: 0.75 }],
   ["Samantha (Premium)", { rate: 0.74, pitch: 0.9, volume: 0.75 }],
   ["Karen (Enhanced)", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
@@ -33,34 +24,31 @@ const VOICE_PRIORITY: [string, Partial<VoiceTuning>][] = [
   ["Tessa (Premium)", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
   ["Daniel (Enhanced)", { rate: 0.68, pitch: 0.8, volume: 0.7 }],
   ["Daniel (Premium)", { rate: 0.68, pitch: 0.8, volume: 0.7 }],
-  // Standard macOS voices (still decent)
   ["Samantha", { rate: 0.74, pitch: 0.9, volume: 0.75 }],
   ["Karen", { rate: 0.72, pitch: 0.88, volume: 0.75 }],
   ["Moira", { rate: 0.70, pitch: 0.85, volume: 0.75 }],
-
-  // ---- Microsoft Edge Online neural voices (Azure quality, free) ----
   ["Microsoft Jenny Online", { rate: 0.76, pitch: 0.95, volume: 0.75 }],
   ["Microsoft Aria Online", { rate: 0.74, pitch: 0.92, volume: 0.75 }],
   ["Microsoft Sonia Online", { rate: 0.72, pitch: 0.9, volume: 0.75 }],
   ["Microsoft Libby Online", { rate: 0.72, pitch: 0.9, volume: 0.75 }],
   ["Microsoft Guy Online", { rate: 0.70, pitch: 0.82, volume: 0.7 }],
-  // Edge desktop voices (still good)
   ["Microsoft Jenny", { rate: 0.76, pitch: 0.95, volume: 0.75 }],
   ["Microsoft Zira", { rate: 0.72, pitch: 0.88, volume: 0.7 }],
   ["Microsoft David", { rate: 0.70, pitch: 0.82, volume: 0.7 }],
-
-  // ---- Google voices (Chrome on all platforms) ----
   ["Google UK English Female", { rate: 0.72, pitch: 0.88, volume: 0.7 }],
   ["Google US English", { rate: 0.74, pitch: 0.9, volume: 0.7 }],
   ["Google UK English Male", { rate: 0.68, pitch: 0.82, volume: 0.7 }],
-
-  // ---- Linux common voices ----
   ["English+Annie", { rate: 0.74, pitch: 0.9, volume: 0.7 }],
 ];
 
 const DEFAULT_TUNING: VoiceTuning = { rate: 0.72, pitch: 0.85, volume: 0.7 };
 
-import { AUDIO_MAP } from "./audioMap";
+export interface SpeakOptions {
+  file?: string;
+  rate?: number;
+  pitch?: number;
+  volume?: number;
+}
 
 export class TranceVoice {
   private synth: SpeechSynthesis | null = null;
@@ -72,10 +60,7 @@ export class TranceVoice {
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentAudio: HTMLAudioElement | null = null;
   private audioCache = new Map<string, HTMLAudioElement>();
-  private useAudioFiles = true;
-  /** Resolve callback for any in-flight speakAsync promise */
   private pendingResolve: (() => void) | null = null;
-  /** Current done callback, so stopCurrent can remove event listeners */
   private pendingDone: (() => void) | null = null;
 
   init(): void {
@@ -87,7 +72,6 @@ export class TranceVoice {
       const voices = this.synth!.getVoices();
       if (voices.length === 0) return;
 
-      // Try priority list
       for (const [nameFragment, tuningOverride] of VOICE_PRIORITY) {
         const found = voices.find(
           (v) => v.name.includes(nameFragment) && v.lang.startsWith("en")
@@ -100,11 +84,10 @@ export class TranceVoice {
         }
       }
 
-      // Broad search: prefer any voice with "Enhanced", "Premium", or "Neural"
       const neural = voices.find(
         (v) =>
           v.lang.startsWith("en") &&
-          (/enhanced|premium|neural|online/i.test(v.name))
+          /enhanced|premium|neural|online/i.test(v.name)
       );
       if (neural) {
         this.voice = neural;
@@ -113,7 +96,6 @@ export class TranceVoice {
         return;
       }
 
-      // Final fallback: any English voice
       const enVoice = voices.find((v) => v.lang.startsWith("en"));
       if (enVoice) {
         this.voice = enVoice;
@@ -126,53 +108,42 @@ export class TranceVoice {
     if (!this.ready) {
       this.synth.addEventListener("voiceschanged", pickVoice, { once: true });
     }
-
-    // Probe for audio files
-    this.probeAudioFiles();
   }
 
-  private async probeAudioFiles(): Promise<void> {
-    try {
-      const resp = await fetch("/audio/breath/breath-in.mp3", { method: "HEAD" });
-      this.useAudioFiles = resp.ok;
-    } catch {
-      this.useAudioFiles = false;
-    }
-  }
-
-  speak(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
+  /**
+   * Fire-and-forget playback. If options.file is provided, tries that MP3
+   * first; on failure falls back to Web Speech with the text.
+   */
+  speak(text: string, options?: SpeakOptions): void {
     if (!this.enabled) return;
     this.stopCurrent();
 
-    if (this.useAudioFiles) {
-      const audioPath = AUDIO_MAP[text];
-      if (audioPath) {
-        let audio = this.audioCache.get(audioPath);
-        if (!audio) {
-          audio = new Audio(audioPath);
-          this.audioCache.set(audioPath, audio);
-        }
-        audio.volume = options?.volume ?? this.tuning.volume;
-        audio.currentTime = 0;
-        audio.play().catch(() => { this.speakWithSynth(text, options); });
-        this.currentAudio = audio;
-        return;
+    if (options?.file) {
+      const audioPath = options.file;
+      let audio = this.audioCache.get(audioPath);
+      if (!audio) {
+        audio = new Audio(audioPath);
+        this.audioCache.set(audioPath, audio);
       }
+      audio.volume = options?.volume ?? this.tuning.volume;
+      audio.currentTime = 0;
+      audio.play().catch(() => { this.speakWithSynth(text, options); });
+      this.currentAudio = audio;
+      return;
     }
 
     this.speakWithSynth(text, options);
   }
 
   /**
-   * Like speak(), but returns a Promise that resolves when the audio (or
-   * speech synthesis) finishes. Resolves immediately if voice is disabled.
-   * If cancel() is called before the audio ends, the promise resolves early.
+   * Returns a Promise that resolves when the audio finishes.
+   * If options.file is provided, tries that MP3 first; on failure falls
+   * back to Web Speech. If cancel() is called, the promise resolves early.
    */
-  speakAsync(text: string, options?: { rate?: number; pitch?: number; volume?: number }): Promise<void> {
+  speakAsync(text: string, options?: SpeakOptions): Promise<void> {
     return new Promise<void>((resolve) => {
       if (!this.enabled) { resolve(); return; }
 
-      // Resolve any previous pending speakAsync promise
       this._resolvePending();
       this.stopCurrent();
       this.pendingResolve = resolve;
@@ -184,26 +155,24 @@ export class TranceVoice {
       };
       this.pendingDone = done;
 
-      if (this.useAudioFiles) {
-        const audioPath = AUDIO_MAP[text];
-        if (audioPath) {
-          let audio = this.audioCache.get(audioPath);
-          if (!audio) {
-            audio = new Audio(audioPath);
-            this.audioCache.set(audioPath, audio);
-          }
-          audio.volume = options?.volume ?? this.tuning.volume;
-          audio.currentTime = 0;
-          audio.addEventListener("ended", done, { once: true });
-          audio.addEventListener("error", done, { once: true });
-          audio.play().catch(() => {
-            audio!.removeEventListener("ended", done);
-            audio!.removeEventListener("error", done);
-            this.speakWithSynthAsync(text, options, done);
-          });
-          this.currentAudio = audio;
-          return;
+      if (options?.file) {
+        const audioPath = options.file;
+        let audio = this.audioCache.get(audioPath);
+        if (!audio) {
+          audio = new Audio(audioPath);
+          this.audioCache.set(audioPath, audio);
         }
+        audio.volume = options?.volume ?? this.tuning.volume;
+        audio.currentTime = 0;
+        audio.addEventListener("ended", done, { once: true });
+        audio.addEventListener("error", done, { once: true });
+        audio.play().catch(() => {
+          audio!.removeEventListener("ended", done);
+          audio!.removeEventListener("error", done);
+          this.speakWithSynthAsync(text, options, done);
+        });
+        this.currentAudio = audio;
+        return;
       }
 
       this.speakWithSynthAsync(text, options, done);
@@ -218,7 +187,7 @@ export class TranceVoice {
     }
   }
 
-  private speakWithSynth(text: string, options?: { rate?: number; pitch?: number; volume?: number }): void {
+  private speakWithSynth(text: string, options?: SpeakOptions): void {
     if (!this.synth || !this.ready) return;
     this.synth.cancel();
 
@@ -233,7 +202,7 @@ export class TranceVoice {
 
   private speakWithSynthAsync(
     text: string,
-    options: { rate?: number; pitch?: number; volume?: number } | undefined,
+    options: SpeakOptions | undefined,
     onDone: () => void
   ): void {
     if (!this.synth || !this.ready) { onDone(); return; }
@@ -252,7 +221,6 @@ export class TranceVoice {
 
   private stopCurrent(): void {
     if (this.currentAudio) {
-      // Remove stale event listeners so they don't fire on next reuse
       if (this.pendingDone) {
         this.currentAudio.removeEventListener("ended", this.pendingDone);
         this.currentAudio.removeEventListener("error", this.pendingDone);
@@ -266,8 +234,9 @@ export class TranceVoice {
     this.currentUtterance = null;
   }
 
-  speakAlert(text: string, step: number): void {
+  speakAlert(text: string, step: number, file?: string): void {
     this.speak(text, {
+      file,
       rate: this.tuning.rate + step * 0.06,
       pitch: this.tuning.pitch + step * 0.04,
     });
@@ -283,21 +252,10 @@ export class TranceVoice {
     if (!on) this.cancel();
   }
 
-  isEnabled(): boolean {
-    return this.enabled;
-  }
-
-  isReady(): boolean {
-    return this.ready;
-  }
-
-  isSupported(): boolean {
-    return this.supported;
-  }
-
-  getVoiceName(): string {
-    return this.voice?.name ?? "none";
-  }
+  isEnabled(): boolean { return this.enabled; }
+  isReady(): boolean { return this.ready; }
+  isSupported(): boolean { return this.supported; }
+  getVoiceName(): string { return this.voice?.name ?? "none"; }
 
   stop(): void {
     this._resolvePending();

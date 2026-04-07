@@ -9,7 +9,7 @@ interface EmergenceSequenceProps {
   isActive: boolean;
   onComplete: () => void;
   onStep?: (step: number) => void;
-  voice?: { speakAlert: (text: string, step: number) => void } | null;
+  voice?: { speakAlert: (text: string, step: number, file?: string) => void } | null;
 }
 
 export default function EmergenceSequence({
@@ -35,7 +35,7 @@ export default function EmergenceSequence({
           setCurrentCue(cue.text);
           setBrightness((index + 1) / emergenceNarration.length);
           onStep?.(index + 1);
-          voice?.speakAlert(cue.spoken || cue.text, index + 1);
+          voice?.speakAlert(cue.spoken || cue.text, index + 1, cue.file);
         }, showTime)
       );
 

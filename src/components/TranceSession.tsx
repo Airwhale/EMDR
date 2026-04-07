@@ -26,6 +26,19 @@ const EXPERIMENT_ORDER: ExperimentId[] = ["arm", "time", "sensory", "pendulum"];
 type TrancePhase = Exclude<PhaseId, "entry">;
 
 const numberWords = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const numberFiles = [
+  "",
+  "/audio/trance/trance-staircase-count-01.mp3",
+  "/audio/trance/trance-staircase-count-02.mp3",
+  "/audio/trance/trance-staircase-count-03.mp3",
+  "/audio/trance/trance-staircase-count-04.mp3",
+  "/audio/trance/trance-staircase-05.mp3",
+  "/audio/trance/trance-staircase-06.mp3",
+  "/audio/trance/trance-staircase-07.mp3",
+  "/audio/trance/trance-staircase-08.mp3",
+  "/audio/trance/trance-staircase-09.mp3",
+  "/audio/trance/trance-staircase-10.mp3",
+];
 
 interface TranceSessionProps {
   onExit?: () => void;
@@ -76,9 +89,9 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
   }, []);
 
   const speakNarration = useCallback(
-    (text: string, spoken?: string) => {
+    (text: string, spoken?: string, file?: string) => {
       if (!voiceEnabled) return;
-      voiceRef.current?.speak(spoken || text);
+      voiceRef.current?.speak(spoken || text, { file });
     },
     [voiceEnabled]
   );
@@ -96,7 +109,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
         timers.push(
           setTimeout(() => {
             setCurrentNarration(cue.text);
-            speakNarration(cue.text, cue.spoken);
+            speakNarration(cue.text, cue.spoken, cue.file);
           }, show)
         );
         timers.push(setTimeout(() => setCurrentNarration(null), hide));
@@ -157,7 +170,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
     audioRef.current?.setDepth(0.5 + (10 - step) * 0.05);
     audioRef.current?.setMasterVolume(0.65 + (10 - step) * 0.012, 3);
     setVignetteIntensity(0.55 + (10 - step) * 0.035);
-    speakNarration(numberWords[step] || String(step));
+    speakNarration(numberWords[step] || String(step), undefined, numberFiles[step]);
   }, [speakNarration]);
 
   const handleStaircaseComplete = useCallback(() => setPhase("experiments"), []);
@@ -184,7 +197,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
       const cue = script.narration[0];
       const t1 = setTimeout(() => {
         setCurrentNarration(cue.text);
-        speakNarration(cue.text, cue.spoken);
+        speakNarration(cue.text, cue.spoken, cue.file);
       }, cue.delay);
       const t2 = setTimeout(() => setCurrentNarration(null), cue.delay + cue.duration);
       return () => { clearTimeout(t1); clearTimeout(t2); };
@@ -290,7 +303,7 @@ export default function TranceSession({ onExit }: TranceSessionProps) {
 
         {phase === "emergence" && (
           <motion.div key="emergence" className="w-full h-full z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <EmergenceSequence isActive={true} onComplete={handleEmergenceComplete} onStep={handleEmergenceStep} />
+            <EmergenceSequence isActive={true} onComplete={handleEmergenceComplete} onStep={handleEmergenceStep} voice={voiceRef.current} />
           </motion.div>
         )}
 

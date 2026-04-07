@@ -82,11 +82,16 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
   const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  const say = useCallback(async (display: string, spoken?: string) => {
+  const say = useCallback(async (display: string, file?: string) => {
     const start = Date.now();
     setNarration(display);
-    if (voiceRef.current) await voiceRef.current.speakAsync(spoken ?? display);
-    // Ensure the cue stays visible for at least MIN_CUE_DISPLAY ms total
+    if (voiceRef.current) {
+      if (file) {
+        await voiceRef.current.speakAsync(display, { file });
+      } else {
+        await voiceRef.current.speakAsync(display);
+      }
+    }
     const elapsed = Date.now() - start;
     const remaining = Math.max(CUE_PAUSE, MIN_CUE_DISPLAY - elapsed);
     await delay(remaining);
@@ -99,9 +104,9 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       await delay(1500);
       if (cancelled) return;
-      await say("Take a deep breath...", "Take a deep breath... settle into this moment...");
+      await say("Take a deep breath...", "/audio/art/art-centering-01.mp3");
       if (cancelled) return;
-      await say("Let your body relax...", "Let your body relax... feel the ground beneath you...");
+      await say("Let your body relax...", "/audio/art/art-centering-02.mp3");
       if (cancelled) return;
       setPhase("scene-select");
     };
@@ -116,14 +121,14 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       await say(
         "Choose a specific moment...",
-        "Think of something stressful... you don't need to describe it... just bring it to mind..."
+        "/audio/art/art-scene-01.mp3"
       );
       if (cancelled) return;
       await delay(3000);
       if (cancelled) return;
       await say(
         "See it like a movie scene...",
-        "See it like a scene in a movie... in your mind... notice the details..."
+        "/audio/art/art-scene-02.mp3"
       );
       if (cancelled) return;
       await delay(2000);
@@ -172,17 +177,19 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       if (round > 1) {
         await voiceRef.current?.speakAsync(
-          "Bring the original scene back to mind... how it was... before you changed it..."
+          "Bring the original scene back to mind...",
+          { file: "/audio/art/art-processing-return-01.mp3" }
         );
         setNarration("Bring the original scene back...");
-        await voiceRef.current?.speakAsync("Follow the dot... notice what's still there...");
+        await voiceRef.current?.speakAsync("Follow the dot...", { file: "/audio/art/art-processing-return-02.mp3" });
         setNarration("Follow the dot...");
       } else {
         await voiceRef.current?.speakAsync(
-          "Hold that scene in mind... follow the dot with your eyes... keep your head still... just your eyes..."
+          "Hold the scene... follow the dot...",
+          { file: "/audio/art/art-processing-01.mp3" }
         );
         setNarration("Hold the scene... follow the dot...");
-        await voiceRef.current?.speakAsync("Keep following... let whatever comes up... just be there...");
+        await voiceRef.current?.speakAsync("Keep following...", { file: "/audio/art/art-processing-02.mp3" });
         setNarration("Keep following...");
       }
     };
@@ -206,7 +213,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       await say(
         "Where do you feel it in your body?",
-        "Where do you feel the tension... or discomfort... in your body... focus on that place..."
+        "/audio/art/art-sensation-01.mp3"
       );
       if (cancelled) return;
       setShowReady(true);
@@ -222,7 +229,8 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setBlsActive(true);
     setShowBlsContinue(false);
     voiceRef.current?.speakAsync(
-      "Follow the dot... focus on where you feel it in your body... let the feeling soften..."
+      "Follow the dot... let it soften...",
+      { file: "/audio/art/art-sensation-bls.mp3" }
     );
     setNarration("Follow the dot... let it soften...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
@@ -242,14 +250,14 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       await say(
         "Create a new version of this moment...",
-        "Now... in your mind... change the scene. You're in control of this image..."
+        "/audio/art/art-vir-01.mp3"
       );
       if (cancelled) return;
       await delay(2500);
       if (cancelled) return;
       await say(
         "Change what happens... make it yours...",
-        "Change what happens... change who's there... change how it looks or feels. Make it the way you want it to be..."
+        "/audio/art/art-vir-02.mp3"
       );
       if (cancelled) return;
       setShowReady(true);
@@ -264,7 +272,10 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     if (phase !== "vir-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync("Hold the changed scene in mind... follow the dot... let it settle in...");
+    voiceRef.current?.speakAsync(
+      "Hold the new scene... follow the dot...",
+      { file: "/audio/art/art-vir-bls.mp3" }
+    );
     setNarration("Hold the new scene... follow the dot...");
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
     return () => { clearTimeout(t); voiceRef.current?.cancel(); };
@@ -297,9 +308,9 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     if (phase !== "body-scan") return;
     let cancelled = false;
     const run = async () => {
-      await say("Scan your body... notice what shifted...", "Scan your body from head to toe... notice what has shifted...");
+      await say("Scan your body... notice what shifted...", "/audio/art/art-bodyscan-01.mp3");
       if (cancelled) return;
-      await say("Observe without judgment...", "Observe... without judgment...");
+      await say("Observe without judgment...", "/audio/art/art-bodyscan-02.mp3");
       if (cancelled) return;
       setPhase("closing");
     };
@@ -314,7 +325,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       await say(
         "Think back to the original memory...",
-        "Take a deep breath... think back to the original memory... notice how different it feels now..."
+        "/audio/art/art-closing-01.mp3"
       );
       if (cancelled) return;
       setShowSudFinal(true);

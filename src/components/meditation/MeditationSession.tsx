@@ -17,6 +17,19 @@ import Staircase from "@/components/Staircase";
 type MedPhase = "centering" | "fixation" | "deepening" | "staircase" | "sustain" | "emergence" | "complete";
 
 const NUMBER_WORDS = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const NUMBER_FILES = [
+  "",
+  "/audio/trance/trance-staircase-count-01.mp3",
+  "/audio/trance/trance-staircase-count-02.mp3",
+  "/audio/trance/trance-staircase-count-03.mp3",
+  "/audio/trance/trance-staircase-count-04.mp3",
+  "/audio/trance/trance-staircase-05.mp3",
+  "/audio/trance/trance-staircase-06.mp3",
+  "/audio/trance/trance-staircase-07.mp3",
+  "/audio/trance/trance-staircase-08.mp3",
+  "/audio/trance/trance-staircase-09.mp3",
+  "/audio/trance/trance-staircase-10.mp3",
+];
 
 interface MeditationSessionProps {
   onComplete: () => void;
@@ -31,46 +44,46 @@ interface MeditationSessionProps {
 // Techniques: deepening challenges, dissociation language, presuppositions.
 const sustainCues: NarrationCue[] = [
   // Contentment
-  { text: "contentment", spoken: "And perhaps you can feel that contentment now... growing with every breath... deeper... and more satisfying...", delay: 25000, duration: 6000 },
+  { text: "contentment", spoken: "And perhaps you can feel that contentment now... growing with every breath... deeper... and more satisfying...", delay: 25000, duration: 6000, file: "/audio/meditation/meditation-sustain-01.mp3" },
   // Belonging
-  { text: "belonging", spoken: "Some people notice the sounds welcoming them deeper... the gentle tones cradling them... and you might find you belong here... in this comfort...", delay: 25000, duration: 6000 },
+  { text: "belonging", spoken: "Some people notice the sounds welcoming them deeper... the gentle tones cradling them... and you might find you belong here... in this comfort...", delay: 25000, duration: 6000, file: "/audio/meditation/meditation-sustain-02.mp3" },
   // Deepening challenge
-  { text: "deeper", spoken: "I wonder if you can go even deeper than this... and I think you can... because you already have... and it can feel so good...", delay: 30000, duration: 6000 },
+  { text: "deeper", spoken: "I wonder if you can go even deeper than this... and I think you can... because you already have... and it can feel so good...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-03.mp3" },
   // Peace
-  { text: "peace", spoken: "You might notice your mind becoming beautifully still... your body perfectly at ease... and perhaps there is such deep peace... in this moment...", delay: 30000, duration: 6000 },
+  { text: "peace", spoken: "You might notice your mind becoming beautifully still... your body perfectly at ease... and perhaps there is such deep peace... in this moment...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-04.mp3" },
   // Dissociation
-  { text: "floating", spoken: "Some people find that while their body rests here... comfortable and safe... their mind begins to float freely... drifting... weightless... free...", delay: 30000, duration: 6000 },
+  { text: "floating", spoken: "Some people find that while their body rests here... comfortable and safe... their mind begins to float freely... drifting... weightless... free...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-05.mp3" },
   // Gratitude
-  { text: "gratitude", spoken: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace...", delay: 25000, duration: 6000 },
+  { text: "gratitude", spoken: "Notice how good this feels... this gift you are giving yourself... this time... this care... this peace...", delay: 25000, duration: 6000, file: "/audio/meditation/meditation-sustain-06.mp3" },
   // Deepening challenge + contentment
-  { text: "even deeper", spoken: "And you may find you can go even deeper still... deeper than you thought possible... and each new depth might bring even more contentment... even more joy...", delay: 30000, duration: 6000 },
+  { text: "even deeper", spoken: "And you may find you can go even deeper still... deeper than you thought possible... and each new depth might bring even more contentment... even more joy...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-07.mp3" },
   // Wellbeing
-  { text: "wellbeing", spoken: "Perhaps you can notice a profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace...", delay: 30000, duration: 6000 },
+  { text: "wellbeing", spoken: "Perhaps you can notice a profound sense of wellbeing... spreading through every part of you... deeply... completely... perfectly at peace...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-08.mp3" },
   // Dissociation + safety
-  { text: "free", spoken: "Some people find their body resting here... warm and safe... while their mind drifts somewhere beautiful... somewhere peaceful... somewhere that is entirely theirs...", delay: 35000, duration: 6000 },
+  { text: "free", spoken: "Some people find their body resting here... warm and safe... while their mind drifts somewhere beautiful... somewhere peaceful... somewhere that is entirely theirs...", delay: 35000, duration: 6000, file: "/audio/meditation/meditation-sustain-09.mp3" },
   // Joy
-  { text: "joy", spoken: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that might come from deep within...", delay: 30000, duration: 6000 },
+  { text: "joy", spoken: "And perhaps you can notice... a quiet joy... underneath all of this... a gentle smile that might come from deep within...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-10.mp3" },
   // Ease
-  { text: "ease", spoken: "And you might notice it becoming so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000 },
+  { text: "ease", spoken: "And you might notice it becoming so easy now... so effortless... your deeper mind knows exactly what to do... and you can simply enjoy...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-11.mp3" },
   // Deepening challenge + dissociation
-  { text: "boundless", spoken: "I wonder how deep you can go... perhaps there is no limit... your mind vast and open... and every moment here... might bring more comfort... more peace... more contentment...", delay: 30000, duration: 6000 },
+  { text: "boundless", spoken: "I wonder how deep you can go... perhaps there is no limit... your mind vast and open... and every moment here... might bring more comfort... more peace... more contentment...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-12.mp3" },
   // Contentment + belonging
-  { text: "exactly right", spoken: "And you may realize that everything is exactly as it should be... and you are exactly where you want to be... you might find you belong here... in this warmth...", delay: 30000, duration: 6000 },
+  { text: "exactly right", spoken: "And you may realize that everything is exactly as it should be... and you are exactly where you want to be... you might find you belong here... in this warmth...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-13.mp3" },
   // Dissociation + wellbeing
-  { text: "dissolving", spoken: "Perhaps the boundary between you and this peace... is beginning to dissolve... and you might find yourself becoming the calm itself... the stillness itself...", delay: 30000, duration: 6000 },
+  { text: "dissolving", spoken: "Perhaps the boundary between you and this peace... is beginning to dissolve... and you might find yourself becoming the calm itself... the stillness itself...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-14.mp3" },
   // Safety + joy
-  { text: "safe", spoken: "You can rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you...", delay: 35000, duration: 6000 },
+  { text: "safe", spoken: "You can rest here... in this beautiful place... knowing that you are safe... you are whole... and this joy... this contentment... is always available to you...", delay: 35000, duration: 6000, file: "/audio/meditation/meditation-sustain-15.mp3" },
   // Flowing + contentment
-  { text: "flowing", spoken: "Perhaps you can notice everything flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly...", delay: 30000, duration: 6000 },
+  { text: "flowing", spoken: "Perhaps you can notice everything flowing... your breath... the sounds... this feeling of deep contentment... all moving together... perfectly...", delay: 30000, duration: 6000, file: "/audio/meditation/meditation-sustain-16.mp3" },
 ];
 
 const emergenceCues: NarrationCue[] = [
-  { text: "When you're ready... you'll begin to return... carrying this peace with you...", spoken: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you...", delay: 2000, duration: 8000 },
-  { text: "1 — a gentle brightening... feeling so content...", spoken: "One... a gentle brightening... feeling so content... so grateful for this time...", delay: 8000, duration: 6000 },
-  { text: "2 — more present now... this peace travels with you...", spoken: "Two... becoming more present now... and this deep peace... it travels with you...", delay: 7000, duration: 6000 },
-  { text: "3 — energy and vitality returning... feeling wonderful...", spoken: "Three... energy and vitality returning to your body... feeling wonderful... refreshed...", delay: 7000, duration: 6000 },
-  { text: "4 — almost there... a deep, satisfying breath...", spoken: "Four... almost there... take a deep... satisfying breath... feeling clear... feeling content...", delay: 7000, duration: 6000 },
-  { text: "5 — eyes open, fully present, deeply at peace.", spoken: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you.", delay: 7000, duration: 8000 },
+  { text: "When you're ready... you'll begin to return... carrying this peace with you...", spoken: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you...", delay: 2000, duration: 8000, file: "/audio/meditation/meditation-emergence-intro.mp3" },
+  { text: "1 — a gentle brightening... feeling so content...", spoken: "One... a gentle brightening... feeling so content... so grateful for this time...", delay: 8000, duration: 6000, file: "/audio/meditation/meditation-emergence-01.mp3" },
+  { text: "2 — more present now... this peace travels with you...", spoken: "Two... becoming more present now... and this deep peace... it travels with you...", delay: 7000, duration: 6000, file: "/audio/meditation/meditation-emergence-02.mp3" },
+  { text: "3 — energy and vitality returning... feeling wonderful...", spoken: "Three... energy and vitality returning to your body... feeling wonderful... refreshed...", delay: 7000, duration: 6000, file: "/audio/meditation/meditation-emergence-03.mp3" },
+  { text: "4 — almost there... a deep, satisfying breath...", spoken: "Four... almost there... take a deep... satisfying breath... feeling clear... feeling content...", delay: 7000, duration: 6000, file: "/audio/meditation/meditation-emergence-04.mp3" },
+  { text: "5 — eyes open, fully present, deeply at peace.", spoken: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you.", delay: 7000, duration: 8000, file: "/audio/meditation/meditation-emergence-05.mp3" },
 ];
 
 export default function MeditationSession({ onComplete, onExit, silent = false, binauralEnabled = true }: MeditationSessionProps) {
@@ -123,9 +136,9 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
   }, []);
 
   const speakNarration = useCallback(
-    (text: string, spoken?: string) => {
+    (text: string, spoken?: string, file?: string) => {
       if (!voiceEnabled || silent) return;
-      voiceRef.current?.speak(spoken || text);
+      voiceRef.current?.speak(spoken || text, { file });
     },
     [voiceEnabled, silent]
   );
@@ -140,7 +153,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         const show = cumulative;
         timers.push(setTimeout(() => {
           setCurrentNarration(cue.text);
-          speakNarration(cue.text, cue.spoken);
+          speakNarration(cue.text, cue.spoken, cue.file);
         }, show));
         cumulative = show + cue.duration;
       });
@@ -165,7 +178,8 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     timers.push(setTimeout(() => {
       speakNarration(
         "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes...",
-        "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes..."
+        "Let your eyes follow the dot moving across the screen... keep your head still... just your eyes...",
+        "/audio/meditation/meditation-centering-01.mp3"
       );
     }, 2000));
 
@@ -173,14 +187,16 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     timers.push(setTimeout(() => {
       speakNarration(
         "As the sounds rise... breathe in... as they hold... hold... as they fall... breathe out slowly...",
-        "As the sounds rise... breathe in... as they hold... hold... as they fall... breathe out slowly..."
+        "As the sounds rise... breathe in... as they hold... hold... as they fall... breathe out slowly...",
+        "/audio/meditation/meditation-centering-02.mp3"
       );
     }, 16000));
 
     timers.push(setTimeout(() => {
       speakNarration(
         "That's it... synchronize your breathing with the rhythm you hear... and allow it to become automatic... keeping your eyes on the dot...",
-        "That's it... synchronize your breathing with the rhythm you hear... and allow it to become automatic... keeping your eyes on the dot..."
+        "That's it... synchronize your breathing with the rhythm you hear... and allow it to become automatic... keeping your eyes on the dot...",
+        "/audio/meditation/meditation-centering-03.mp3"
       );
     }, 34000));
     timers.push(setTimeout(() => {
@@ -238,7 +254,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     audioRef.current?.setMasterVolume(0.65 + (10 - step) * 0.012, 3);
     setVignetteIntensity(0.55 + (10 - step) * 0.035);
     // Speak the number
-    speakNarration(NUMBER_WORDS[step] || String(step));
+    speakNarration(NUMBER_WORDS[step] || String(step), undefined, NUMBER_FILES[step]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speakNarration]);
 
@@ -311,7 +327,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         if (voiceEnabled && !silent) {
           voiceRef.current?.speak(
             "Gently press your thumb and forefinger together... feel this deep contentment lock into place... this feeling is yours... whenever you press these fingers together... this peace returns...",
-            { volume: 0.95 }
+            { file: "/audio/meditation/meditation-anchor-01.mp3", volume: 0.95 }
           );
         }
         if (!silent) {
@@ -324,7 +340,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         if (voiceEnabled && !silent) {
           voiceRef.current?.speak(
             "Press your thumb and forefinger together again now... notice how much deeper this feeling has become... your anchor grows stronger each time... this profound peace... this contentment... stored in this simple touch...",
-            { volume: 0.95 }
+            { file: "/audio/meditation/meditation-anchor-02.mp3", volume: 0.95 }
           );
         }
         if (!silent) {
@@ -337,7 +353,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         if (voiceEnabled && !silent) {
           voiceRef.current?.speak(
             "One last time... press your thumb and forefinger together... at this deepest point... seal this feeling in... this is the deepest peace you have felt... and it is always here for you... always available... with this simple touch...",
-            { volume: 0.95 }
+            { file: "/audio/meditation/meditation-anchor-03.mp3", volume: 0.95 }
           );
         }
         if (!silent) {
@@ -355,7 +371,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       const showTimer = setTimeout(() => {
         if (!silent) {
           setCurrentNarration(cue.text);
-          speakNarration(cue.text, cue.spoken);
+          speakNarration(cue.text, cue.spoken, cue.file);
         }
       }, cue.delay);
 

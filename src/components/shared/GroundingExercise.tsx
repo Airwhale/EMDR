@@ -10,11 +10,11 @@ interface GroundingExerciseProps {
 }
 
 const steps = [
-  { count: 5, sense: "things you can see", prompt: "Look around and name 5 things you can see..." },
-  { count: 4, sense: "things you can touch", prompt: "Notice 4 things you can physically feel..." },
-  { count: 3, sense: "things you can hear", prompt: "Listen for 3 sounds around you..." },
-  { count: 2, sense: "things you can smell", prompt: "Identify 2 things you can smell..." },
-  { count: 1, sense: "thing you can taste", prompt: "Notice 1 thing you can taste..." },
+  { count: 5, sense: "things you can see", prompt: "Look around and name 5 things you can see...", file: "/audio/grounding/grounding-01-see.mp3" },
+  { count: 4, sense: "things you can touch", prompt: "Notice 4 things you can physically feel...", file: "/audio/grounding/grounding-02-touch.mp3" },
+  { count: 3, sense: "things you can hear", prompt: "Listen for 3 sounds around you...", file: "/audio/grounding/grounding-03-hear.mp3" },
+  { count: 2, sense: "things you can smell", prompt: "Identify 2 things you can smell...", file: "/audio/grounding/grounding-04-smell.mp3" },
+  { count: 1, sense: "thing you can taste", prompt: "Notice 1 thing you can taste...", file: "/audio/grounding/grounding-05-taste.mp3" },
 ];
 
 /**
@@ -33,7 +33,7 @@ export default function GroundingExercise({ voice, onComplete }: GroundingExerci
       if (cancelled) return;
       await voice?.speakAsync(
         "Let's pause and ground yourself. This is a simple exercise to bring you back to the present moment.",
-        { rate: 0.8 }
+        { rate: 0.8, file: "/audio/grounding/grounding-intro.mp3" }
       );
       if (cancelled) return;
       await delay(800);
@@ -41,14 +41,14 @@ export default function GroundingExercise({ voice, onComplete }: GroundingExerci
       for (let i = 0; i < steps.length; i++) {
         if (cancelled) return;
         setStepIndex(i);
-        await voice?.speakAsync(steps[i].prompt, { rate: 0.8 });
+        await voice?.speakAsync(steps[i].prompt, { rate: 0.8, file: steps[i].file });
         if (cancelled) return;
         // Give the user time to do each step even if the spoken cue is short
         await delay(4000);
       }
 
       if (cancelled) return;
-      await voice?.speakAsync("Good. Take a deep breath. You're here, you're safe.", { rate: 0.75 });
+      await voice?.speakAsync("Good. Take a deep breath. You're here, you're safe.", { rate: 0.75, file: "/audio/grounding/grounding-closing.mp3" });
       if (cancelled) return;
       await delay(1000);
       if (!cancelled) onComplete();

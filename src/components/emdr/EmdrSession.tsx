@@ -79,10 +79,16 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // Helpers used inside phase effects
   const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  const say = useCallback(async (display: string, spoken?: string) => {
+  const say = useCallback(async (display: string, file?: string) => {
     const start = Date.now();
     setNarration(display);
-    if (voiceRef.current) await voiceRef.current.speakAsync(spoken ?? display);
+    if (voiceRef.current) {
+      if (file) {
+        await voiceRef.current.speakAsync(display, { file });
+      } else {
+        await voiceRef.current.speakAsync(display);
+      }
+    }
     // Ensure the cue stays visible for at least MIN_CUE_DISPLAY ms total
     const elapsed = Date.now() - start;
     const remaining = Math.max(CUE_PAUSE, MIN_CUE_DISPLAY - elapsed);
@@ -110,9 +116,9 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     const run = async () => {
       await delay(1500);
       if (cancelled) return;
-      await say("Take a deep breath...", "Take a slow... deep breath... let your body settle...");
+      await say("Take a deep breath...", "/audio/emdr/emdr-centering-01.mp3");
       if (cancelled) return;
-      await say("Feel the surface beneath you...", "Feel the surface beneath you... notice the air on your skin...");
+      await say("Feel the surface beneath you...", "/audio/emdr/emdr-centering-02.mp3");
       if (cancelled) return;
       setPhase("safe-place");
     };
@@ -125,19 +131,19 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "safe-place") return;
     let cancelled = false;
     const run = async () => {
-      await say("Think of your safe place...", "In your mind... think of a place... where you feel completely safe... and at peace...");
+      await say("Think of your safe place...", "/audio/emdr/emdr-safeplace-01.mp3");
       if (cancelled) return;
       await delay(3000);
       if (cancelled) return;
-      await say("Notice its colors, sounds, and warmth...", "Notice the colors... the sounds... and the temperature of this place... in your mind...");
+      await say("Notice its colors, sounds, and warmth...", "/audio/emdr/emdr-safeplace-02.mp3");
       if (cancelled) return;
       await delay(2500);
       if (cancelled) return;
-      await say("Choose one word for this place...", "Choose a single word... that represents this safe place...");
+      await say("Choose one word for this place...", "/audio/emdr/emdr-safeplace-03.mp3");
       if (cancelled) return;
       await delay(3000);
       if (cancelled) return;
-      await say("Hold that image and word...", "Hold that image and word in mind...");
+      await say("Hold that image and word...", "/audio/emdr/emdr-safeplace-04.mp3");
       if (cancelled) return;
       setShowReady(true);
       setReadyTarget("safe-place-bls");
@@ -152,7 +158,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     setBlsActive(true);
     setShowBlsContinue(false);
     voiceRef.current?.speakAsync(
-      "Follow the dot with your eyes... keep your head still... just your eyes... holding your safe place in mind..."
+      "Follow the dot... hold your safe place...",
+      { file: "/audio/emdr/emdr-safeplace-bls.mp3" }
     );
     setNarration("Follow the dot... hold your safe place...");
     const t = setTimeout(() => setShowBlsContinue(true), 20000);
@@ -177,15 +184,15 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "container") return;
     let cancelled = false;
     const run = async () => {
-      await say("Imagine a strong container...", "In your mind... imagine a strong container... a box... a vault... anything that locks securely...");
+      await say("Imagine a strong container...", "/audio/emdr/emdr-container-01.mp3");
       if (cancelled) return;
       await delay(2000);
       if (cancelled) return;
-      await say("Place what bothers you inside... close it...", "Place anything that's been bothering you inside... close the lid firmly...");
+      await say("Place what bothers you inside... close it...", "/audio/emdr/emdr-container-02.mp3");
       if (cancelled) return;
       await delay(2000);
       if (cancelled) return;
-      await say("Safely contained for now...", "It's held safely there... not gone... just contained for now...");
+      await say("Safely contained for now...", "/audio/emdr/emdr-container-03.mp3");
       if (cancelled) return;
       await delay(1500);
       if (cancelled) return;
@@ -202,7 +209,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     setBlsActive(true);
     setShowBlsContinue(false);
     voiceRef.current?.speakAsync(
-      "Imagine the container sealing... as you follow the dot... feeling it become more and more secure... with each movement of your eyes..."
+      "Follow the dot... feel it sealing...",
+      { file: "/audio/emdr/emdr-container-bls.mp3" }
     );
     setNarration("Follow the dot... feel it sealing...");
     const t = setTimeout(() => setShowBlsContinue(true), 15000);
@@ -221,15 +229,15 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "resource") return;
     let cancelled = false;
     const run = async () => {
-      await say("Think of a time you felt strong...", "In your mind... think of a time... you felt strong... capable... or deeply at peace...");
+      await say("Think of a time you felt strong...", "/audio/emdr/emdr-resource-01.mp3");
       if (cancelled) return;
       await delay(3000);
       if (cancelled) return;
-      await say("Step into that memory...", "In your mind... step into that memory... feel it... in your body...");
+      await say("Step into that memory...", "/audio/emdr/emdr-resource-02.mp3");
       if (cancelled) return;
       await delay(2500);
       if (cancelled) return;
-      await say("Where do you feel it? Let it expand...", "Where in your body do you feel that strength... or peace... let the feeling expand...");
+      await say("Where do you feel it? Let it expand...", "/audio/emdr/emdr-resource-03.mp3");
       if (cancelled) return;
       setShowReady(true);
       setReadyTarget("resource-bls");
@@ -243,7 +251,10 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "resource-bls") return;
     setBlsActive(true);
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync("Follow the dot... let the eye movements strengthen this feeling...");
+    voiceRef.current?.speakAsync(
+      "Follow the dot... strengthen this feeling...",
+      { file: "/audio/emdr/emdr-resource-bls.mp3" }
+    );
     setNarration("Follow the dot... strengthen this feeling...");
     const t = setTimeout(() => setShowBlsContinue(true), 25000);
     return () => { clearTimeout(t); voiceRef.current?.cancel(); };
@@ -261,9 +272,9 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "body-scan") return;
     let cancelled = false;
     const run = async () => {
-      await say("Scan your body... notice how you feel...", "Scan your body from head to toe... notice how you feel now...");
+      await say("Scan your body... notice how you feel...", "/audio/emdr/emdr-bodyscan-01.mp3");
       if (cancelled) return;
-      await say("Observe without judgment...", "Observe any changes... without judgment...");
+      await say("Observe without judgment...", "/audio/emdr/emdr-bodyscan-02.mp3");
       if (cancelled) return;
       setPhase("closing");
     };
@@ -276,7 +287,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "closing") return;
     let cancelled = false;
     const run = async () => {
-      await say("You can return to your safe place anytime...", "Take a deep breath... you can return to your safe place... anytime you need...");
+      await say("You can return to your safe place anytime...", "/audio/emdr/emdr-closing-01.mp3");
       if (cancelled) return;
       setNarration(null);
       setSudEnd(-1);

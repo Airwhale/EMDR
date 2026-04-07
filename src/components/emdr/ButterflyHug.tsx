@@ -13,12 +13,12 @@ interface ButterflyHugProps {
 }
 
 const cues = [
-  "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone...",
-  "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone...",
-  "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...",
-  "Keep tapping steadily on your upper chest... each tap light and rhythmic...",
-  "Notice any sensations in your body as you tap... just observe them...",
-  "Continue tapping for a few more moments... feeling calmer with each tap...",
+  { text: "Cross your arms over your upper chest, so each hand rests just below the opposite collarbone...", file: "/audio/emdr/emdr-butterfly-01.mp3" },
+  { text: "Your fingertips should be pointing up toward your neck, resting on the area between your shoulder and collarbone...", file: "/audio/emdr/emdr-butterfly-02.mp3" },
+  { text: "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...", file: "/audio/emdr/emdr-butterfly-03.mp3" },
+  { text: "Keep tapping steadily on your upper chest... each tap light and rhythmic...", file: "/audio/emdr/emdr-butterfly-04.mp3" },
+  { text: "Notice any sensations in your body as you tap... just observe them...", file: "/audio/emdr/emdr-butterfly-05.mp3" },
+  { text: "Continue tapping for a few more moments... feeling calmer with each tap...", file: "/audio/emdr/emdr-butterfly-06.mp3" },
 ];
 
 export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugProps) {
@@ -36,8 +36,9 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
       // Placement cues (show pose image during these)
       for (let i = 0; i < 2; i++) {
         if (cancelled) return;
-        setCurrentText(cues[i]);
-        if (voice) await voice.speakAsync(cues[i]);
+        const cue = cues[i];
+        setCurrentText(cue.text);
+        if (voice) await voice.speakAsync(cue.text, { file: cue.file });
         if (cancelled) return;
         await delay(400);
       }
@@ -50,8 +51,9 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
       // Tapping cues
       for (let i = 2; i < cues.length; i++) {
         if (cancelled) return;
-        setCurrentText(cues[i]);
-        if (voice) await voice.speakAsync(cues[i]);
+        const cue = cues[i];
+        setCurrentText(cue.text);
+        if (voice) await voice.speakAsync(cue.text, { file: cue.file });
         if (cancelled) return;
         await delay(400);
       }
