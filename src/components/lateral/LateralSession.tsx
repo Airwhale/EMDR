@@ -51,7 +51,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
 
   useEffect(() => {
     if (!audioRef.current) return;
-    audioRef.current.setBinauralBeat(binauralHz, 2);
+    audioRef.current.setBinauralBeat(binauralHz, 0.3);
   }, [binauralHz]);
 
   useEffect(() => {
@@ -74,9 +74,11 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
   };
 
   const binauralLabel = binauralHz === 0 ? "Off" :
-    binauralHz <= 4 ? `${binauralHz}Hz (theta)` :
-    binauralHz <= 8 ? `${binauralHz}Hz (alpha)` :
-    `${binauralHz}Hz (beta)`;
+    binauralHz <= 4 ? `${binauralHz}Hz (delta/theta)` :
+    binauralHz <= 8 ? `${binauralHz}Hz (theta/alpha)` :
+    binauralHz <= 13 ? `${binauralHz}Hz (alpha/beta)` :
+    binauralHz <= 30 ? `${binauralHz}Hz (beta)` :
+    `${binauralHz}Hz (gamma)`;
 
   const speedLabel = speed <= 0.3 ? "Fast" : speed <= 0.5 ? "Medium" : speed <= 0.7 ? "Slow" : "Very slow";
 
@@ -160,7 +162,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
               <input
                 type="range"
                 min="0"
-                max="12"
+                max="40"
                 step="0.5"
                 value={binauralHz}
                 onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
