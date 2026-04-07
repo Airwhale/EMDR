@@ -93,6 +93,25 @@ This app layers 40 techniques across audio, visual, language, breathing, bilater
 - Web Speech API — narration with smart voice selection (falls back to text)
 - Pre-generated audio support via ElevenLabs (optional, see AUDIO_SCRIPTS.md)
 
+## Audio narration system
+
+The narration engine (`TranceVoice`) supports two playback backends:
+
+1. **ElevenLabs MP3s** (preferred) — pre-generated files looked up via `audioMap.ts`
+2. **Web Speech API** (fallback) — browser speech synthesis with per-voice tuning
+
+Narration cues are chained using `speakAsync()`, which returns a `Promise<void>` that resolves when the audio finishes. This guarantees each cue completes before the next one starts — no fixed timeouts, no cutoffs.
+
+```
+say("Display text", "Spoken text matching audioMap key")
+  → sets on-screen text
+  → plays MP3 (or speech synthesis)
+  → resolves when audio ends
+  → next cue begins
+```
+
+Session components (EMDR, ART, ButterflyHug, GroundingExercise) use async/await effect chains with cancellation support for clean phase transitions.
+
 ## Local development
 
 ```bash
@@ -101,6 +120,12 @@ npm run dev
 ```
 
 Open `http://localhost:3000`. Headphones recommended.
+
+## Running tests
+
+```bash
+node --test tests/
+```
 
 ## Data storage
 

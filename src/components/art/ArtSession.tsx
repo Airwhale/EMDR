@@ -92,9 +92,9 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     const run = async () => {
       await delay(1500);
       if (cancelled) return;
-      await say("Take a deep breath...");
+      await say("Take a deep breath...", "Take a deep breath... settle into this moment...");
       if (cancelled) return;
-      await say("Let your body relax...");
+      await say("Let your body relax...", "Let your body relax... feel the ground beneath you...");
       if (cancelled) return;
       setPhase("scene-select");
     };
@@ -283,7 +283,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     if (phase !== "body-scan") return;
     let cancelled = false;
     const run = async () => {
-      await say("Scan your body... notice what shifted...");
+      await say("Scan your body... notice what shifted...", "Scan your body from head to toe... notice what has shifted...");
       if (cancelled) return;
       await say("Observe without judgment...", "Observe... without judgment...");
       if (cancelled) return;

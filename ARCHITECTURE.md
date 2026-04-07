@@ -128,6 +128,35 @@ Handles all spoken narration:
 3. If no MP3s: falls back to Web Speech API with smart voice selection
 4. Per-voice tuning ensures consistent quality across browsers/OS
 
+Key methods:
+- `speak(text)` — fire-and-forget playback
+- `speakAsync(text)` — returns `Promise<void>` resolving when audio ends;
+  used by EMDR/ART/ButterflyHug/GroundingExercise to chain cues sequentially
+- `cancel()` — stops playback and resolves any pending `speakAsync` promise
+
+### 3. Session narration pattern (async cue chaining)
+EMDR, ART, ButterflyHug, and GroundingExercise use async/await inside
+`useEffect` to chain narration cues. Each cue waits for the previous audio
+to finish before showing the next display text:
+
+```typescript
+useEffect(() => {
+  let cancelled = false;
+  const run = async () => {
+    await say("Display text", "Spoken text (audioMap key)");
+    if (cancelled) return;
+    await say("Next cue...");
+    if (cancelled) return;
+    setPhase("next-phase");
+  };
+  run();
+  return () => { cancelled = true; voiceRef.current?.cancel(); };
+}, [phase]);
+```
+
+The `cancelled` flag + `cancel()` in cleanup ensures clean teardown when
+the component unmounts or the phase changes mid-playback.
+
 ## Data storage
 
 All data in `localStorage`. Nothing sent to any server.

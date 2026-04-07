@@ -45,13 +45,16 @@ node scripts/generate-audio.mjs --skip-existing
 ## Voice settings
 
 The script uses these ElevenLabs voice settings (optimized for calm, meditative narration):
-- Stability: 0.65
+- Model: `eleven_turbo_v2_5`
+- Stability: 0.85
 - Similarity boost: 0.75
 - Style: 0.4
 - Speaker boost: enabled
 
 ## After generation
 
-Once MP3 files are in `public/audio/`, the app automatically detects and uses them instead of browser speech synthesis. The detection is handled by `TranceVoice` which probes for `/audio/breath/breath-in.mp3` on init — if found, all subsequent `speak()` calls look up the text in `audioMap.ts` and play the corresponding MP3.
+Once MP3 files are in `public/audio/`, the app automatically detects and uses them instead of browser speech synthesis. The detection is handled by `TranceVoice` which probes for `/audio/breath/breath-in.mp3` on init — if found, all subsequent `speak()` / `speakAsync()` calls look up the text in `audioMap.ts` and play the corresponding MP3.
+
+**Important:** The spoken text passed to `speakAsync()` must match the `audioMap.ts` key exactly. In session components, the `say(displayText, spokenText)` helper allows the display text to be shortened while the spoken text matches the audioMap key for the ElevenLabs MP3.
 
 No code changes needed — just generate the files, commit them, and deploy.
