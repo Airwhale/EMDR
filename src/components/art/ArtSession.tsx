@@ -112,10 +112,14 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
         "Think of something stressful... you don't need to describe it... just bring it to mind..."
       );
       if (cancelled) return;
+      await delay(3000);
+      if (cancelled) return;
       await say(
         "See it like a movie scene...",
         "See it like a scene in a movie... in your mind... notice the details..."
       );
+      if (cancelled) return;
+      await delay(2000);
       if (cancelled) return;
       setPhase("sud-initial");
     };
@@ -232,6 +236,8 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
         "Create a new version of this moment...",
         "Now... in your mind... change the scene. You're in control of this image..."
       );
+      if (cancelled) return;
+      await delay(2500);
       if (cancelled) return;
       await say(
         "Change what happens... make it yours...",

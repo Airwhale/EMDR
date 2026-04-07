@@ -120,9 +120,15 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     const run = async () => {
       await say("Think of your safe place...", "In your mind... think of a place... where you feel completely safe... and at peace...");
       if (cancelled) return;
+      await delay(3000);
+      if (cancelled) return;
       await say("Notice its colors, sounds, and warmth...", "Notice the colors... the sounds... and the temperature of this place... in your mind...");
       if (cancelled) return;
+      await delay(2500);
+      if (cancelled) return;
       await say("Choose one word for this place...", "Choose a single word... that represents this safe place...");
+      if (cancelled) return;
+      await delay(3000);
       if (cancelled) return;
       await say("Hold that image and word...", "Hold that image and word in mind...");
       if (cancelled) return;
@@ -166,9 +172,15 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     const run = async () => {
       await say("Imagine a strong container...", "In your mind... imagine a strong container... a box... a vault... anything that locks securely...");
       if (cancelled) return;
+      await delay(2000);
+      if (cancelled) return;
       await say("Place what bothers you inside... close it...", "Place anything that's been bothering you inside... close the lid firmly...");
       if (cancelled) return;
+      await delay(2000);
+      if (cancelled) return;
       await say("Safely contained for now...", "It's held safely there... not gone... just contained for now...");
+      if (cancelled) return;
+      await delay(1500);
       if (cancelled) return;
       setShowReady(true);
       setReadyTarget("container-bls");
@@ -204,7 +216,11 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     const run = async () => {
       await say("Think of a time you felt strong...", "In your mind... think of a time... you felt strong... capable... or deeply at peace...");
       if (cancelled) return;
+      await delay(3000);
+      if (cancelled) return;
       await say("Step into that memory...", "In your mind... step into that memory... feel it... in your body...");
+      if (cancelled) return;
+      await delay(2500);
       if (cancelled) return;
       await say("Where do you feel it? Let it expand...", "Where in your body do you feel that strength... or peace... let the feeling expand...");
       if (cancelled) return;
