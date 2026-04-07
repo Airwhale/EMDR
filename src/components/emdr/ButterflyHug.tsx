@@ -37,7 +37,7 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
       for (let i = 0; i < 2; i++) {
         if (cancelled) return;
         setCurrentText(cues[i]);
-        await voice?.speakAsync(cues[i]) ?? delay(0);
+        if (voice) await voice.speakAsync(cues[i]);
         if (cancelled) return;
         await delay(400);
       }
@@ -51,7 +51,7 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
       for (let i = 2; i < cues.length; i++) {
         if (cancelled) return;
         setCurrentText(cues[i]);
-        await voice?.speakAsync(cues[i]) ?? delay(0);
+        if (voice) await voice.speakAsync(cues[i]);
         if (cancelled) return;
         await delay(400);
       }
