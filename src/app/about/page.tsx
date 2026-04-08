@@ -27,7 +27,7 @@ const sections: AboutSection[] = [
       "The slowly moving dot that tracks horizontally across your screen uses the same principle as EMDR (Eye Movement Desensitization and Reprocessing) therapy. Bilateral eye movements activate both brain hemispheres alternately, which reduces cognitive arousal and facilitates a shift from active, analytical thinking into a more receptive, trance-like state. In clinical EMDR, this is used to process trauma; here, it serves as an induction aid that helps disengage the critical faculty.",
     evidence: [
       { label: "EMDRIA: What is EMDR?", href: "https://www.emdria.org/about-emdr-therapy/" },
-      { label: "WHO PTSD guideline (EMDR listed)", href: "https://www.who.int/publications/i/item/9789241550186" },
+      { label: "Harvard Health: What is EMDR?", href: "https://www.health.harvard.edu/mental-health/what-is-emdr-therapy-and-who-can-it-help" },
     ],
   },
   {
@@ -42,7 +42,6 @@ const sections: AboutSection[] = [
       "This experience uses your browser's speech synthesis (or pre-generated audio files) to deliver narration in a slow, calm voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled therapist. Spoken guidance engages different processing pathways than written text, and the combination of hearing and seeing creates dual-channel reinforcement that deepens the effect.",
     evidence: [
       { label: "APA Dictionary: Suggestibility", href: "https://dictionary.apa.org/suggestibility" },
-      { label: "Web Speech API (MDN)", href: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API" },
     ],
   },
   {
