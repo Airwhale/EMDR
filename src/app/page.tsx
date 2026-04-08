@@ -261,7 +261,7 @@ export default function App() {
               >
                 Find a certified EMDR therapist at{" "}
                 <a href="https://www.emdria.org/find-an-emdr-therapist/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdria.org</a>
-                {" "}or access free EMDR therapy through{" "}
+                {" "}or connect with pro bono EMDR therapists through{" "}
                 <a href="https://www.emdrhap.org/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdrhap.org</a>
               </motion.p>
             </div>
