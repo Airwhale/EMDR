@@ -32,12 +32,8 @@ export default function SafetyGate({ onContinue, onBack }: SafetyGateProps) {
           <li>Strong emotions may come up briefly. This is normal.</li>
         </ul>
 
-        <div className="p-3 border border-[#e8e0d4]/15 rounded-xl text-xs text-[#e8e0d4]/45 font-light leading-relaxed">
-          <p className="mb-2">If anything ever feels like more than you want to handle alone, these are free and available anytime:</p>
-          <ul className="space-y-1 pl-1">
-            <li>Call or text <span className="text-gold/80">988</span> <span className="text-[#e8e0d4]/30">(Suicide &amp; Crisis Lifeline, US)</span></li>
-            <li>Text <span className="text-gold/80">HOME</span> to <span className="text-gold/80">741741</span> <span className="text-[#e8e0d4]/30">(Crisis Text Line)</span></li>
-          </ul>
+        <div className="p-3 border border-[#e8e0d4]/15 rounded-xl text-xs text-[#e8e0d4]/50">
+          In the US, call or text <span className="text-gold/80">988</span> for 24/7 crisis support.
         </div>
 
         <div className="flex justify-center gap-4 mt-6">
