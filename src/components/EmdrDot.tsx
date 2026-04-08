@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 interface EmdrDotProps {
   cycleDuration?: number;
@@ -10,17 +11,25 @@ interface EmdrDotProps {
 }
 
 /**
- * EMDR-style dot for the trance mode — smooth horizontal movement
- * using viewport-width units for wide screen coverage.
+ * EMDR-style dot for the trance mode — smooth horizontal movement.
+ * Uses pixel values (derived from vw at mount/resize) so Framer Motion
+ * animates reliably.
  */
 export default function EmdrDot({
   cycleDuration = 4,
   size = 12,
   rangeVw = 35,
 }: EmdrDotProps) {
-  // Framer Motion animates x as a string with vw units
-  const left = `${-rangeVw}vw`;
-  const right = `${rangeVw}vw`;
+  const [rangeX, setRangeX] = useState(() =>
+    typeof window !== "undefined" ? Math.round(window.innerWidth * rangeVw / 100) : 400
+  );
+
+  useEffect(() => {
+    const update = () => setRangeX(Math.round(window.innerWidth * rangeVw / 100));
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [rangeVw]);
 
   return (
     <div
@@ -40,7 +49,7 @@ export default function EmdrDot({
           willChange: "transform",
         }}
         animate={{
-          x: [left, right, left],
+          x: [-rangeX, rangeX, -rangeX],
         }}
         transition={{
           duration: cycleDuration,
@@ -61,7 +70,7 @@ export default function EmdrDot({
           willChange: "transform",
         }}
         animate={{
-          x: [left, right, left],
+          x: [-rangeX, rangeX, -rangeX],
         }}
         transition={{
           duration: cycleDuration,
