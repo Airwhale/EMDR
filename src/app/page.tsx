@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import LearnContent from "@/components/shared/LearnContent";
@@ -25,6 +25,7 @@ type AppState = "entry" | "learn" | "safety" | "mode-select" | "meditation-choic
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
+  const hasEnteredOnce = useRef(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [showReady, setShowReady] = useState(false);
   const [entryTextVisible, setEntryTextVisible] = useState(false);
@@ -162,13 +163,13 @@ export default function App() {
           <motion.main
             key="entry"
             className="w-full h-screen flex items-center justify-center overflow-hidden"
-            initial={{ opacity: 0 }}
+            initial={hasEnteredOnce.current ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
             transition={{ duration: 0.8 }}
+            onAnimationComplete={() => { hasEnteredOnce.current = true; }}
           >
             <div className="flex flex-col items-center gap-10 z-10">
-              {/* Title */}
               {/* Title */}
               <motion.h1
                 initial={{ opacity: 0 }}
