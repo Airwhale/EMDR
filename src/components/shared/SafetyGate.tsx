@@ -29,7 +29,7 @@ export default function SafetyGate({ onContinue, onBack }: SafetyGateProps) {
         <ul className="space-y-2 text-sm text-[#e8e0d4]/50 font-light leading-relaxed list-disc pl-5 mb-4">
           <li>Use in a safe, private setting where you can sit or lie down.</li>
           <li>You can exit at any time using the button in the top left corner.</li>
-          <li>Strong emotions may come up briefly. This is normal and will be managed.</li>
+          <li>Strong emotions may come up briefly. This is normal.</li>
         </ul>
 
         <div className="p-3 border border-[#e8e0d4]/15 rounded-xl text-xs text-[#e8e0d4]/50">
