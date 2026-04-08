@@ -1,19 +1,19 @@
 # EMDR / ART Self-Administered Experience
 
-A free, browser-based guided self-regulation tool. Four modes — EMDR resource-building, ART memory rescripting, guided hypnotic meditation, and a customizable bilateral stimulation tool — all running entirely in the browser with no backend, no accounts, and no data collection.
+A free, browser-based guided self-regulation tool. Four modes (EMDR resource-building, ART memory rescripting, guided hypnotic meditation, and a customizable bilateral stimulation tool), all running entirely in the browser with no backend, no accounts, and no data collection.
 
 > **This is a wellness and educational tool, not a substitute for professional therapy.**
 > Find a certified EMDR therapist at [emdria.org](https://www.emdria.org/find-an-emdr-therapist/) or connect with pro bono therapists through [emdrhap.org](https://www.emdrhap.org/).
 
 ## Live demo
 
-**[hypno1.vercel.app](https://hypno1.vercel.app)** — headphones recommended
+**[hypno1.vercel.app](https://hypno1.vercel.app)** (headphones recommended)
 
 ## Why this exists
 
 EMDR and ART are evidence-based therapies with strong clinical outcomes, but access is limited by cost, availability, and waitlists. This project asks: what if the core bilateral stimulation techniques were available to anyone with a browser and headphones?
 
-It is not a replacement for working with a therapist. It implements a simplified subset of these therapies — resource-building from EMDR, image rescripting from ART, and a hypnotic meditation that layers binaural tones, breathing guidance, and progressive relaxation. The goal is to give people a structured, consent-forward tool they can use on their own terms.
+It is not a replacement for working with a therapist. It implements a simplified subset of these therapies: resource-building from EMDR, image rescripting from ART, and a hypnotic meditation that layers binaural tones, breathing guidance, and progressive relaxation. The goal is to give people a structured, consent-forward tool they can use on their own terms.
 
 ## What it does
 
@@ -21,7 +21,7 @@ It is not a replacement for working with a therapist. It implements a simplified
 
 | Mode | Duration | What happens |
 |------|----------|-------------|
-| **EMDR** | 10-15 min | Safe place visualization, butterfly hug, container exercise, resource installation — each paired with bilateral eye movements |
+| **EMDR** | 10-15 min | Safe place visualization, butterfly hug, container exercise, resource installation, each paired with bilateral eye movements |
 | **ART** | 10-20 min | Select a stressful scene, process it with fast bilateral eye movements, then rescript it into something better. Loops until distress drops |
 | **Meditation** | Up to 30 min | Guided or silent. Hypnotic induction, breathing sync, binaural tones deepening from theta to delta, positive suggestion cues, anchoring. End whenever you're ready |
 | **Lateral** | Open-ended | Adjustable bilateral dot with sliders for speed, binaural frequency (0-40 Hz), binaural volume, ping sound, and pink noise |
@@ -38,11 +38,11 @@ Every session begins with a safety gate explaining what the tool is and isn't. E
 
 ### Session tracking
 
-Completed EMDR and ART sessions are stored locally with before/after distress scores. The end summary shows improvement and session history so users can see patterns over time. All data stays in the browser — nothing leaves the device.
+Completed EMDR and ART sessions are stored locally with before/after distress scores. The end summary shows improvement and session history so users can see patterns over time. All data stays in the browser. Nothing leaves the device.
 
 ## How it works
 
-The app layers 40 techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories. All audio is synthesized in real-time with the Web Audio API — no pre-recorded sound files for the sound engine. Voice narration uses pre-generated ElevenLabs MP3s with Web Speech API fallback.
+The app layers 40 techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories. All audio is synthesized in real-time with the Web Audio API, with no pre-recorded sound files for the sound engine. Voice narration uses pre-generated ElevenLabs MP3s with Web Speech API fallback.
 
 ### Audio (8 techniques)
 | Technique | Description | Modes |
@@ -84,7 +84,7 @@ The app layers 40 techniques across audio, visual, language, breathing, bilatera
 ### Breathing (2 techniques)
 | Technique | Description | Modes |
 |-----------|-------------|-------|
-| 4-4-6 extended exhale pattern | 4s inhale, 4s hold, 6s exhale — activates vagal tone and parasympathetic response | Meditation |
+| 4-4-6 extended exhale pattern | 4s inhale, 4s hold, 6s exhale. Activates vagal tone and parasympathetic response | Meditation |
 | Progressive breath slowdown | Cycle duration gradually increases from 14s to 27s over the session | Meditation |
 
 ### Bilateral stimulation (3 techniques)
@@ -107,10 +107,10 @@ The app layers 40 techniques across audio, visual, language, breathing, bilatera
 
 The narration engine (`TranceVoice`) supports two playback backends:
 
-1. **ElevenLabs MP3s** (preferred) — pre-generated files looked up via `audioMap.ts`
-2. **Web Speech API** (fallback) — browser speech synthesis with per-voice tuning
+1. **ElevenLabs MP3s** (preferred): pre-generated files looked up via `audioMap.ts`
+2. **Web Speech API** (fallback): browser speech synthesis with per-voice tuning
 
-Narration cues are chained using `speakAsync()`, which returns a `Promise<void>` that resolves when the audio finishes. This guarantees each cue completes before the next one starts — no fixed timeouts, no cutoffs.
+Narration cues are chained using `speakAsync()`, which returns a `Promise<void>` that resolves when the audio finishes. This guarantees each cue completes before the next one starts, with no fixed timeouts or cutoffs.
 
 ```
 say("Display text", "Spoken text matching audioMap key")
@@ -126,7 +126,7 @@ Session components (EMDR, ART, ButterflyHug, GroundingExercise) use async/await 
 
 - Keyboard navigable throughout (roving tabIndex on SUD scale, arrow keys, Home/End)
 - `aria-labels` on all interactive controls, `role="switch"` on toggles, `role="dialog"` on safety gate
-- `prefers-reduced-motion` respected — disables animations, photic flicker, and binaural pulse
+- `prefers-reduced-motion` respected: disables animations, photic flicker, and binaural pulse
 - Graceful fallback messaging if Web Audio is unsupported
 - `noscript` fallback for non-JS browsers
 
@@ -134,9 +134,9 @@ Session components (EMDR, ART, ButterflyHug, GroundingExercise) use async/await 
 
 - **Next.js 14** (App Router), TypeScript, Tailwind CSS
 - **Framer Motion** for animations and page transitions
-- **Web Audio API** — binaural tones, pink noise, heartbeat, isochronic pulses, all synthesized in-browser
-- **Web Speech API** — voice narration with smart voice selection (ElevenLabs MP3 fallback)
-- **No backend** — all state in localStorage, no network requests after page load
+- **Web Audio API**: binaural tones, pink noise, heartbeat, isochronic pulses, all synthesized in-browser
+- **Web Speech API**: voice narration with smart voice selection (ElevenLabs MP3 fallback)
+- **No backend**: all state in localStorage, no network requests after page load
 
 ## Local development
 
