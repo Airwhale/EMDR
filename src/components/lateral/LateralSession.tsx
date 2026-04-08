@@ -12,10 +12,10 @@ interface LateralSessionProps {
 
 export default function LateralSession({ onExit }: LateralSessionProps) {
   const [speed, setSpeed] = useState(0.5);       // half-cycle seconds (0.2 = fast, 1.0 = slow)
-  const [soundVol, setSoundVol] = useState(0.5);  // 0-1 ping volume
+  const [soundVol, setSoundVol] = useState(0.25);  // 0-1 ping volume
   const [binauralHz, setBinauralHz] = useState(4); // 0 = off, 1-12 Hz
   const [droneVol, setDroneVol] = useState(0.4);  // 0-2 binaural drone volume
-  const [pinkVol, setPinkVol] = useState(0.06);   // pink noise volume
+  const [pinkVol, setPinkVol] = useState(0);       // pink noise volume
   const [showControls, setShowControls] = useState(true);
   const [elapsed, setElapsed] = useState(0);
 
