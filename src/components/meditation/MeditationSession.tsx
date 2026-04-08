@@ -481,7 +481,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     >
       <Vignette intensity={vignetteIntensity} />
       <BinauralPulse active={phase === "sustain" || phase === "staircase"} frequency={currentBeatFreq} intensity={0.035} />
-      <PhoticFlicker active={showPhotic} frequency={phase === "sustain" ? 5 : phase === "staircase" ? 6 : 8} intensity={phase === "sustain" ? 0.025 : 0.03} />
+      <PhoticFlicker active={showPhotic} frequency={phase === "sustain" ? 5 : phase === "staircase" ? 6 : 8} intensity={phase === "sustain" ? 0.012 : 0.015} />
 
       {/* Persistent breathing guide — never unmounts, so animation is continuous */}
       {phase !== "emergence" && phase !== "complete" && (
