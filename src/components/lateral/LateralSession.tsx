@@ -131,9 +131,9 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-6"
+          className="fixed bottom-12 inset-x-0 z-50 px-4"
         >
-          <div className="border border-gold/20 rounded-2xl p-5 space-y-4"
+          <div className="border border-gold/20 rounded-2xl p-5 space-y-4 max-w-sm mx-auto"
                style={{ background: "rgba(10, 10, 15, 0.9)" }}>
 
             {/* Speed — slider left = slow, right = fast */}
