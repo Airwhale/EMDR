@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface Section {
   title: string;
@@ -142,14 +143,14 @@ export default function LearnContent({ onBack, onReady }: LearnContentProps) {
             >
               I&apos;m ready to begin
             </button>
-            <a
+            <Link
               href="/about"
               className="px-8 py-4 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/50
                          hover:border-[#e8e0d4]/40 hover:text-[#e8e0d4]/80 transition-all duration-700
                          ui-text"
             >
               The science behind it
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>
