@@ -27,7 +27,7 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 </p>
 
 <p align="center">
-<em>Left: Every session starts with a safety gate explaining what this tool is and isn't. Right: If distress hits 10/10, the app exits the session immediately, runs a grounding exercise, and lands here with crisis resources. There is no button to navigate away. The user stays with these resources as long as they need.</em>
+<em>Left: Every session starts with a safety gate explaining what this tool is and isn't. Right: If the user becomes extremely distressed and stays that way during the session, the app exits the session immediately, tells the user they are okay, everything is fine, runs a grounding exercise, and lands here with crisis resources. The user stays with these resources as long as they need.</em>
 </p>
 
 ## Why this exists
