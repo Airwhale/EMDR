@@ -110,6 +110,27 @@ export class TranceVoice {
   }
 
   /**
+   * Load an MP3 file fully into memory, then create an Audio element from
+   * the blob. This prevents mid-playback cutoffs from streaming/buffering.
+   */
+  private async loadAudio(file: string): Promise<HTMLAudioElement | null> {
+    try {
+      const resp = await fetch(file);
+      if (!resp.ok) return null;
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      // Clean up blob URL when the element is done (played or errored)
+      const revoke = () => URL.revokeObjectURL(url);
+      audio.addEventListener("ended", revoke, { once: true });
+      audio.addEventListener("error", revoke, { once: true });
+      return audio;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * Fire-and-forget playback. If options.file is provided, tries that MP3
    * first; on failure falls back to Web Speech with the text.
    */
@@ -118,10 +139,12 @@ export class TranceVoice {
     this.stopCurrent();
 
     if (options?.file) {
-      const audio = new Audio(options.file);
-      audio.volume = options?.volume ?? this.tuning.volume;
-      audio.play().catch(() => { this.speakWithSynth(text, options); });
-      this.currentAudio = audio;
+      this.loadAudio(options.file).then((audio) => {
+        if (!audio) { this.speakWithSynth(text, options); return; }
+        audio.volume = options?.volume ?? this.tuning.volume;
+        audio.play().catch(() => { this.speakWithSynth(text, options); });
+        this.currentAudio = audio;
+      });
       return;
     }
 
@@ -130,8 +153,8 @@ export class TranceVoice {
 
   /**
    * Returns a Promise that resolves when the audio finishes.
-   * If options.file is provided, tries that MP3 first; on failure falls
-   * back to Web Speech. If cancel() is called, the promise resolves early.
+   * If options.file is provided, downloads the full MP3 first, then plays.
+   * If cancel() is called, the promise resolves early.
    */
   speakAsync(text: string, options?: SpeakOptions): Promise<void> {
     return new Promise<void>((resolve) => {
@@ -149,16 +172,23 @@ export class TranceVoice {
       this.pendingDone = done;
 
       if (options?.file) {
-        const audio = new Audio(options.file);
-        audio.volume = options?.volume ?? this.tuning.volume;
-        audio.addEventListener("ended", done, { once: true });
-        audio.addEventListener("error", done, { once: true });
-        audio.play().catch(() => {
-          audio.removeEventListener("ended", done);
-          audio.removeEventListener("error", done);
-          this.speakWithSynthAsync(text, options, done);
+        this.loadAudio(options.file).then((audio) => {
+          // If cancelled while loading, don't start playback
+          if (this.pendingResolve !== resolve) return;
+          if (!audio) {
+            this.speakWithSynthAsync(text, options, done);
+            return;
+          }
+          audio.volume = options?.volume ?? this.tuning.volume;
+          audio.addEventListener("ended", done, { once: true });
+          audio.addEventListener("error", done, { once: true });
+          audio.play().catch(() => {
+            audio.removeEventListener("ended", done);
+            audio.removeEventListener("error", done);
+            this.speakWithSynthAsync(text, options, done);
+          });
+          this.currentAudio = audio;
         });
-        this.currentAudio = audio;
         return;
       }
 
