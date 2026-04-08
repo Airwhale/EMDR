@@ -13,6 +13,7 @@ interface AboutSection {
   title: string;
   content: string;
   evidence?: ReadingLink[];
+  meditationOnly?: boolean;
 }
 
 const sections: AboutSection[] = [
@@ -46,58 +47,69 @@ const sections: AboutSection[] = [
   },
   {
     title: "Fixation Induction & Spiral",
+    meditationOnly: true,
     content:
       "The breathing guide uses visual fixation combined with paced breathing. The subtle logarithmic spiral behind it rotates just fast enough to hold peripheral attention without conscious awareness. This combination activates the parasympathetic nervous system. The 4-4-6 breathing pattern (inhale-hold-exhale) is specifically chosen to promote vagal tone and trigger the relaxation response.",
   },
   {
     title: "Embedded Commands & Ericksonian Language",
+    meditationOnly: true,
     content:
       "The narration uses Milton Erickson's permissive language patterns; suggestions are phrased as possibilities ('you might notice...') rather than commands ('relax now'). The spoken voice version includes subtle embedded commands, imperative phrases hidden within longer permissive sentences (like 'and as it slows, you can relax deeply now'). Your conscious mind processes the full sentence, but your unconscious responds to the emphasized command fragment.",
   },
   {
     title: "Confusion Technique",
+    meditationOnly: true,
     content:
       "Several narration cues use paradoxical statements ('the more you try to stay aware, the easier it becomes to let go'). This is Erickson's confusion technique: by presenting the conscious mind with a logical paradox, it momentarily short-circuits analytical processing and creates an opening for direct suggestion. The brief cognitive overload makes the unconscious mind more receptive.",
   },
   {
     title: "Photic Driving",
+    meditationOnly: true,
     content:
       "During deepening phases, you may notice an extremely subtle luminance flicker on screen (off by default; enable in settings). This is photic driving, rhythmic visual stimulation at alpha (8Hz) or theta (6Hz) frequencies that may influence brainwave activity. The effect is kept very subtle (barely perceptible) for comfort. Some studies suggest that even low-intensity photic stimulation can shift dominant EEG frequency, though results vary.",
     evidence: [{ label: "Review: Rhythmic sensory stimulation and brain oscillations", href: "https://www.frontiersin.org/articles/10.3389/fnhum.2018.00389/full" }],
   },
   {
     title: "Vignette & Tunnel Vision",
+    meditationOnly: true,
     content:
       "The darkening edges of your screen simulate tunnel vision, a phenomenon that naturally occurs in deep trance states as peripheral awareness narrows. By artificially creating this visual effect, we leverage the brain's tendency toward response expectancy: seeing what trance 'looks like' helps produce the actual experience. The vignette deepens progressively with each phase.",
   },
   {
     title: "Progressive Relaxation & Anchoring",
+    meditationOnly: true,
     content:
       "The body scan follows Edmund Jacobson's progressive muscle relaxation, adapted with Ericksonian permissive language. Near the end, you're asked to press thumb and forefinger together, which creates a kinesthetic 'anchor' (an NLP technique from Bandler and Grinder). With repetition, this physical gesture becomes a conditioned trigger that can rapidly re-induce relaxation in future sessions.",
   },
   {
     title: "Fractionation",
+    meditationOnly: true,
     content:
       "During the staircase deepening, there's a brief moment where you're asked to become more aware before dropping deeper again. This is fractionation: repeatedly moving between lighter and deeper states. Each cycle deepens the trance more than continuous deepening alone, because the contrast between states amplifies the subjective experience of 'going deeper.'",
   },
   {
     title: "Sub-Bass Heartbeat Entrainment",
+    meditationOnly: true,
     content:
       "A barely-audible 40Hz sub-bass oscillation is modulated at approximately resting heart rate (60bpm). As trance deepens, this slows to ~50bpm. Some research on auditory-cardiac entrainment suggests that rhythmic auditory stimulation near heart rate may influence cardiac rhythm, though evidence is preliminary. The intention is to promote parasympathetic dominance and physiological relaxation.",
     evidence: [{ label: "Systematic review: auditory stimulation and heart rate variability", href: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5871151/" }],
   },
   {
     title: "Second Binaural Layer & Binaural Pulse",
+    meditationOnly: true,
     content:
       "A second binaural tone at double the base frequency (200Hz) creates harmonic reinforcement, making the drone richer and more enveloping. Additionally, during the meditation sustain phase, the entire screen subtly pulses in opacity at the binaural beat frequency, adding a visual layer to the auditory experience. You may not consciously notice either effect, but the intention is to create a coherent multi-sensory environment that supports relaxation.",
   },
   {
     title: "Deepening Challenges & Dissociation",
+    meditationOnly: true,
     content:
       "During the meditation's sustained phase, the narration uses two advanced hypnotic techniques. Deepening challenges are presuppositional invitations ('I wonder if you can go even deeper than this... and I think you can... because you already have') that assume you're already deep and can go further. Dissociation language gently separates mind from body ('your body is here, comfortable and safe... but your mind can float freely'), creating the floating, boundary-dissolving quality of deep trance. The meditation also weaves in suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing throughout.",
   },
   {
     title: "NLP Sensory Patterns",
+    meditationOnly: true,
     content:
       "The narration uses rich, multi-sensory imagery drawn from Neuro-Linguistic Programming: warmth spreading through your body, muscles melting like warm honey, waves of comfort like sunlight, velvet heaviness in the eyelids. The theory is that vivid sensory language can activate some of the same neural pathways as actual physical sensation, deepening the felt experience of relaxation. How strongly this works varies from person to person.",
   },
@@ -188,9 +200,14 @@ export default function AboutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.6 }}
               >
-                <h2 className="narration-text text-2xl text-gold/80 mb-3">
+                <h2 className={`narration-text text-2xl text-gold/80 ${section.meditationOnly ? "mb-1" : "mb-3"}`}>
                   {section.title}
                 </h2>
+                {section.meditationOnly && (
+                  <p className="ui-text text-[10px] text-gold/35 mb-3 tracking-wider">
+                    Hypnotic Meditation
+                  </p>
+                )}
                 <p className="text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
                   {section.content}
                 </p>
