@@ -10,14 +10,24 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 **[hypno1-amber.vercel.app](https://hypno1-amber.vercel.app/)** (headphones recommended)
 
 ![Entry screen](docs/screenshots/entry.png)
+*The landing page. A slow-moving bilateral dot tracks across the screen while the user decides between four modes. Everything runs in the browser with no backend.*
 
 <p align="center">
 <img src="docs/screenshots/meditation.png" width="48%" alt="Guided meditation with breathing spiral">
 <img src="docs/screenshots/lateral.png" width="48%" alt="Lateral eye movement tool with controls">
 </p>
+
 <p align="center">
-<img src="docs/screenshots/safety.png" width="48%" alt="Safety gate with crisis resources">
+<em>Left: Guided meditation. A 5-arm logarithmic spiral rotates while the breathing guide expands and contracts on a 4-4-6 cycle. Binaural tones deepen from theta toward delta over 30 minutes. Right: The lateral eye movement tool. Five sliders let the user tune dot speed, binaural frequency (0-40 Hz), volume, ping sound, and pink noise in real time.</em>
+</p>
+
+<p align="center">
+<img src="docs/screenshots/safety.png" width="48%" alt="Safety gate before sessions begin">
 <img src="docs/screenshots/crisis.png" width="48%" alt="Crisis resources after adverse event">
+</p>
+
+<p align="center">
+<em>Left: Every session starts with a safety gate explaining what this tool is and isn't. Right: If distress hits 10/10, the app exits the session immediately, runs a grounding exercise, and lands here with crisis resources. There is no button to navigate away. The user stays with these resources as long as they need.</em>
 </p>
 
 ## Why this exists
