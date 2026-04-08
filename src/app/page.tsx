@@ -317,7 +317,7 @@ export default function App() {
                 </button>
               </div>
               <p className="ui-text text-[10px] text-[#e8e0d4]/30 text-center max-w-xs">
-                Binaural tones are always on for this experience. The binaural toggle on the previous screen does not apply here. Headphones recommended.
+                Binaural tones are always on for this experience. Headphones recommended.
               </p>
 
               {/* Flickering effects toggle */}
