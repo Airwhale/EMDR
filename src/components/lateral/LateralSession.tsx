@@ -136,7 +136,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
           <div className="border border-gold/20 rounded-2xl p-5 space-y-4"
                style={{ background: "rgba(10, 10, 15, 0.9)" }}>
 
-            {/* Speed */}
+            {/* Speed — slider left = slow, right = fast */}
             <div>
               <div className="flex justify-between mb-1">
                 <span className="ui-text text-[10px] text-[#e8e0d4]/50">dot speed</span>
@@ -147,8 +147,8 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 min="0.2"
                 max="1.0"
                 step="0.05"
-                value={speed}
-                onChange={(e) => setSpeed(parseFloat(e.target.value))}
+                value={1.2 - speed}
+                onChange={(e) => setSpeed(1.2 - parseFloat(e.target.value))}
                 className="w-full accent-gold"
               />
             </div>
@@ -163,7 +163,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 type="range"
                 min="0"
                 max="40"
-                step="0.5"
+                step="0.1"
                 value={binauralHz}
                 onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
                 className="w-full accent-gold"
