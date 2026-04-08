@@ -142,6 +142,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- INITIAL SUD ----
   const handleSudInitial = useCallback((rating: number) => {
     setSudStart(rating);
+    setNarration(null);
     if (rating > 6) {
       if (groundingAttempted && rating >= 9) {
         setShowAdverseEvent(true);
