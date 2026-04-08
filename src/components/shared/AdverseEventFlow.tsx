@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { TranceVoice } from "@/lib/TranceVoice";
 
 interface AdverseEventFlowProps {
@@ -19,6 +19,7 @@ const groundingSteps = [
   { count: 1, prompt: "Take one deep, slow breath...", file: "/audio/grounding/grounding-05-breath.mp3" },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlowProps) {
   const [step, setStep] = useState<AEStep>("pause");
   const [groundingIndex, setGroundingIndex] = useState(-1);
@@ -75,10 +76,6 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
     run();
     return () => { cancelled = true; };
   }, [voice]);
-
-  const handleExit = useCallback(() => {
-    onComplete();
-  }, [onComplete]);
 
   return (
     <div className="w-full h-screen flex items-center justify-center px-6 bg-trance-dark">
@@ -152,13 +149,9 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
               </div>
             </div>
 
-            <button
-              onClick={handleExit}
-              className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
-                         hover:border-gold/70 hover:text-gold transition-all duration-500 ui-text"
-            >
-              Return to home
-            </button>
+            <p className="ui-text text-[10px] text-[#e8e0d4]/30 mt-2">
+              Close this tab whenever you&apos;re ready.
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
