@@ -143,8 +143,8 @@ export default function App() {
     clearAppSnapshot();
     setSelectedMode(null);
     setEndSummary(null);
-    setShowReady(false);
-    setEntryTextVisible(false);
+    // Don't reset showReady/entryTextVisible — the slow reveal is only for the
+    // very first visit. On return the entry screen should be fully visible.
     setAppState("entry");
   }, []);
 
