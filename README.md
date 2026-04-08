@@ -9,25 +9,7 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 
 **[hypno1-amber.vercel.app](https://hypno1-amber.vercel.app/)** (headphones recommended)
 
-<p align="center">
-<img src="docs/screenshots/entry.png" width="600" alt="Entry screen">
-</p>
-
-<p align="center"><em>The landing page. A bilateral dot tracks across the screen while the user chooses between four modes. Everything runs in the browser with no backend.</em></p>
-
-<p align="center">
-<img src="docs/screenshots/meditation.png" width="350" height="280" alt="Guided meditation with breathing spiral">&nbsp;&nbsp;
-<img src="docs/screenshots/lateral.png" width="350" height="280" alt="Lateral eye movement tool with controls">
-</p>
-
-<p align="center"><em>Left: Guided meditation. A logarithmic spiral rotates while the breathing guide expands and contracts on a 4-4-6 cycle. Binaural tones deepen from theta toward delta over 30 minutes. Right: The lateral eye movement tool. Five sliders tune dot speed, binaural frequency, volume, ping sound, and pink noise in real time.</em></p>
-
-<p align="center">
-<img src="docs/screenshots/safety.png" width="350" height="280" alt="Safety gate before sessions begin">&nbsp;&nbsp;
-<img src="docs/screenshots/crisis.png" width="350" height="280" alt="Crisis resources after adverse event">
-</p>
-
-<p align="center"><em>Left: Every session starts with a safety gate explaining what this tool is and isn't. Right: If the user becomes extremely distressed and stays that way during the session, the app exits the session immediately, tells the user they are okay, everything is fine, runs a grounding exercise, and lands here with crisis resources. The user stays with these resources as long as they need.</em></p>
+![Entry screen](docs/screenshots/entry.png)
 
 ## Why this exists
 
@@ -56,6 +38,10 @@ Every session begins with a safety gate explaining what the tool is and isn't. E
 - **After every session:** Crisis resources are shown (988 Suicide & Crisis Lifeline, Crisis Text Line)
 - **At any point:** The exit button is always visible in the top-left corner
 
+If the user becomes extremely distressed, the app exits the session immediately, tells the user they are okay, runs a grounding exercise, and lands on a page with crisis resources. There is no button to navigate away. The user stays with these resources as long as they need.
+
+![Crisis resources](docs/screenshots/crisis.png)
+
 ### Session tracking
 
 Completed EMDR and ART sessions are stored locally with before/after distress scores. The end summary shows improvement and session history so users can see patterns over time. All data stays in the browser. Nothing leaves the device.
@@ -63,6 +49,10 @@ Completed EMDR and ART sessions are stored locally with before/after distress sc
 ## How it works
 
 The app layers 40 techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories. All audio is synthesized in real-time with the Web Audio API, with no pre-recorded sound files for the sound engine. Voice narration uses pre-generated ElevenLabs MP3s with Web Speech API fallback.
+
+The guided meditation uses a rotating logarithmic spiral synced to a breathing guide, while binaural tones deepen from theta toward delta over 30 minutes:
+
+![Guided meditation](docs/screenshots/meditation.png)
 
 ### Audio (8 techniques)
 | Technique | Description | Modes |
