@@ -146,7 +146,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setNarration(null);
     if (rating > 6) {
       if (groundingAttempted) {
-        if (rating >= 9) {
+        if (rating >= 10) {
           setShowAdverseEvent(true);
         } else {
           setPhase("post-grounding");

@@ -101,7 +101,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     setSudStart(rating);
     if (rating > 5) {
       if (groundingAttempted) {
-        if (rating >= 9) {
+        if (rating >= 10) {
           setShowAdverseEvent(true);
         } else {
           setPhase("post-grounding");
