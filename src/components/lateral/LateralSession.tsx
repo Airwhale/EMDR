@@ -231,7 +231,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
               <input
                 type="range"
                 min="0"
-                max="0.3"
+                max="0.15"
                 step="0.01"
                 value={pinkVol}
                 onChange={(e) => setPinkVol(parseFloat(e.target.value))}
