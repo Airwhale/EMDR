@@ -39,7 +39,7 @@ const sections: AboutSection[] = [
   {
     title: "Voice Synthesis",
     content:
-      "This experience uses your browser's speech synthesis (or pre-generated audio files) to deliver narration in a slow, calm voice. The pacing — with deliberate pauses between phrases — mimics the cadence of a skilled therapist. Spoken guidance engages different processing pathways than written text, and the combination of hearing and seeing creates dual-channel reinforcement that deepens the effect.",
+      "This experience uses your browser's speech synthesis (or pre-generated audio files) to deliver narration in a slow, calm voice. The pacing, with deliberate pauses between phrases, mimics the cadence of a skilled therapist. Spoken guidance engages different processing pathways than written text, and the combination of hearing and seeing creates dual-channel reinforcement that deepens the effect.",
     evidence: [
       { label: "APA Dictionary: Suggestibility", href: "https://dictionary.apa.org/suggestibility" },
     ],
