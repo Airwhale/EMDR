@@ -24,7 +24,7 @@ const sections: AboutSection[] = [
   {
     title: "EMDR-Style Eye Movement",
     content:
-      "The slowly moving dot that tracks horizontally across your screen uses the same principle as EMDR (Eye Movement Desensitization and Reprocessing) therapy. Bilateral eye movements activate both brain hemispheres alternately, which reduces cognitive arousal and facilitates a shift from active, analytical thinking into a more receptive, trance-like state. In clinical EMDR, this is used to process trauma; here, it serves as an induction aid that helps disengage the critical faculty.",
+      "The slowly moving dot that tracks horizontally across your screen uses the same principle as EMDR (Eye Movement Desensitization and Reprocessing) therapy. Research suggests that bilateral eye movements may activate both brain hemispheres alternately, reducing cognitive arousal and facilitating a shift from active, analytical thinking into a more receptive state. In clinical EMDR, this is used to process trauma; here, it serves as an induction aid.",
     evidence: [
       { label: "EMDRIA: What is EMDR?", href: "https://www.emdria.org/about-emdr-therapy/" },
       { label: "Harvard Health: What is EMDR?", href: "https://www.health.harvard.edu/mental-health/what-is-emdr-therapy-and-who-can-it-help" },
@@ -33,7 +33,7 @@ const sections: AboutSection[] = [
   {
     title: "True Binaural Tones",
     content:
-      "The audio engine sends a slightly different frequency to each ear: for example, 100Hz to the left and 104Hz to the right. Your brain perceives the 4Hz difference as a rhythmic 'beat' that isn't present in either signal alone. This theta-frequency beating pattern (4-7Hz) corresponds to the EEG signature of deep meditation and light sleep. As trance deepens, the binaural beat frequency shifts lower into deep theta. During emergence, it rises to alpha (8-12Hz) to promote alertness. These binaural tones are layered with pink noise masking, isochronic theta pulses, and breath-synced chimes to create a rich, immersive soundscape. Headphones are essential for this effect.",
+      "The audio engine sends a slightly different frequency to each ear: for example, 100Hz to the left and 104Hz to the right. Your brain perceives the 4Hz difference as a rhythmic 'beat' that isn't present in either signal alone. This theta-frequency range (4-7Hz) is associated with the EEG patterns seen during deep meditation and light sleep, though the degree to which binaural beats reliably entrain brainwaves varies across studies. As trance deepens, the beat frequency shifts lower. During emergence, it rises to alpha (8-12Hz) to encourage alertness. These tones are layered with pink noise masking, isochronic theta pulses, and breath-synced chimes to create a rich, immersive soundscape. Headphones are essential for this effect.",
     evidence: [{ label: "Oster (1973): Auditory beats in the brain", href: "https://www.scientificamerican.com/article/auditory-beats-in-the-brain/" }],
   },
   {
@@ -62,7 +62,7 @@ const sections: AboutSection[] = [
   {
     title: "Photic Driving",
     content:
-      "During deepening phases, you may notice an extremely subtle luminance flicker on screen. This is photic driving — rhythmic visual stimulation at alpha (8Hz) or theta (6Hz) frequencies that can entrain brainwave activity. The effect is kept very subtle (barely perceptible) for comfort, but clinical studies show that even low-intensity photic stimulation can measurably shift dominant EEG frequency.",
+      "During deepening phases, you may notice an extremely subtle luminance flicker on screen (off by default; enable in settings). This is photic driving, rhythmic visual stimulation at alpha (8Hz) or theta (6Hz) frequencies that may influence brainwave activity. The effect is kept very subtle (barely perceptible) for comfort. Some studies suggest that even low-intensity photic stimulation can shift dominant EEG frequency, though results vary.",
     evidence: [{ label: "Review: Rhythmic sensory stimulation and brain oscillations", href: "https://www.frontiersin.org/articles/10.3389/fnhum.2018.00389/full" }],
   },
   {
@@ -83,13 +83,13 @@ const sections: AboutSection[] = [
   {
     title: "Sub-Bass Heartbeat Entrainment",
     content:
-      "A barely-audible 40Hz sub-bass oscillation is modulated at approximately resting heart rate (60bpm). As trance deepens, this slows to ~50bpm. Research on auditory-cardiac entrainment suggests that rhythmic auditory stimulation near heart rate can influence actual cardiac rhythm, promoting parasympathetic dominance and physiological relaxation.",
+      "A barely-audible 40Hz sub-bass oscillation is modulated at approximately resting heart rate (60bpm). As trance deepens, this slows to ~50bpm. Some research on auditory-cardiac entrainment suggests that rhythmic auditory stimulation near heart rate may influence cardiac rhythm, though evidence is preliminary. The intention is to promote parasympathetic dominance and physiological relaxation.",
     evidence: [{ label: "Systematic review: auditory stimulation and heart rate variability", href: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5871151/" }],
   },
   {
     title: "Second Binaural Layer & Binaural Pulse",
     content:
-      "A second binaural tone at double the base frequency (200Hz) creates harmonic reinforcement, making the drone richer and more enveloping. Additionally, during the meditation sustain phase, the entire screen subtly pulses in opacity at the exact binaural beat frequency, reinforcing the auditory entrainment through a second sensory channel. You may not consciously notice either effect, but your brain responds to the multi-layered coherence.",
+      "A second binaural tone at double the base frequency (200Hz) creates harmonic reinforcement, making the drone richer and more enveloping. Additionally, during the meditation sustain phase, the entire screen subtly pulses in opacity at the binaural beat frequency, adding a visual layer to the auditory experience. You may not consciously notice either effect, but the intention is to create a coherent multi-sensory environment that supports relaxation.",
   },
   {
     title: "Deepening Challenges & Dissociation",
@@ -99,12 +99,12 @@ const sections: AboutSection[] = [
   {
     title: "NLP Sensory Patterns",
     content:
-      "The narration uses rich, multi-sensory imagery drawn from Neuro-Linguistic Programming: warmth spreading through your body, muscles melting like warm honey, waves of comfort like sunlight, velvet heaviness in the eyelids. These sensory predicates engage the same neural pathways as actual physical sensation, deepening the somatic experience of relaxation and making the suggestions feel physically real.",
+      "The narration uses rich, multi-sensory imagery drawn from Neuro-Linguistic Programming: warmth spreading through your body, muscles melting like warm honey, waves of comfort like sunlight, velvet heaviness in the eyelids. The theory is that vivid sensory language can activate some of the same neural pathways as actual physical sensation, deepening the felt experience of relaxation. How strongly this works varies from person to person.",
   },
   {
     title: "Is This Real?",
     content:
-      "Yes. This experience layers dozens of evidence-based techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories, including binaural entrainment, Ericksonian language, photic driving, heartbeat entrainment, NLP patterns, deepening challenges, and dissociation language. These techniques are drawn from clinical EMDR, ART, and hypnotherapy. Each one has measurable effects on its own; together they create a powerful multi-modal experience. However, this is a self-guided tool: it lacks the real-time adaptation of a live clinician. The effects tend to deepen with repeated sessions.",
+      "This experience layers dozens of techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories, including binaural tones, Ericksonian language, photic driving, heartbeat entrainment, NLP patterns, deepening challenges, and dissociation language. These techniques are drawn from clinical EMDR, ART, and hypnotherapy. Some have strong research support (EMDR, progressive relaxation, paced breathing); others have promising but more preliminary evidence (binaural entrainment, photic driving). Together they create a multi-layered experience, though individual responses vary. This is a self-guided tool: it lacks the real-time adaptation of a live clinician. The effects tend to deepen with repeated sessions.",
     evidence: [{ label: "APA Dictionary: Hypnosis", href: "https://dictionary.apa.org/hypnosis" }],
   },
 ];
