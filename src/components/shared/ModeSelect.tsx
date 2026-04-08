@@ -24,7 +24,7 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
     title: "ART",
     subtitle: "Process & rescript a stressful memory",
     description:
-      "Best if you have a specific stressful memory you'd like to take the edge off. Fast-paced eye movements help you process the scene, then you'll be guided to change it in your mind — reshaping it into something that feels better. You won't need to describe or share anything.",
+      "Best if you have a specific stressful memory you'd like to take the edge off. This is a simplified, self-guided version of the clinical technique. Fast-paced eye movements help you process the scene, then you'll be guided to change it in your mind, reshaping it into something that feels better. You won't need to describe or share anything.",
   },
   {
     id: "meditation",

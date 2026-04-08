@@ -44,7 +44,7 @@ const sections: Section[] = [
   {
     title: "Important note",
     content:
-      "This tool is designed for self-regulation and wellness. It is not a replacement for professional therapy. If you are dealing with trauma, severe anxiety, PTSD, or any mental health crisis, please work with a licensed clinician. The EMDR and ART modes in this app use only the resource-building and mild-stress components of these therapies, not the full clinical trauma-processing protocols.",
+      "This tool is designed for self-regulation and wellness, not as a replacement for professional therapy. EMDR and ART are clinical therapies designed to be administered by a trained therapist over the course of a therapeutic relationship. This app borrows specific relaxation and resource-building techniques from those approaches for self-guided use, but does not replicate the full clinical protocols. If you are dealing with trauma, severe anxiety, PTSD, or any mental health crisis, please work with a licensed clinician.",
   },
 ];
 

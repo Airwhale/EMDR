@@ -23,12 +23,12 @@ export default function SafetyGate({ onContinue, onBack }: SafetyGateProps) {
       <div className="w-full max-w-lg border border-gold/30 rounded-2xl p-8 bg-gold/[0.02]">
         <h1 id="safety-gate-title" className="narration-text text-2xl text-gold/85 mb-4 text-center">Before you begin</h1>
         <p id="safety-gate-description" className="text-sm text-[#e8e0d4]/55 font-light leading-relaxed mb-4">
-          This supports relaxation and emotional regulation, but is not therapy or crisis support.
+          EMDR and ART are clinical therapies designed to be administered by a trained therapist. This tool borrows specific relaxation and resource-building techniques from those approaches for self-guided use. It is not a substitute for the full clinical protocols or for working with a licensed professional.
         </p>
 
         <ul className="space-y-2 text-sm text-[#e8e0d4]/50 font-light leading-relaxed list-disc pl-5 mb-4">
           <li>Use in a safe, private setting where you can sit or lie down.</li>
-          <li>If distress increases, use the exit button — you&apos;ll be guided through grounding.</li>
+          <li>You can exit at any time using the button in the top left corner.</li>
           <li>Strong emotions may come up briefly. This is normal and will be managed.</li>
         </ul>
 
