@@ -185,7 +185,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
             {/* Drone volume */}
             <div>
               <div className="flex justify-between mb-1">
-                <span className="ui-text text-[10px] text-[#e8e0d4]/50">drone volume</span>
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">binaural volume</span>
                 <span className="ui-text text-[10px] text-gold/60">{Math.round(droneVol * 100)}%</span>
               </div>
               <input
