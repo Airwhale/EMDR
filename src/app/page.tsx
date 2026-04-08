@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import LearnContent from "@/components/shared/LearnContent";
@@ -26,7 +26,6 @@ type AppState = "entry" | "learn" | "safety" | "mode-select" | "meditation-choic
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
   const [isHydrated, setIsHydrated] = useState(false);
-  const navigationDisabled = useRef(false);
   const [showReady, setShowReady] = useState(false);
   const [entryTextVisible, setEntryTextVisible] = useState(false);
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
@@ -84,7 +83,6 @@ export default function App() {
   }, [appState]);
 
   const handleReady = useCallback(() => {
-    if (navigationDisabled.current) return;
     setAppState("safety");
   }, []);
 
@@ -146,8 +144,6 @@ export default function App() {
     setSelectedMode(null);
     setEndSummary(null);
     setAppState("entry");
-    navigationDisabled.current = true;
-    setTimeout(() => { navigationDisabled.current = false; }, 900);
   }, []);
 
   if (!isHydrated) {
