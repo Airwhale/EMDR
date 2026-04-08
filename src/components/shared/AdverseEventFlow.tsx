@@ -12,11 +12,11 @@ interface AdverseEventFlowProps {
 type AEStep = "pause" | "orient" | "grounding" | "support" | "resources";
 
 const groundingSteps = [
-  { count: 5, prompt: "Look around and name 5 things you can see..." },
-  { count: 4, prompt: "Notice 4 things you can physically feel..." },
-  { count: 3, prompt: "Listen for 3 sounds around you..." },
-  { count: 2, prompt: "Identify 2 things you can smell..." },
-  { count: 1, prompt: "Notice 1 thing you can taste..." },
+  { count: 5, prompt: "Look around and name 5 things you can see...", file: "/audio/grounding/grounding-01-see.mp3" },
+  { count: 4, prompt: "Notice 4 things you can physically feel...", file: "/audio/grounding/grounding-02-touch.mp3" },
+  { count: 3, prompt: "Listen for 3 sounds around you...", file: "/audio/grounding/grounding-03-hear.mp3" },
+  { count: 2, prompt: "Identify 2 things you can smell...", file: "/audio/grounding/grounding-04-smell.mp3" },
+  { count: 1, prompt: "Notice 1 thing you can taste...", file: "/audio/grounding/grounding-05-taste.mp3" },
 ];
 
 export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlowProps) {
@@ -26,7 +26,7 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
   // PAUSE
   useEffect(() => {
     if (step !== "pause") return;
-    voice?.speak("Let's pause. You're safe. Take a slow breath.");
+    voice?.speak("Let's pause. You're safe. Take a slow breath.", { file: "/audio/adverse/adverse-pause.mp3" });
     const t = setTimeout(() => setStep("orient"), 8000);
     return () => clearTimeout(t);
   }, [step, voice]);
@@ -34,7 +34,7 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
   // ORIENT TO ROOM
   useEffect(() => {
     if (step !== "orient") return;
-    voice?.speak("Feel your feet on the floor. Feel the surface beneath you. Notice the room around you.");
+    voice?.speak("Feel your feet on the floor. Feel the surface beneath you. Notice the room around you.", { file: "/audio/adverse/adverse-orient.mp3" });
     const t = setTimeout(() => setStep("grounding"), 12000);
     return () => clearTimeout(t);
   }, [step, voice]);
@@ -42,20 +42,20 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
   // 5-4-3-2-1 GROUNDING
   useEffect(() => {
     if (step !== "grounding") return;
-    voice?.speak("We're going to ground you with a simple exercise.");
+    voice?.speak("We're going to ground you with a simple exercise.", { file: "/audio/grounding/grounding-intro.mp3" });
     const timers: ReturnType<typeof setTimeout>[] = [];
     let cumulative = 4000;
 
     groundingSteps.forEach((gs, i) => {
       timers.push(setTimeout(() => {
         setGroundingIndex(i);
-        voice?.speak(gs.prompt);
+        voice?.speak(gs.prompt, { file: gs.file });
       }, cumulative));
       cumulative += 10000;
     });
 
     timers.push(setTimeout(() => {
-      voice?.speak("Good. Take a deep breath. You're here, you're safe.");
+      voice?.speak("Good. Take a deep breath. You're here, you're safe.", { file: "/audio/grounding/grounding-closing.mp3" });
     }, cumulative));
     timers.push(setTimeout(() => setStep("support"), cumulative + 6000));
 
@@ -65,7 +65,7 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
   // SUPPORT MESSAGE
   useEffect(() => {
     if (step !== "support") return;
-    voice?.speak("What you experienced is a normal response. This tool may not be right for you in this moment, and that's okay.");
+    voice?.speak("What you experienced is a normal response. This tool may not be right for you in this moment, and that's okay.", { file: "/audio/adverse/adverse-support.mp3" });
     const t = setTimeout(() => setStep("resources"), 12000);
     return () => clearTimeout(t);
   }, [step, voice]);
