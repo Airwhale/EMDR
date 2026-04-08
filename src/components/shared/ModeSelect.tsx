@@ -29,7 +29,7 @@ const modes: { id: SessionMode; title: string; subtitle: string; description: st
   {
     id: "meditation",
     title: "HYPNOTIC MEDITATION",
-    subtitle: "Guided hypnotic induction into deep relaxation",
+    subtitle: "Guided hypnotic meditation into deep relaxation",
     description:
       "Best if you want a long, immersive session. Uses hypnotic language, binaural tones, and bilateral stimulation to guide you into a deep trance state, then holds you there with gentle deepening cues for up to 30 minutes. Includes suggestions of contentment, belonging, joy, gratitude, safety, and wellbeing. End whenever you're ready.",
   },
