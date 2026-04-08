@@ -251,15 +251,7 @@ export default function App() {
               >
                 This experience draws on select relaxation techniques from EMDR and ART.
                 The full clinical therapies are far more comprehensive and are designed
-                to be guided by a trained professional.
-              </motion.p>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: showReady ? 1 : 0 }}
-                transition={{ duration: 0.8 }}
-                className="text-[10px] text-[#e8e0d4]/20 font-light text-center max-w-sm leading-relaxed"
-              >
-                Find a certified EMDR therapist at{" "}
+                to be guided by a trained professional. Find a certified EMDR therapist at{" "}
                 <a href="https://www.emdria.org/find-an-emdr-therapist/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdria.org</a>
                 {" "}or connect with pro bono EMDR therapists through{" "}
                 <a href="https://www.emdrhap.org/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdrhap.org</a>
