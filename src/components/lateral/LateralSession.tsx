@@ -87,6 +87,8 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
     ? "beta — active/alert state"
     : null;
 
+  const speedLabel = speed <= 0.3 ? "Fast" : speed <= 0.5 ? "Medium" : speed <= 0.7 ? "Slow" : "Very slow";
+
   return (
     <main className="relative w-screen h-screen flex flex-col items-center justify-center overflow-hidden bg-trance-dark">
       <Vignette intensity={0.3} />
