@@ -15,6 +15,7 @@ type ArtPhase =
   | "scene-select"
   | "sud-initial"
   | "grounding"
+  | "post-grounding"
   | "processing"
   | "sensation-check"
   | "sensation-bls"
@@ -144,11 +145,15 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     setSudStart(rating);
     setNarration(null);
     if (rating > 6) {
-      if (groundingAttempted && rating >= 9) {
-        setShowAdverseEvent(true);
-        return;
+      if (groundingAttempted) {
+        if (rating >= 9) {
+          setShowAdverseEvent(true);
+        } else {
+          setPhase("post-grounding");
+        }
+      } else {
+        setPhase("grounding");
       }
-      setPhase("grounding");
     } else {
       setRound(1);
       setPhase("processing");
@@ -403,6 +408,36 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
         {phase === "grounding" && (
           <motion.div key="art-grounding" exit={{ opacity: 0 }} transition={{ duration: 1 }}>
             <GroundingExercise voice={voiceRef.current} onComplete={handleGroundingComplete} />
+          </motion.div>
+        )}
+
+        {phase === "post-grounding" && (
+          <motion.div key="art-post-grounding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}
+            className="flex flex-col items-center gap-6 text-center max-w-md">
+            <p className="narration-text text-xl text-[#e8e0d4]/70">
+              You can continue to the session, or exit if you&apos;d prefer to stop.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => { setRound(1); setPhase("processing"); }}
+                className="px-6 py-3 border border-gold/45 rounded-full text-gold/85
+                           hover:border-gold/75 hover:text-gold transition-all duration-700 ui-text"
+              >
+                Continue
+              </button>
+              <button
+                onClick={() => {
+                  audioRef.current?.fadeOut(3);
+                  setTimeout(() => audioRef.current?.stop(), 3500);
+                  voiceRef.current?.stop();
+                  onExit?.();
+                }}
+                className="px-6 py-3 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/55
+                           hover:border-[#e8e0d4]/35 hover:text-[#e8e0d4]/80 transition-all duration-700 ui-text"
+              >
+                Exit
+              </button>
+            </div>
           </motion.div>
         )}
 
