@@ -536,23 +536,18 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         )}
       </AnimatePresence>
 
-      {/* Exit button — top left */}
+      {/* End meditation button — top left, consistent with other modes */}
       {phase !== "emergence" && phase !== "complete" && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.2 }}
           whileHover={{ opacity: 0.6 }}
           transition={{ duration: 0.8 }}
-          onClick={() => {
-            audioRef.current?.fadeOut(3);
-            setTimeout(() => audioRef.current?.stop(), 3500);
-            voiceRef.current?.stop();
-            onExit();
-          }}
+          onClick={handleEndMeditation}
           className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
                      hover:text-[#e8e0d4]/60 transition-colors duration-500"
         >
-          ← exit
+          ← end
         </motion.button>
       )}
 
@@ -567,21 +562,8 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
         {/* Timer */}
         <span className="ui-text text-[10px] text-[#e8e0d4]/20">{formatTime(elapsed)}</span>
 
-        {/* End meditation button */}
-        {showEndButton && (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            whileHover={{ opacity: 0.9 }}
-            transition={{ duration: 0.8 }}
-            onClick={handleEndMeditation}
-            className="px-5 py-2 border border-[#e8e0d4]/25 rounded-full text-[#e8e0d4]/45
-                       hover:border-[#e8e0d4]/50 hover:text-[#e8e0d4]/80
-                       transition-all duration-500 ui-text text-[10px]"
-          >
-            end meditation
-          </motion.button>
-        )}
+        {/* Spacer to keep timer centered */}
+        <div className="w-16" />
       </div>
     </main>
   );

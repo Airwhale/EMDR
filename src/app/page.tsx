@@ -143,9 +143,11 @@ export default function App() {
     clearAppSnapshot();
     setSelectedMode(null);
     setEndSummary(null);
-    // Don't reset showReady/entryTextVisible — the slow reveal is only for the
-    // very first visit. On return the entry screen should be fully visible.
+    // Briefly disable buttons during the 0.8s fade-in to prevent ghost taps
+    // (e.g. tapping "I'm ready" could fire on the safety gate's "Go back" button)
+    setShowReady(false);
     setAppState("entry");
+    setTimeout(() => setShowReady(true), 900);
   }, []);
 
   if (!isHydrated) {
