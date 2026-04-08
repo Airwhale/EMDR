@@ -9,7 +9,9 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 
 **[hypno1-amber.vercel.app](https://hypno1-amber.vercel.app/)** (headphones recommended)
 
-![Entry screen](docs/screenshots/entry.png)
+<p align="center">
+<img src="docs/screenshots/entry.png" width="600" alt="Entry screen">
+</p>
 
 ## Why this exists
 
