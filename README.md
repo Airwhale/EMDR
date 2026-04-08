@@ -7,7 +7,18 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 
 ## Live demo
 
-**[hypno1.vercel.app](https://hypno1.vercel.app)** (headphones recommended)
+**[hypno1-amber.vercel.app](https://hypno1-amber.vercel.app/)** (headphones recommended)
+
+![Entry screen](docs/screenshots/entry.png)
+
+<p align="center">
+<img src="docs/screenshots/meditation.png" width="48%" alt="Guided meditation with breathing spiral">
+<img src="docs/screenshots/lateral.png" width="48%" alt="Lateral eye movement tool with controls">
+</p>
+<p align="center">
+<img src="docs/screenshots/sud.png" width="48%" alt="SUD distress scale">
+<img src="docs/screenshots/safety.png" width="48%" alt="Safety gate with crisis resources">
+</p>
 
 ## Why this exists
 
