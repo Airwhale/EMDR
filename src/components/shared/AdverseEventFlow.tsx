@@ -23,52 +23,58 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
   const [step, setStep] = useState<AEStep>("pause");
   const [groundingIndex, setGroundingIndex] = useState(-1);
 
-  // PAUSE
   useEffect(() => {
-    if (step !== "pause") return;
-    voice?.speak("Let's pause. You're safe. Take a slow breath.", { file: "/audio/adverse/adverse-pause.mp3" });
-    const t = setTimeout(() => setStep("orient"), 8000);
-    return () => clearTimeout(t);
-  }, [step, voice]);
+    let cancelled = false;
+    const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  // ORIENT TO ROOM
-  useEffect(() => {
-    if (step !== "orient") return;
-    voice?.speak("Feel your feet on the floor. Feel the surface beneath you. Notice the room around you.", { file: "/audio/adverse/adverse-orient.mp3" });
-    const t = setTimeout(() => setStep("grounding"), 12000);
-    return () => clearTimeout(t);
-  }, [step, voice]);
+    const run = async () => {
+      // PAUSE
+      await voice?.speakAsync("Let's pause. You're safe. Take a slow breath.", { file: "/audio/adverse/adverse-pause.mp3" });
+      if (cancelled) return;
+      await delay(3000);
+      if (cancelled) return;
 
-  // 5-4-3-2-1 GROUNDING
-  useEffect(() => {
-    if (step !== "grounding") return;
-    voice?.speak("We're going to ground you with a simple exercise.", { file: "/audio/grounding/grounding-intro.mp3" });
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    let cumulative = 4000;
+      // ORIENT
+      setStep("orient");
+      await voice?.speakAsync("Feel your feet on the floor. Feel the surface beneath you. Notice the room around you.", { file: "/audio/adverse/adverse-orient.mp3" });
+      if (cancelled) return;
+      await delay(4000);
+      if (cancelled) return;
 
-    groundingSteps.forEach((gs, i) => {
-      timers.push(setTimeout(() => {
+      // GROUNDING
+      setStep("grounding");
+      await voice?.speakAsync("We're going to ground you with a simple exercise.", { file: "/audio/grounding/grounding-intro.mp3" });
+      if (cancelled) return;
+      await delay(2000);
+
+      for (let i = 0; i < groundingSteps.length; i++) {
+        if (cancelled) return;
         setGroundingIndex(i);
-        voice?.speak(gs.prompt, { file: gs.file });
-      }, cumulative));
-      cumulative += 10000;
-    });
+        await voice?.speakAsync(groundingSteps[i].prompt, { file: groundingSteps[i].file });
+        if (cancelled) return;
+        await delay(6000);
+      }
 
-    timers.push(setTimeout(() => {
-      voice?.speak("Good. Take a deep breath. You're here, you're safe.", { file: "/audio/grounding/grounding-closing.mp3" });
-    }, cumulative));
-    timers.push(setTimeout(() => setStep("support"), cumulative + 6000));
+      if (cancelled) return;
+      await voice?.speakAsync("Good. Take a deep breath. You're here, you're safe.", { file: "/audio/grounding/grounding-closing.mp3" });
+      if (cancelled) return;
+      await delay(3000);
 
-    return () => timers.forEach(clearTimeout);
-  }, [step, voice]);
+      // SUPPORT
+      if (cancelled) return;
+      setStep("support");
+      await voice?.speakAsync("What you experienced is a normal response. This tool may not be right for you in this moment, and that's okay.", { file: "/audio/adverse/adverse-support.mp3" });
+      if (cancelled) return;
+      await delay(4000);
 
-  // SUPPORT MESSAGE
-  useEffect(() => {
-    if (step !== "support") return;
-    voice?.speak("What you experienced is a normal response. This tool may not be right for you in this moment, and that's okay.", { file: "/audio/adverse/adverse-support.mp3" });
-    const t = setTimeout(() => setStep("resources"), 12000);
-    return () => clearTimeout(t);
-  }, [step, voice]);
+      // RESOURCES
+      if (cancelled) return;
+      setStep("resources");
+    };
+
+    run();
+    return () => { cancelled = true; };
+  }, [voice]);
 
   const handleExit = useCallback(() => {
     onComplete();
@@ -134,7 +140,7 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
             <div className="space-y-3 w-full">
               <div className="p-4 border border-gold/25 rounded-xl">
                 <p className="text-sm text-gold/80 font-light">988 Suicide &amp; Crisis Lifeline</p>
-                <p className="text-xs text-[#e8e0d4]/50 font-light mt-1">Call or text 988 — available 24/7</p>
+                <p className="text-xs text-[#e8e0d4]/50 font-light mt-1">Call or text 988, available 24/7</p>
               </div>
               <div className="p-4 border border-[#e8e0d4]/15 rounded-xl">
                 <p className="text-sm text-[#e8e0d4]/60 font-light">Crisis Text Line</p>
@@ -142,7 +148,7 @@ export default function AdverseEventFlow({ voice, onComplete }: AdverseEventFlow
               </div>
               <div className="p-4 border border-[#e8e0d4]/15 rounded-xl">
                 <p className="text-sm text-[#e8e0d4]/60 font-light">SAMHSA National Helpline</p>
-                <p className="text-xs text-[#e8e0d4]/50 font-light mt-1">1-800-662-4357 — free, confidential, 24/7</p>
+                <p className="text-xs text-[#e8e0d4]/50 font-light mt-1">1-800-662-4357, free, confidential, 24/7</p>
               </div>
             </div>
 
