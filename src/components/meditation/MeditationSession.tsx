@@ -79,11 +79,11 @@ const sustainCues: NarrationCue[] = [
 
 const emergenceCues: NarrationCue[] = [
   { text: "When you're ready... you'll begin to return... carrying this peace with you...", spoken: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you...", delay: 2000, duration: 8000, file: "/audio/meditation/meditation-emergence-intro.mp3" },
-  { text: "1 — a gentle brightening... feeling so content...", spoken: "One... a gentle brightening... feeling so content... so grateful for this time...", delay: 8000, duration: 6000, file: "/audio/meditation/meditation-emergence-01.mp3" },
-  { text: "2 — more present now... this peace travels with you...", spoken: "Two... becoming more present now... and this deep peace... it travels with you...", delay: 7000, duration: 6000, file: "/audio/meditation/meditation-emergence-02.mp3" },
-  { text: "3 — energy and vitality returning... feeling wonderful...", spoken: "Three... energy and vitality returning to your body... feeling wonderful... refreshed...", delay: 7000, duration: 6000, file: "/audio/meditation/meditation-emergence-03.mp3" },
-  { text: "4 — almost there... a deep, satisfying breath...", spoken: "Four... almost there... take a deep... satisfying breath... feeling clear... feeling content...", delay: 7000, duration: 6000, file: "/audio/meditation/meditation-emergence-04.mp3" },
-  { text: "5 — eyes open, fully present, deeply at peace.", spoken: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you.", delay: 7000, duration: 8000, file: "/audio/meditation/meditation-emergence-05.mp3" },
+  { text: "A gentle brightening... feeling so content...", spoken: "A gentle brightening... feeling so content... so grateful for this time...", delay: 8000, duration: 6000 },
+  { text: "Becoming more present... this peace travels with you...", spoken: "Becoming more present now... and this deep peace... it travels with you...", delay: 7000, duration: 6000 },
+  { text: "Energy returning... feeling wonderful, refreshed...", spoken: "Energy and vitality returning to your body... feeling wonderful... refreshed...", delay: 7000, duration: 6000 },
+  { text: "Take a deep, satisfying breath...", spoken: "Take a deep... satisfying breath... feeling clear... feeling content...", delay: 7000, duration: 6000 },
+  { text: "Eyes open... fully present... deeply at peace.", spoken: "Eyes open... fully present... feeling wonderful... carrying this deep sense of peace and contentment with you.", delay: 7000, duration: 8000 },
 ];
 
 export default function MeditationSession({ onComplete, onExit, silent = false, binauralEnabled = true }: MeditationSessionProps) {
