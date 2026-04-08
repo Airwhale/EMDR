@@ -16,8 +16,8 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 <img src="docs/screenshots/lateral.png" width="48%" alt="Lateral eye movement tool with controls">
 </p>
 <p align="center">
-<img src="docs/screenshots/sud.png" width="48%" alt="SUD distress scale">
 <img src="docs/screenshots/safety.png" width="48%" alt="Safety gate with crisis resources">
+<img src="docs/screenshots/crisis.png" width="48%" alt="Crisis resources after adverse event">
 </p>
 
 ## Why this exists

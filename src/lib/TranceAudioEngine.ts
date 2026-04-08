@@ -101,7 +101,7 @@ export class TranceAudioEngine {
       // EMDR/ART: lighter ambient — just pink noise at lower level
       this.setupPinkNoise();
       if (this.pinkGain) {
-        this.pinkGain.gain.value = mode === "emdr" ? 0.06 : 0.04;
+        this.pinkGain.gain.value = mode === "emdr" ? 0.04 : 0.03;
       }
     }
 
