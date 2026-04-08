@@ -19,12 +19,7 @@ const sections: AboutSection[] = [
   {
     title: "How This Works",
     content:
-      "This experience layers dozens of techniques from EMDR, ART, and clinical relaxation practices. None of this is magic. It's applied psychology, rhythm, and focused attention. Here is everything this app does to create the experience:",
-  },
-  {
-    title: "All Techniques at a Glance",
-    content:
-      "Audio: true binaural beats (two layers), pink noise masking, isochronic theta pulses, sub-bass heartbeat entrainment (progressively slowing from 60 to 45bpm), breath-synced tonal chimes panned L/R, binaural drone modulation that breathes with you, bilateral ping tones for EMDR/ART. Visual: animated breathing circle (4-4-6 pattern with progressive slowdown), bilateral eye-tracking dot, logarithmic hypnotic spiral, photic flicker at alpha/theta frequencies, full-screen opacity pulse synced to the binaural beat, progressive vignette simulating tunnel vision, staircase countdown with drifting particles. Language: Ericksonian permissive language, embedded commands, confusion technique (paradoxical statements), fractionation (alert-then-deepen cycles), deepening challenges, dissociation language (mind-body separation), kinesthetic anchoring, presuppositions, NLP sensory patterns. Breathing: 4-4-6 extended exhale pattern, progressive breath cycle slowdown (14s→27s). Bilateral: EMDR slow eye movements, ART fast eye movements, butterfly hug self-tapping. Body: progressive body scan, 5-4-3-2-1 grounding. Emergence: counting 1→5 with reorientation, audio pitch brightening, vignette lightening.",
+      "This experience layers dozens of techniques from EMDR, ART, and clinical relaxation practices. None of this is magic. It's applied psychology, rhythm, and focused attention. Below is a deeper look at how each technique works.",
   },
   {
     title: "EMDR-Style Eye Movement",
@@ -38,7 +33,7 @@ const sections: AboutSection[] = [
   {
     title: "True Binaural Tones",
     content:
-      "The audio engine sends a slightly different frequency to each ear: for example, 100Hz to the left and 104Hz to the right. Your brain perceives the 4Hz difference as a rhythmic 'beat' that isn't present in either signal alone. This theta-frequency beating pattern (4-7Hz) corresponds to the EEG signature of deep meditation and light sleep. As trance deepens, the binaural beat frequency shifts lower into deep theta. During emergence, it rises to alpha (8-12Hz) to promote alertness. Headphones are essential for this effect.",
+      "The audio engine sends a slightly different frequency to each ear: for example, 100Hz to the left and 104Hz to the right. Your brain perceives the 4Hz difference as a rhythmic 'beat' that isn't present in either signal alone. This theta-frequency beating pattern (4-7Hz) corresponds to the EEG signature of deep meditation and light sleep. As trance deepens, the binaural beat frequency shifts lower into deep theta. During emergence, it rises to alpha (8-12Hz) to promote alertness. These binaural tones are layered with pink noise masking, isochronic theta pulses, and breath-synced chimes to create a rich, immersive soundscape. Headphones are essential for this effect.",
     evidence: [{ label: "Oster (1973): Auditory beats in the brain", href: "https://www.scientificamerican.com/article/auditory-beats-in-the-brain/" }],
   },
   {
