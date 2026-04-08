@@ -171,27 +171,27 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- PROCESSING ----
   useEffect(() => {
     if (phase !== "processing") return;
-    setBlsActive(true);
     setShowBlsContinue(false);
 
     const run = async () => {
       if (round > 1) {
+        setNarration("Bring the original scene back...");
         await voiceRef.current?.speakAsync(
           "Bring the original scene back to mind...",
           { file: "/audio/art/art-processing-return-01.mp3" }
         );
-        setNarration("Bring the original scene back...");
         await voiceRef.current?.speakAsync("Follow the dot...", { file: "/audio/art/art-processing-return-02.mp3" });
-        setNarration("Follow the dot...");
       } else {
+        setNarration("Hold the scene... follow the dot...");
         await voiceRef.current?.speakAsync(
           "Hold the scene... follow the dot...",
           { file: "/audio/art/art-processing-01.mp3" }
         );
-        setNarration("Hold the scene... follow the dot...");
         await voiceRef.current?.speakAsync("Keep following...", { file: "/audio/art/art-processing-02.mp3" });
-        setNarration("Keep following...");
       }
+      // Voice done — now start the dot
+      setNarration(null);
+      setBlsActive(true);
     };
     run();
 
@@ -226,15 +226,21 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- SENSATION BLS ----
   useEffect(() => {
     if (phase !== "sensation-bls") return;
-    setBlsActive(true);
+    let cancelled = false;
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync(
-      "Follow the dot... let it soften...",
-      { file: "/audio/art/art-sensation-bls.mp3" }
-    );
     setNarration("Follow the dot... let it soften...");
+    const run = async () => {
+      await voiceRef.current?.speakAsync(
+        "Follow the dot... let it soften...",
+        { file: "/audio/art/art-sensation-bls.mp3" }
+      );
+      if (cancelled) return;
+      setNarration(null);
+      setBlsActive(true);
+    };
+    run();
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
-    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleSensationContinue = useCallback(() => {
@@ -270,15 +276,21 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // ---- VIR BLS ----
   useEffect(() => {
     if (phase !== "vir-bls") return;
-    setBlsActive(true);
+    let cancelled = false;
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync(
-      "Hold the new scene... follow the dot...",
-      { file: "/audio/art/art-vir-bls.mp3" }
-    );
     setNarration("Hold the new scene... follow the dot...");
+    const run = async () => {
+      await voiceRef.current?.speakAsync(
+        "Hold the new scene... follow the dot...",
+        { file: "/audio/art/art-vir-bls.mp3" }
+      );
+      if (cancelled) return;
+      setNarration(null);
+      setBlsActive(true);
+    };
+    run();
     const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
-    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleVirContinue = useCallback(() => {

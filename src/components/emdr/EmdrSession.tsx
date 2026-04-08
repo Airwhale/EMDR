@@ -155,15 +155,21 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- SAFE PLACE BLS ----
   useEffect(() => {
     if (phase !== "safe-place-bls") return;
-    setBlsActive(true);
+    let cancelled = false;
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync(
-      "Follow the dot... hold your safe place...",
-      { file: "/audio/emdr/emdr-safeplace-bls.mp3" }
-    );
     setNarration("Follow the dot... hold your safe place...");
-    const t = setTimeout(() => setShowBlsContinue(true), 20000);
-    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+    const run = async () => {
+      await voiceRef.current?.speakAsync(
+        "Follow the dot... hold your safe place...",
+        { file: "/audio/emdr/emdr-safeplace-bls.mp3" }
+      );
+      if (cancelled) return;
+      setNarration(null);
+      setBlsActive(true);
+    };
+    run();
+    const t = setTimeout(() => setShowBlsContinue(true), 25000);
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleSafePlaceContinue = useCallback(() => {
@@ -206,15 +212,21 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- CONTAINER BLS ----
   useEffect(() => {
     if (phase !== "container-bls") return;
-    setBlsActive(true);
+    let cancelled = false;
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync(
-      "Follow the dot... feel it sealing...",
-      { file: "/audio/emdr/emdr-container-bls.mp3" }
-    );
     setNarration("Follow the dot... feel it sealing...");
-    const t = setTimeout(() => setShowBlsContinue(true), 15000);
-    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+    const run = async () => {
+      await voiceRef.current?.speakAsync(
+        "Follow the dot... feel it sealing...",
+        { file: "/audio/emdr/emdr-container-bls.mp3" }
+      );
+      if (cancelled) return;
+      setNarration(null);
+      setBlsActive(true);
+    };
+    run();
+    const t = setTimeout(() => setShowBlsContinue(true), 20000);
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleContainerContinue = useCallback(() => {
@@ -249,15 +261,21 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
   // ---- RESOURCE BLS ----
   useEffect(() => {
     if (phase !== "resource-bls") return;
-    setBlsActive(true);
+    let cancelled = false;
     setShowBlsContinue(false);
-    voiceRef.current?.speakAsync(
-      "Follow the dot... strengthen this feeling...",
-      { file: "/audio/emdr/emdr-resource-bls.mp3" }
-    );
     setNarration("Follow the dot... strengthen this feeling...");
-    const t = setTimeout(() => setShowBlsContinue(true), 25000);
-    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
+    const run = async () => {
+      await voiceRef.current?.speakAsync(
+        "Follow the dot... strengthen this feeling...",
+        { file: "/audio/emdr/emdr-resource-bls.mp3" }
+      );
+      if (cancelled) return;
+      setNarration(null);
+      setBlsActive(true);
+    };
+    run();
+    const t = setTimeout(() => setShowBlsContinue(true), 30000);
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
   const handleResourceContinue = useCallback(() => {
