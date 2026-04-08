@@ -7,6 +7,11 @@
 
 export type AudioMode = "trance" | "emdr" | "art";
 
+/** Cancel in-flight automation without a value jump. */
+function smoothCancel(param: AudioParam, now: number): void {
+  param.cancelAndHoldAtTime(now);
+}
+
 export class TranceAudioEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
@@ -140,16 +145,14 @@ export class TranceAudioEngine {
     if (!this.ctx || !this.pingGain) return;
     this.pingVolume = volume;
     const now = this.ctx.currentTime;
-    try { (this.pingGain.gain as any).cancelAndHoldAtTime(now); }
-    catch { this.pingGain.gain.cancelScheduledValues(now); this.pingGain.gain.setValueAtTime(this.pingGain.gain.value, now); }
+    smoothCancel(this.pingGain.gain, now);
     this.pingGain.gain.linearRampToValueAtTime(volume, now + 0.1);
   }
 
   setPinkNoiseVolume(volume: number): void {
     if (!this.ctx || !this.pinkGain) return;
     const now = this.ctx.currentTime;
-    try { (this.pinkGain.gain as any).cancelAndHoldAtTime(now); }
-    catch { this.pinkGain.gain.cancelScheduledValues(now); this.pinkGain.gain.setValueAtTime(this.pinkGain.gain.value, now); }
+    smoothCancel(this.pinkGain.gain, now);
     this.pinkGain.gain.linearRampToValueAtTime(volume, now + 0.1);
   }
 
@@ -407,8 +410,7 @@ export class TranceAudioEngine {
   setMasterVolume(target: number, duration: number = 4): void {
     if (!this.ctx || !this.masterGain) return;
     const now = this.ctx.currentTime;
-    try { (this.masterGain.gain as any).cancelAndHoldAtTime(now); }
-    catch { this.masterGain.gain.cancelScheduledValues(now); this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now); }
+    smoothCancel(this.masterGain.gain, now);
     this.masterGain.gain.linearRampToValueAtTime(target, now + duration);
   }
 
@@ -442,19 +444,14 @@ export class TranceAudioEngine {
     // interpolated frequency, so a subsequent ramp starts from the right place.
     // This prevents clicks when called rapidly (e.g. slider drag mid-ramp).
     // Falls back to cancelScheduledValues for older browsers.
-    const smoothRamp = (param: AudioParam, target: number) => {
-      try {
-        (param as any).cancelAndHoldAtTime(now);
-      } catch {
-        param.cancelScheduledValues(now);
-        param.setValueAtTime(param.value, now);
-      }
+    const ramp = (param: AudioParam, target: number) => {
+      smoothCancel(param, now);
       param.linearRampToValueAtTime(target, now + duration);
     };
 
-    smoothRamp(this.droneOscR.frequency, this.baseFreq + beatHz);
+    ramp(this.droneOscR.frequency, this.baseFreq + beatHz);
     if (this.drone2OscR) {
-      smoothRamp(this.drone2OscR.frequency, this.drone2BaseFreq + beatHz);
+      ramp(this.drone2OscR.frequency, this.drone2BaseFreq + beatHz);
     }
   }
 
