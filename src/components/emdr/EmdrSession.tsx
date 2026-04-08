@@ -366,8 +366,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       {onExit && (
         <motion.button
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          whileHover={{ opacity: 0.6 }}
+          animate={{ opacity: 0.5 }}
+          whileHover={{ opacity: 0.9 }}
           transition={{ duration: 0.8 }}
           onClick={() => {
             audioRef.current?.fadeOut(3);
@@ -375,8 +375,8 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
             voiceRef.current?.stop();
             onExit();
           }}
-          className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/25
-                     hover:text-[#e8e0d4]/60 transition-colors duration-500"
+          className="fixed top-4 left-4 z-50 ui-text text-[11px] text-[#e8e0d4]/50
+                     hover:text-[#e8e0d4]/80 transition-colors duration-300"
         >
           ← exit
         </motion.button>
