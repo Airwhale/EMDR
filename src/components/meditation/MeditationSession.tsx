@@ -36,6 +36,7 @@ interface MeditationSessionProps {
   onExit: () => void;
   /** If true, skip all voice narration and countdown — visual + audio only */
   silent?: boolean;
+  flickerEnabled?: boolean;
   binauralEnabled?: boolean;
 }
 
@@ -81,7 +82,7 @@ const emergenceCues: NarrationCue[] = [
   { text: "When you're ready... you'll begin to return... carrying this peace with you...", spoken: "When you're ready... you'll begin to return... carrying this beautiful feeling of peace with you... it stays with you...", delay: 2000, duration: 8000, file: "/audio/meditation/meditation-emergence-intro.mp3" },
 ];
 
-export default function MeditationSession({ onComplete, onExit, silent = false, binauralEnabled = true }: MeditationSessionProps) {
+export default function MeditationSession({ onComplete, onExit, silent = false, binauralEnabled = true, flickerEnabled = false }: MeditationSessionProps) {
   const [phase, setPhase] = useState<MedPhase>(silent ? "sustain" : "centering");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
@@ -450,7 +451,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const showPhotic = phase === "deepening" || phase === "staircase" || phase === "sustain";
+  const showPhotic = flickerEnabled && (phase === "deepening" || phase === "staircase" || phase === "sustain");
   const showEndButton = phase !== "emergence" && phase !== "complete";
 
   const bgColors: Record<string, string> = {

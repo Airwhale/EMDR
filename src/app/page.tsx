@@ -31,7 +31,7 @@ export default function App() {
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
   const [meditationSilent, setMeditationSilent] = useState(false);
   const [binauralEnabled, setBinauralEnabled] = useState(false);
-  const [flickerEnabled, setFlickerEnabled] = useState(true);
+  const [flickerEnabled, setFlickerEnabled] = useState(false);
 
   // EMDR/ART summary data
   const [endSummary, setEndSummary] = useState<EndSummary | null>(null);
@@ -366,7 +366,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} binauralEnabled={binauralEnabled} />
+            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} binauralEnabled={binauralEnabled} flickerEnabled={flickerEnabled} />
           </motion.div>
         )}
 
