@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import LearnContent from "@/components/shared/LearnContent";
@@ -26,6 +26,7 @@ type AppState = "entry" | "learn" | "safety" | "mode-select" | "meditation-choic
 export default function App() {
   const [appState, setAppState] = useState<AppState>("entry");
   const [isHydrated, setIsHydrated] = useState(false);
+  const navigationDisabled = useRef(false);
   const [showReady, setShowReady] = useState(false);
   const [entryTextVisible, setEntryTextVisible] = useState(false);
   const [selectedMode, setSelectedMode] = useState<SessionMode | null>(null);
@@ -83,6 +84,7 @@ export default function App() {
   }, [appState]);
 
   const handleReady = useCallback(() => {
+    if (navigationDisabled.current) return;
     setAppState("safety");
   }, []);
 
@@ -143,11 +145,9 @@ export default function App() {
     clearAppSnapshot();
     setSelectedMode(null);
     setEndSummary(null);
-    // Briefly disable buttons during the 0.8s fade-in to prevent ghost taps
-    // (e.g. tapping "I'm ready" could fire on the safety gate's "Go back" button)
-    setShowReady(false);
     setAppState("entry");
-    setTimeout(() => setShowReady(true), 900);
+    navigationDisabled.current = true;
+    setTimeout(() => { navigationDisabled.current = false; }, 900);
   }, []);
 
   if (!isHydrated) {
