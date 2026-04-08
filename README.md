@@ -13,6 +13,24 @@ A free, browser-based guided self-regulation tool. Four modes (EMDR resource-bui
 <img src="docs/screenshots/entry.png" width="600" alt="Entry screen">
 </p>
 
+## Contents
+
+- [Why this exists](#why-this-exists)
+- [What it does](#what-it-does)
+  - [Four modes](#four-modes)
+  - [Safety and consent](#safety-and-consent)
+  - [Session tracking](#session-tracking)
+- [How it works](#how-it-works)
+  - [Technique tables](#audio-8-techniques)
+  - [Audio narration system](#audio-narration-system)
+- [Known limitations](#known-limitations)
+- [Architecture and UX flow](#architecture-and-ux-flow)
+- [Accessibility](#accessibility)
+- [Tech stack](#tech-stack)
+- [Local development](#local-development)
+- [Tests](#tests)
+- [Data and privacy](#data-and-privacy)
+
 ## Why this exists
 
 EMDR and ART are evidence-based therapies with strong clinical outcomes, but access is limited by cost, availability, and waitlists. This project asks: what if the core bilateral stimulation techniques were available to anyone with a browser and headphones?
@@ -133,6 +151,21 @@ say("Display text", "Spoken text matching audioMap key")
 ```
 
 Session components (EMDR, ART, ButterflyHug, GroundingExercise) use async/await effect chains with cancellation support for clean phase transitions.
+
+## Known limitations
+
+This tool is not therapy. It should be understood clearly as a self-guided relaxation and coping tool that borrows specific techniques from clinical modalities.
+
+- **No therapist in the loop.** Clinical EMDR and ART involve a trained professional who adapts in real time to the client's responses. This tool follows a fixed script. It cannot read the room, adjust pacing based on subtle cues, or provide the relational safety of a therapeutic alliance.
+- **Simplified protocols.** The EMDR mode implements resource-building exercises (safe place, container, butterfly hug) but not the full 8-phase EMDR protocol. The ART mode implements basic scene processing and voluntary image replacement but lacks the nuanced clinical judgment a therapist brings to reprocessing.
+- **Not for acute trauma.** The adverse event protocol and SUD gating provide guardrails, but this tool is not designed for processing severe or recent trauma. The safety gate says this explicitly before every session.
+- **Voice quality varies.** The Web Speech API fallback sounds robotic on some browsers and devices. The ElevenLabs MP3s are higher quality but require pre-generation.
+- **No clinical validation.** This tool has not been tested in a clinical trial. The individual techniques it uses are evidence-based, but this specific combination and delivery method has not been studied.
+
+## Architecture and UX flow
+
+- [**UX flow diagrams**](docs/UX_FLOW.md): Mermaid state diagrams covering every screen, transition, and session phase across all four modes, including safety paths and crisis protocols
+- [**Architecture notes**](ARCHITECTURE.md): Detailed technical documentation of the audio engine, narration system, and component structure
 
 ## Accessibility
 
