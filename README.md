@@ -42,22 +42,85 @@ Completed EMDR and ART sessions are stored locally with before/after distress sc
 
 ## How it works
 
-The app layers 40+ techniques across audio, visual, language, breathing, and bilateral stimulation:
+The app layers 40 techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories. All audio is synthesized in real-time with the Web Audio API — no pre-recorded sound files for the sound engine. Voice narration uses pre-generated ElevenLabs MP3s with Web Speech API fallback.
 
-### Audio
-True binaural beats (separate L/R oscillators), a second harmonic layer, pink noise, isochronic pulses, a sub-bass heartbeat that slows from 60 to 45 bpm, breath-synced chimes, and bilateral ping tones. All generated in real-time with the Web Audio API — no audio files for the sound engine.
+### Audio (8 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Binaural beats (primary) | Different frequencies in L/R ears create a perceived beat that entrains brainwave frequency | All |
+| Second binaural layer | Harmonic layer at 2x base frequency reinforcing the primary beat | Meditation |
+| Pink noise | Filtered noise masking environmental sounds | All |
+| Isochronic pulses | Rhythmic amplitude modulation at theta frequency (6 Hz) | Meditation |
+| Sub-bass heartbeat | 40 Hz oscillation modulated at resting heart rate, progressively slowing from 60 to 45 bpm | Meditation |
+| Breath-cue chimes | Rising/falling/steady tones panned L/R/center matching inhale/hold/exhale | Meditation |
+| Binaural drone modulation | Drone volume rises and falls in sync with the breathing cycle | Meditation |
+| Bilateral ping tones | Short L/R panned taps accompanying each direction change of the eye-tracking dot | EMDR, ART |
 
-### Visual
-Bilateral eye-tracking dot, breathing guide circle with spring physics, hypnotic spiral, photic flicker at alpha/theta frequencies, binaural pulse synced to beat frequency, progressive vignette (tunnel vision), and staircase countdown particles.
+### Visual (8 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Breathing guide circle | Expanding/contracting ring with spring physics guiding 4-4-6 breathing | Meditation |
+| EMDR horizontal dot | Smooth bilateral eye-tracking dot moving across 84% of viewport | All |
+| Hypnotic spiral | Canvas-rendered 5-arm logarithmic spiral rotating at ~10 deg/s | Meditation |
+| Photic flicker | Full-screen luminance oscillation at alpha/theta frequencies (5-8 Hz) | Meditation |
+| Binaural pulse | Full-screen opacity pulse synced exactly to the binaural beat frequency | Meditation |
+| Vignette (tunnel vision) | Progressive radial darkening simulating the narrowed focus of deep trance | All |
+| Staircase particles | Downward-drifting particles with dissolving countdown numbers (10 to 1) | Meditation |
+| Bilateral stimulation dot | Full-width dot at configurable speeds (EMDR: 1 Hz, ART: 1.4 Hz) with trail | EMDR, ART |
 
-### Language and narration
-Ericksonian permissive language, embedded commands, confusion technique, fractionation, presuppositions, dissociation language, deepening challenges, NLP sensory patterns, and kinesthetic anchoring. Voice narration uses pre-generated ElevenLabs MP3s with Web Speech API fallback.
+### Language and narration (9 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Embedded commands | Imperative suggestions hidden within permissive sentences | Meditation |
+| Ericksonian permissive language | Indirect suggestions using "perhaps," "might," "can" to bypass resistance | Meditation |
+| Confusion technique | Paradoxical statements that short-circuit analytical thinking | Meditation |
+| Fractionation | Brief alert-then-deepen cycles that amplify subjective depth | Meditation |
+| Deepening challenges | Presuppositional challenges ("I wonder if you can go even deeper...") | Meditation |
+| Dissociation language | Mind-body separation suggestions ("your body is here... your mind can float freely") | Meditation |
+| Anchoring | Physical gesture (thumb-forefinger press) paired with deep relaxation for future recall | Meditation |
+| Presuppositions | Statements assuming forward progress ("the deeper you go, the more content you feel") | Meditation |
+| NLP sensory patterns | Rich multisensory imagery (warmth, heaviness, floating, honey, sunlight) | Meditation |
 
-### Breathing
-4-4-6 extended exhale pattern (activates parasympathetic response) with progressive slowdown — cycle duration increases from 14s to 27s over the session.
+### Breathing (2 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| 4-4-6 extended exhale pattern | 4s inhale, 4s hold, 6s exhale — activates vagal tone and parasympathetic response | Meditation |
+| Progressive breath slowdown | Cycle duration gradually increases from 14s to 27s over the session | Meditation |
 
-### Bilateral stimulation
-Three speeds: slow (~1 Hz) for EMDR resource-building, fast (~1.4 Hz) for ART processing, and user-controlled for the lateral tool. Plus butterfly hug self-tapping at ~1 Hz.
+### Bilateral stimulation (3 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| EMDR bilateral stimulation | Slow horizontal eye movements (~1 Hz) following a dot | EMDR |
+| ART bilateral stimulation | Faster eye movements (~1.4 Hz) for accelerated processing | ART |
+| Butterfly hug tapping | Self-administered alternating fingertip taps on upper chest at ~1 Hz | EMDR |
+
+### Body-based and emergence (6 techniques)
+| Technique | Description | Modes |
+|-----------|-------------|-------|
+| Progressive body scan | Systematic attention from feet to head, noticing warmth/comfort spreading | Meditation |
+| 5-4-3-2-1 grounding | Sensory anchoring exercise (see/touch/hear/smell/taste) | EMDR, ART |
+| Emergence sequence | Counting 1 to 5 with progressive reorientation and positive anchoring | Meditation |
+| Audio pitch brightening | Binaural frequency shifts upward to alpha during emergence | Meditation |
+| Vignette lightening | Progressive reduction of tunnel-vision darkening | All |
+
+### Audio narration system
+
+The narration engine (`TranceVoice`) supports two playback backends:
+
+1. **ElevenLabs MP3s** (preferred) — pre-generated files looked up via `audioMap.ts`
+2. **Web Speech API** (fallback) — browser speech synthesis with per-voice tuning
+
+Narration cues are chained using `speakAsync()`, which returns a `Promise<void>` that resolves when the audio finishes. This guarantees each cue completes before the next one starts — no fixed timeouts, no cutoffs.
+
+```
+say("Display text", "Spoken text matching audioMap key")
+  -> sets on-screen text
+  -> plays MP3 (or speech synthesis)
+  -> resolves when audio ends
+  -> next cue begins
+```
+
+Session components (EMDR, ART, ButterflyHug, GroundingExercise) use async/await effect chains with cancellation support for clean phase transitions.
 
 ## Accessibility
 
