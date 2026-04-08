@@ -74,13 +74,18 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
   };
 
   const binauralLabel = binauralHz === 0 ? "Off" :
+    binauralHz < 0.5 ? `${binauralHz}Hz (sub-delta — experimental)` :
     binauralHz <= 4 ? `${binauralHz}Hz (delta/theta)` :
     binauralHz <= 8 ? `${binauralHz}Hz (theta/alpha)` :
     binauralHz <= 13 ? `${binauralHz}Hz (alpha/beta)` :
     binauralHz <= 30 ? `${binauralHz}Hz (beta)` :
     `${binauralHz}Hz (gamma)`;
 
-  const speedLabel = speed <= 0.3 ? "Fast" : speed <= 0.5 ? "Medium" : speed <= 0.7 ? "Slow" : "Very slow";
+  const binauralWarning = binauralHz > 30
+    ? "gamma — may increase alertness"
+    : binauralHz > 13
+    ? "beta — active/alert state"
+    : null;
 
   return (
     <main className="relative w-screen h-screen flex flex-col items-center justify-center overflow-hidden bg-trance-dark">
@@ -168,6 +173,9 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
                 className="w-full accent-gold"
               />
+              {binauralWarning && (
+                <p className="ui-text text-[9px] text-red-400/70 mt-1">{binauralWarning}</p>
+              )}
             </div>
 
             {/* Drone volume */}
