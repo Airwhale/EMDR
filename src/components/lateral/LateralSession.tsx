@@ -168,13 +168,16 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 type="range"
                 min="0"
                 max="40"
-                step="0.1"
+                step="0.25"
                 value={binauralHz}
-                onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
+                onChange={(e) => {
+                  const raw = parseFloat(e.target.value);
+                  setBinauralHz(raw > 0 && raw < 0.5 ? 0.5 : raw);
+                }}
                 className="w-full accent-gold"
               />
               {binauralWarning && (
-                <p className="ui-text text-[9px] text-red-400/70 mt-1">{binauralWarning}</p>
+                <p className="ui-text text-[9px] text-blue-300/70 mt-1">{binauralWarning}</p>
               )}
             </div>
 
