@@ -452,7 +452,6 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
   };
 
   const showPhotic = flickerEnabled && (phase === "deepening" || phase === "staircase" || phase === "sustain");
-  const showEndButton = phase !== "emergence" && phase !== "complete";
 
   const bgColors: Record<string, string> = {
     fixation: "#0a0a14",
