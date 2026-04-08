@@ -171,14 +171,21 @@ export default function App() {
           >
             <div className="flex flex-col items-center gap-10 z-10">
               {/* Title */}
-              <motion.h1
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.85 }}
                 transition={{ duration: 0.8 }}
-                className="narration-text text-3xl md:text-4xl text-gold/85 text-center"
+                className="flex flex-col items-center gap-3"
               >
-                EMDR / ART Self-Administered Experience
-              </motion.h1>
+                <h1 className="narration-text text-3xl md:text-4xl text-gold/85 text-center">
+                  EMDR / ART Self-Administered Experience
+                </h1>
+                <p className="text-xs text-[#e8e0d4]/35 font-light text-center max-w-md leading-relaxed">
+                  This experience draws on select relaxation techniques from EMDR and ART.
+                  The full clinical therapies are far more comprehensive and are designed
+                  to be guided by a trained professional.
+                </p>
+              </motion.div>
 
               {/* Slow dot on entry */}
               <motion.div
