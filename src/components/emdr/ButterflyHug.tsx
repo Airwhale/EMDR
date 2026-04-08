@@ -68,7 +68,9 @@ export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugP
     run();
     return () => {
       cancelled = true;
-      voice?.cancel();
+      // Don't call voice?.cancel() here — the parent (EmdrSession) owns
+      // the voice ref and the next phase's speakAsync handles cleanup.
+      // Calling cancel() here races with the container phase's loadAudio().
     };
   }, [voice, onComplete]);
 

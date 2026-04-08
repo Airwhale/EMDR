@@ -57,7 +57,6 @@ export default function GroundingExercise({ voice, onComplete }: GroundingExerci
     run();
     return () => {
       cancelled = true;
-      voice?.cancel();
     };
   }, [voice, onComplete]);
 
