@@ -15,7 +15,7 @@ const groundingSteps = [
   { count: 5, prompt: "Look around and name 5 things you can see...", file: "/audio/grounding/grounding-01-see.mp3" },
   { count: 4, prompt: "Notice 4 things you can physically feel...", file: "/audio/grounding/grounding-02-touch.mp3" },
   { count: 3, prompt: "Listen for 3 sounds around you...", file: "/audio/grounding/grounding-03-hear.mp3" },
-  { count: 2, prompt: "Identify 2 things you can smell...", file: "/audio/grounding/grounding-04-smell.mp3" },
+  { count: 2, prompt: "Notice 2 things about how your body feels right now...", file: "/audio/grounding/grounding-04-body.mp3" },
   { count: 1, prompt: "Notice 1 thing you can taste...", file: "/audio/grounding/grounding-05-taste.mp3" },
 ];
 
