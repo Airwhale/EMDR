@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeSelect, { SessionMode } from "@/components/shared/ModeSelect";
 import LearnContent from "@/components/shared/LearnContent";
@@ -36,6 +36,12 @@ export default function App() {
 
   // EMDR/ART summary data
   const [endSummary, setEndSummary] = useState<EndSummary | null>(null);
+
+  // Browser capability check
+  const audioSupported = useMemo(() => {
+    if (typeof window === "undefined") return true; // SSR — assume ok
+    return !!(window.AudioContext || (window as unknown as Record<string, unknown>).webkitAudioContext);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -209,6 +215,7 @@ export default function App() {
                 <div className="flex gap-4 items-center">
                   <button
                     onClick={handleReady}
+                    aria-label="Begin the experience"
                     className="px-10 py-4 border border-gold/40 rounded-full text-gold/80
                                hover:border-gold/70 hover:text-gold transition-all duration-700
                                ui-text tracking-widest"
@@ -217,6 +224,7 @@ export default function App() {
                   </button>
                   <button
                     onClick={() => setAppState("learn")}
+                    aria-label="Learn more about EMDR and ART"
                     className="px-6 py-4 border border-[#e8e0d4]/25 rounded-full text-[#e8e0d4]/50
                                hover:border-[#e8e0d4]/45 hover:text-[#e8e0d4]/80
                                transition-all duration-700 ui-text tracking-widest"
@@ -239,6 +247,18 @@ export default function App() {
                   full screen
                 </button>
               </motion.div>
+
+              {!audioSupported && (
+                <motion.div
+                  animate={{ opacity: showReady ? 1 : 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="text-xs text-[#e8e0d4]/60 text-center max-w-sm border border-[#e8e0d4]/20 rounded-xl px-4 py-3"
+                  role="alert"
+                >
+                  Your browser does not support Web Audio. Binaural tones, pink noise, and sound effects
+                  will not play. For the full experience, try Chrome, Firefox, Safari, or Edge.
+                </motion.div>
+              )}
 
               <motion.p
                 animate={{ opacity: showReady ? 1 : 0 }}
@@ -335,6 +355,9 @@ export default function App() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setFlickerEnabled((v) => !v)}
+                  role="switch"
+                  aria-checked={flickerEnabled}
+                  aria-label="Toggle visual flickering"
                   className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
                     flickerEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
                   }`}

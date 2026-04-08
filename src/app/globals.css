@@ -93,10 +93,11 @@ body {
   color: #e8e0d4;
 }
 
-/* Reduced motion — disable photic flicker, spiral, pulse, particles */
+/* Reduced motion — disable photic flicker, spiral, pulse, particles, transitions */
 @media (prefers-reduced-motion: reduce) {
   .particle { animation: none !important; }
   .spiral-texture { animation: none !important; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 
 /* Focus visibility for keyboard navigation */

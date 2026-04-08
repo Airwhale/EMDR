@@ -164,6 +164,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 step="0.05"
                 value={1.2 - speed}
                 onChange={(e) => setSpeed(1.2 - parseFloat(e.target.value))}
+                aria-label={`Dot speed: ${speedLabel}`}
                 className="w-full accent-gold"
               />
             </div>
@@ -181,6 +182,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 step="0.1"
                 value={binauralHz}
                 onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
+                aria-label={`Binaural frequency: ${binauralLabel}`}
                 className="w-full accent-gold"
               />
               {binauralWarning && (
@@ -201,6 +203,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 step="0.05"
                 value={droneVol}
                 onChange={(e) => setDroneVol(parseFloat(e.target.value))}
+                aria-label={`Binaural volume: ${Math.round(droneVol * 100)}%`}
                 className="w-full accent-gold"
               />
             </div>
@@ -218,6 +221,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 step="0.05"
                 value={soundVol}
                 onChange={(e) => setSoundVol(parseFloat(e.target.value))}
+                aria-label={`Ping sound volume: ${Math.round(soundVol * 100)}%`}
                 className="w-full accent-gold"
               />
             </div>
@@ -235,6 +239,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 step="0.01"
                 value={pinkVol}
                 onChange={(e) => setPinkVol(parseFloat(e.target.value))}
+                aria-label={`Pink noise volume: ${Math.round(pinkVol * 100)}%`}
                 className="w-full accent-gold"
               />
             </div>

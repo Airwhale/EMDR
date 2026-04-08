@@ -1,10 +1,31 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hypno1.vercel.app";
+
 export const metadata: Metadata = {
   title: "EMDR / ART Self-Administered Experience",
   description:
-    "A browser-based guided EMDR, ART, and self-hypnosis experience using bilateral stimulation, progressive relaxation, and evidence-based therapeutic techniques.",
+    "A browser-based guided EMDR, ART, and hypnotic meditation experience using bilateral stimulation, binaural tones, and evidence-based therapeutic techniques.",
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    title: "EMDR / ART Self-Administered Experience",
+    description:
+      "Guided EMDR, ART, and hypnotic meditation using bilateral stimulation, binaural tones, and evidence-based techniques. Free, private, runs entirely in your browser.",
+    url: siteUrl,
+    siteName: "EMDR / ART Experience",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "EMDR / ART Self-Administered Experience",
+    description:
+      "Guided EMDR, ART, and hypnotic meditation using bilateral stimulation, binaural tones, and evidence-based techniques. Free, private, runs entirely in your browser.",
+  },
+  metadataBase: new URL(siteUrl),
 };
 
 export default function RootLayout({

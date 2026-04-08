@@ -66,6 +66,9 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
         <div className="flex items-center gap-3">
           <button
             onClick={() => onBinauralToggle(!binauralEnabled)}
+            role="switch"
+            aria-checked={binauralEnabled}
+            aria-label="Toggle binaural tones"
             className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
               binauralEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
             }`}
