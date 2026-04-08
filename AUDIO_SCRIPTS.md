@@ -171,7 +171,7 @@ grounding-01-see.mp3: "Look around and name 5 things you can see..."
 grounding-02-touch.mp3: "Notice 4 things you can physically feel..."
 grounding-03-hear.mp3: "Listen for 3 sounds around you..."
 grounding-04-body.mp3: "Notice 2 things about how your body feels right now..."
-grounding-05-taste.mp3: "Notice 1 thing you can taste..."
+grounding-05-breath.mp3: "Take one deep, slow breath..."
 grounding-closing.mp3: "Good. Take a deep breath. You're here, you're safe."
 
 ## public/audio/experiments/

@@ -185,8 +185,8 @@ export const BREATH_AUDIO_FILES = [
 export const GROUNDING_AUDIO_FILES = [
   "grounding/grounding-intro",
   "grounding/grounding-01-see", "grounding/grounding-02-touch",
-  "grounding/grounding-03-hear", "grounding/grounding-04-smell",
-  "grounding/grounding-05-taste", "grounding/grounding-closing",
+  "grounding/grounding-03-hear", "grounding/grounding-04-body",
+  "grounding/grounding-05-breath", "grounding/grounding-closing",
 ];
 
 export const EXPERIMENT_AUDIO_FILES = [

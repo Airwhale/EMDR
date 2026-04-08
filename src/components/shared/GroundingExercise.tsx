@@ -14,7 +14,7 @@ const steps = [
   { count: 4, sense: "things you can touch", prompt: "Notice 4 things you can physically feel...", file: "/audio/grounding/grounding-02-touch.mp3" },
   { count: 3, sense: "things you can hear", prompt: "Listen for 3 sounds around you...", file: "/audio/grounding/grounding-03-hear.mp3" },
   { count: 2, sense: "things about how your body feels", prompt: "Notice 2 things about how your body feels right now...", file: "/audio/grounding/grounding-04-body.mp3" },
-  { count: 1, sense: "thing you can taste", prompt: "Notice 1 thing you can taste...", file: "/audio/grounding/grounding-05-taste.mp3" },
+  { count: 1, sense: "deep, slow breath", prompt: "Take one deep, slow breath...", file: "/audio/grounding/grounding-05-breath.mp3" },
 ];
 
 /**
