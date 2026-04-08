@@ -181,6 +181,12 @@ export default function SessionEndSummary({
             Call or text <span className="text-gold/50">988</span> <span className="text-[#e8e0d4]/20">(Suicide &amp; Crisis Lifeline)</span> or
             text <span className="text-gold/50">HOME</span> to <span className="text-gold/50">741741</span> <span className="text-[#e8e0d4]/20">(Crisis Text Line)</span> anytime.
           </p>
+          <p className="mt-3 text-[#e8e0d4]/20">
+            Find a certified EMDR therapist at{" "}
+            <a href="https://www.emdria.org/find-an-emdr-therapist/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdria.org</a>
+            {" "}or connect with pro bono EMDR therapists through{" "}
+            <a href="https://www.emdrhap.org/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdrhap.org</a>
+          </p>
         </motion.div>
 
         <motion.div
