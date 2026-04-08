@@ -56,39 +56,38 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
         Choose your experience
       </p>
 
-      <div className="flex flex-col gap-4 w-full max-w-md">
-        {modes.map((mode, i) => (
-          <motion.button
-            key={mode.id}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 + i * 0.2, duration: 1 }}
-            onClick={() => onSelect(mode.id)}
-            className="text-left px-6 py-5 border border-gold/40 rounded-2xl
-                       hover:border-gold/60 hover:bg-gold/[0.02] transition-all duration-700
-                       group"
-          >
-            <span className="ui-text text-sm text-gold/80 group-hover:text-gold transition-colors duration-500">
-              {mode.title}
-            </span>
-            <span className="narration-text text-sm text-[#e8e0d4]/40 mt-1 block">
-              {mode.subtitle}
-            </span>
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Expandable description */}
-      <motion.button
+      {/* Binaural toggle + info link — top of page */}
+      <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        whileHover={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.8 }}
-        onClick={() => setExpanded(!expanded)}
-        className="ui-text text-[10px] text-[#e8e0d4]/30"
+        animate={{ opacity: 0.6 }}
+        transition={{ delay: 0.4, duration: 0.8 }}
+        className="flex items-center gap-6"
       >
-        {expanded ? "hide details" : "what\u2019s the difference?"}
-      </motion.button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => onBinauralToggle(!binauralEnabled)}
+            className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
+              binauralEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
+            }`}
+          >
+            <div
+              className={`w-4 h-4 rounded-full bg-[#e8e0d4]/80 absolute top-0.5 transition-all duration-300 ${
+                binauralEnabled ? "left-5" : "left-0.5"
+              }`}
+            />
+          </button>
+          <span className="ui-text text-[10px] text-[#e8e0d4]/40">
+            binaural tones {binauralEnabled ? "on" : "off"}
+          </span>
+        </div>
+
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="ui-text text-[10px] text-[#e8e0d4]/30 hover:text-[#e8e0d4]/60 transition-colors duration-300"
+        >
+          {expanded ? "hide details" : "what\u2019s the difference?"}
+        </button>
+      </motion.div>
 
       <AnimatePresence>
         {expanded && (
@@ -111,29 +110,27 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
         )}
       </AnimatePresence>
 
-      {/* Binaural toggle */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="flex items-center gap-3"
-      >
-        <button
-          onClick={() => onBinauralToggle(!binauralEnabled)}
-          className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
-            binauralEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
-          }`}
-        >
-          <div
-            className={`w-4 h-4 rounded-full bg-[#e8e0d4]/80 absolute top-0.5 transition-all duration-300 ${
-              binauralEnabled ? "left-5" : "left-0.5"
-            }`}
-          />
-        </button>
-        <span className="ui-text text-[10px] text-[#e8e0d4]/40">
-          binaural tones {binauralEnabled ? "on" : "off"}
-        </span>
-      </motion.div>
+      <div className="flex flex-col gap-4 w-full max-w-md">
+        {modes.map((mode, i) => (
+          <motion.button
+            key={mode.id}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.2, duration: 1 }}
+            onClick={() => onSelect(mode.id)}
+            className="text-left px-6 py-5 border border-gold/40 rounded-2xl
+                       hover:border-gold/60 hover:bg-gold/[0.02] transition-all duration-700
+                       group"
+          >
+            <span className="ui-text text-sm text-gold/80 group-hover:text-gold transition-colors duration-500">
+              {mode.title}
+            </span>
+            <span className="narration-text text-sm text-[#e8e0d4]/40 mt-1 block">
+              {mode.subtitle}
+            </span>
+          </motion.button>
+        ))}
+      </div>
     </motion.div>
   );
 }
