@@ -143,6 +143,12 @@ export class TranceAudioEngine {
     this.pingGain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.1);
   }
 
+  setPinkNoiseVolume(volume: number): void {
+    if (!this.ctx || !this.pinkGain) return;
+    this.pinkGain.gain.setValueAtTime(this.pinkGain.gain.value, this.ctx.currentTime);
+    this.pinkGain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.1);
+  }
+
   /** Play a breath cue: tonal chime panned L/R + spoken word.
    *  Inhale: rising tone right ear. Hold: steady tone center. Exhale: falling tone left ear. */
   playBreathCue(phase: "inhale" | "hold" | "exhale"): void {

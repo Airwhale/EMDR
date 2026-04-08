@@ -14,7 +14,8 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
   const [speed, setSpeed] = useState(0.5);       // half-cycle seconds (0.2 = fast, 1.0 = slow)
   const [soundVol, setSoundVol] = useState(0.5);  // 0-1 ping volume
   const [binauralHz, setBinauralHz] = useState(4); // 0 = off, 1-12 Hz
-  const [droneVol, setDroneVol] = useState(0.4);  // 0-1 binaural drone volume
+  const [droneVol, setDroneVol] = useState(0.4);  // 0-2 binaural drone volume
+  const [pinkVol, setPinkVol] = useState(0.06);   // pink noise volume
   const [showControls, setShowControls] = useState(true);
   const [elapsed, setElapsed] = useState(0);
 
@@ -58,6 +59,11 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
     if (!audioRef.current) return;
     audioRef.current.setPingVolume(soundVol);
   }, [soundVol]);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.setPinkNoiseVolume(pinkVol);
+  }, [pinkVol]);
 
   const handleExit = useCallback(() => {
     audioRef.current?.fadeOut(2);
@@ -191,7 +197,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
               <input
                 type="range"
                 min="0"
-                max="1"
+                max="2"
                 step="0.05"
                 value={droneVol}
                 onChange={(e) => setDroneVol(parseFloat(e.target.value))}
@@ -212,6 +218,23 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 step="0.05"
                 value={soundVol}
                 onChange={(e) => setSoundVol(parseFloat(e.target.value))}
+                className="w-full accent-gold"
+              />
+            </div>
+
+            {/* Pink noise volume */}
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">pink noise</span>
+                <span className="ui-text text-[10px] text-gold/60">{Math.round(pinkVol * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="0.3"
+                step="0.01"
+                value={pinkVol}
+                onChange={(e) => setPinkVol(parseFloat(e.target.value))}
                 className="w-full accent-gold"
               />
             </div>
