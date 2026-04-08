@@ -135,7 +135,7 @@ export class TranceVoice {
 
   /**
    * Returns a Promise that resolves when the audio finishes.
-   * Downloads the full MP3 first, then plays from memory.
+   * Uses preload="auto" to fully buffer the file before playing.
    * If cancel() is called, the promise resolves early.
    */
   speakAsync(text: string, options?: SpeakOptions): Promise<void> {
@@ -143,19 +143,19 @@ export class TranceVoice {
 
     return new Promise<void>((resolve) => {
       if (!this.enabled) {
-        log(`#${id} SKIP (disabled) "${text.substring(0, 40)}..."`);
+        log(`#${id} SKIP (disabled)`);
         resolve();
         return;
       }
 
-      log(`#${id} speakAsync "${text.substring(0, 40)}..." file=${options?.file ?? "none"}`);
+      log(`#${id} speakAsync "${text.substring(0, 50)}..." file=${options?.file ?? "none"}`);
 
       this._resolvePending();
       this.stopCurrent();
       this.pendingResolve = resolve;
 
       const done = (reason: string) => {
-        log(`#${id} done (${reason}), duration=${this.currentAudio ? this.currentAudio.currentTime.toFixed(1) + "s" : "n/a"}`);
+        log(`#${id} done (${reason})`);
         if (this.pendingResolve === resolve) this.pendingResolve = null;
         if (this.pendingDone === wrappedDone) this.pendingDone = null;
         resolve();
@@ -164,62 +164,40 @@ export class TranceVoice {
       this.pendingDone = wrappedDone;
 
       if (options?.file) {
-        // Fetch full file into memory, then play from blob
-        log(`#${id} fetching ${options.file}...`);
-        fetch(options.file)
-          .then((resp) => {
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            return resp.blob();
-          })
-          .then((blob) => {
-            // Check if we were cancelled during download
-            if (this.pendingResolve !== resolve) {
-              warn(`#${id} CANCELLED during fetch`);
-              return;
-            }
-            log(`#${id} loaded ${blob.size} bytes, creating audio...`);
-            const url = URL.createObjectURL(blob);
-            const audio = new Audio(url);
-            audio.volume = options?.volume ?? this.tuning.volume;
+        const audio = new Audio();
+        audio.preload = "auto";
+        audio.volume = options?.volume ?? this.tuning.volume;
 
-            const cleanup = () => URL.revokeObjectURL(url);
+        audio.addEventListener("ended", () => {
+          log(`#${id} ENDED at ${audio.currentTime.toFixed(1)}/${audio.duration.toFixed(1)}s`);
+          done("ended");
+        }, { once: true });
 
-            audio.addEventListener("ended", () => {
-              log(`#${id} ENDED event, currentTime=${audio.currentTime.toFixed(1)}, duration=${audio.duration.toFixed(1)}`);
-              cleanup();
-              done("ended");
-            }, { once: true });
+        audio.addEventListener("error", () => {
+          const code = audio.error?.code;
+          const msg = audio.error?.message;
+          warn(`#${id} ERROR code=${code} msg=${msg}`);
+          done("error");
+        }, { once: true });
 
-            audio.addEventListener("error", (e) => {
-              warn(`#${id} ERROR event:`, e);
-              cleanup();
-              done("error");
-            }, { once: true });
-
-            // Also track unexpected pauses
-            audio.addEventListener("pause", () => {
-              if (!audio.ended) {
-                warn(`#${id} UNEXPECTED PAUSE at ${audio.currentTime.toFixed(1)}s`);
-              }
-            }, { once: true });
-
-            audio.play().then(() => {
-              log(`#${id} play() started, duration=${audio.duration.toFixed(1)}s`);
-            }).catch((err) => {
-              warn(`#${id} play() FAILED:`, err);
-              cleanup();
-              audio.removeEventListener("ended", wrappedDone);
-              audio.removeEventListener("error", wrappedDone);
-              this.speakWithSynthAsync(text, options, () => done("synth-fallback"));
-            });
-            this.currentAudio = audio;
-          })
-          .catch((err) => {
-            warn(`#${id} fetch FAILED:`, err);
-            if (this.pendingResolve === resolve) {
-              this.speakWithSynthAsync(text, options, () => done("synth-fallback-fetch-fail"));
-            }
+        // Wait for enough data to play through, then start
+        audio.addEventListener("canplaythrough", () => {
+          // Check if cancelled while loading
+          if (this.pendingResolve !== resolve) {
+            warn(`#${id} CANCELLED during load`);
+            return;
+          }
+          log(`#${id} canplaythrough, duration=${audio.duration.toFixed(1)}s, playing...`);
+          audio.play().then(() => {
+            log(`#${id} play() OK`);
+          }).catch((err) => {
+            warn(`#${id} play() FAILED:`, err);
+            this.speakWithSynthAsync(text, options, () => done("synth-fallback"));
           });
+        }, { once: true });
+
+        audio.src = options.file;
+        this.currentAudio = audio;
         return;
       }
 
