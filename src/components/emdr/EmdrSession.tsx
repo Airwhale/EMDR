@@ -390,7 +390,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       <AnimatePresence mode="wait">
         {phase === "sud-check" && sudStart === null && (
           <motion.div key="sud-start" exit={{ opacity: 0 }} transition={{ duration: 1 }}>
-            <SudCheck prompt="Before we begin — how much distress are you feeling right now?" onRate={handleSudStart} />
+            <SudCheck prompt="Before we begin, how much distress are you feeling right now?" onRate={handleSudStart} />
           </motion.div>
         )}
 
