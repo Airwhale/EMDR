@@ -501,7 +501,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       {/* Persistent EMDR dot — visible throughout induction phases */}
       {(phase === "centering" || phase === "fixation" || phase === "deepening" || phase === "staircase" || phase === "sustain") && (
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-          <EmdrDot cycleDuration={phase === "sustain" ? 5 : 4} size={18} rangeVw={35} />
+          <EmdrDot cycleDuration={phase === "sustain" ? 10 : 8} size={18} rangeVw={35} />
         </div>
       )}
 
