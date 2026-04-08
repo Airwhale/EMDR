@@ -85,6 +85,8 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
     ? "gamma — may increase alertness"
     : binauralHz > 13
     ? "beta — active/alert state"
+    : binauralHz > 0 && binauralHz < 0.5
+    ? "sub-delta — experimental, may have no effect"
     : null;
 
   const speedLabel = speed <= 0.3 ? "Fast" : speed <= 0.5 ? "Medium" : speed <= 0.7 ? "Slow" : "Very slow";
@@ -172,10 +174,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 max="40"
                 step="0.25"
                 value={binauralHz}
-                onChange={(e) => {
-                  const raw = parseFloat(e.target.value);
-                  setBinauralHz(raw > 0 && raw < 0.5 ? 0.5 : raw);
-                }}
+                onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
                 className="w-full accent-gold"
               />
               {binauralWarning && (
