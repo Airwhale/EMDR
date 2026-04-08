@@ -158,13 +158,19 @@ meditation-emergence-03.mp3: "Three... energy and vitality returning to your bod
 meditation-emergence-04.mp3: "Four... almost there... take a deep... satisfying breath... feeling clear... feeling content..."
 meditation-emergence-05.mp3: "Five... eyes open... fully present... feeling wonderful... carrying this deep sense of peace... and contentment... with you."
 
+## public/audio/adverse/
+
+adverse-pause.mp3: "Let's pause. You're safe. Take a slow breath."
+adverse-orient.mp3: "Feel your feet on the floor. Feel the surface beneath you. Notice the room around you."
+adverse-support.mp3: "What you experienced is a normal response. This tool may not be right for you in this moment, and that's okay."
+
 ## public/audio/grounding/
 
 grounding-intro.mp3: "Let's pause and ground yourself. This is a simple exercise to bring you back to the present moment."
 grounding-01-see.mp3: "Look around and name 5 things you can see..."
 grounding-02-touch.mp3: "Notice 4 things you can physically feel..."
 grounding-03-hear.mp3: "Listen for 3 sounds around you..."
-grounding-04-smell.mp3: "Identify 2 things you can smell..."
+grounding-04-body.mp3: "Notice 2 things about how your body feels right now..."
 grounding-05-taste.mp3: "Notice 1 thing you can taste..."
 grounding-closing.mp3: "Good. Take a deep breath. You're here, you're safe."
 
@@ -195,7 +201,7 @@ breath-out.mp3: "breathe out"
 
 ---
 
-## Total: 137 audio files
+## Total: 140 audio files
 
 | Folder | Count |
 |--------|-------|
@@ -203,6 +209,7 @@ breath-out.mp3: "breathe out"
 | emdr/ | 24 |
 | art/ | 16 |
 | meditation/ | 28 |
+| adverse/ | 3 |
 | grounding/ | 7 |
 | experiments/ | 13 |
 | breath/ | 3 |
