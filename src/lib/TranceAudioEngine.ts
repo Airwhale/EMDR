@@ -235,7 +235,7 @@ export class TranceAudioEngine {
     this.droneFilter.Q.value = 1;
 
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = this.mode === "trance" ? 0.3 : 0.2;
+    this.droneGain.gain.value = this.mode === "trance" ? 0.55 : 0.2;
 
     this.droneOscL = this.ctx.createOscillator();
     this.droneOscL.type = "sine";
@@ -445,10 +445,10 @@ export class TranceAudioEngine {
     const now = this.ctx.currentTime;
 
     this.droneGain.gain.setValueAtTime(this.droneGain.gain.value, now);
-    this.droneGain.gain.linearRampToValueAtTime(0.2 + depth * 0.25, now + 2);
+    this.droneGain.gain.linearRampToValueAtTime(0.35 + depth * 0.4, now + 2);
 
     this.pinkGain.gain.setValueAtTime(this.pinkGain.gain.value, now);
-    this.pinkGain.gain.linearRampToValueAtTime(0.06 + depth * 0.08, now + 2);
+    this.pinkGain.gain.linearRampToValueAtTime(0.06 + depth * 0.04, now + 2);
 
     if (this.lfo) {
       this.lfo.frequency.setValueAtTime(this.lfo.frequency.value, now);

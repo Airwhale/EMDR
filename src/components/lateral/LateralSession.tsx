@@ -178,7 +178,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
                 type="range"
                 min="0"
                 max="40"
-                step="0.25"
+                step="0.1"
                 value={binauralHz}
                 onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
                 className="w-full accent-gold"
