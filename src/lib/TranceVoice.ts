@@ -43,8 +43,7 @@ const VOICE_PRIORITY: [string, Partial<VoiceTuning>][] = [
 
 const DEFAULT_TUNING: VoiceTuning = { rate: 0.72, pitch: 0.85, volume: 0.7 };
 
-// Debug logging — set to false to silence
-const DEBUG = true;
+const DEBUG = false;
 const log = (...args: unknown[]) => { if (DEBUG) console.log("[TranceVoice]", ...args); };
 const warn = (...args: unknown[]) => { if (DEBUG) console.warn("[TranceVoice]", ...args); };
 
