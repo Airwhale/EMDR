@@ -56,12 +56,12 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
         Choose your experience
       </p>
 
-      {/* Binaural toggle + info link — top of page */}
+      {/* Binaural toggle */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.6 }}
         transition={{ delay: 0.4, duration: 0.8 }}
-        className="flex items-center gap-6"
+        className="flex flex-col items-center gap-2"
       >
         <div className="flex items-center gap-3">
           <button
@@ -81,11 +81,12 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
           </span>
         </div>
 
+        {/* Mode info link — below toggle, clearly about the modes not binaural */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="ui-text text-[10px] text-[#e8e0d4]/30 hover:text-[#e8e0d4]/60 transition-colors duration-300"
+          className="ui-text text-[10px] text-[#e8e0d4]/25 hover:text-[#e8e0d4]/55 transition-colors duration-300"
         >
-          {expanded ? "hide details" : "what\u2019s the difference?"}
+          {expanded ? "hide details" : "not sure which to choose? click to find out more"}
         </button>
       </motion.div>
 
