@@ -174,7 +174,20 @@ export default function SessionEndSummary({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.5, duration: 1.5 }}
-          className="mt-8 text-center"
+          className="mt-10 mb-6 text-center text-[11px] text-[#e8e0d4]/30 font-light leading-relaxed max-w-sm mx-auto"
+        >
+          <p>
+            If anything came up that feels bigger than expected, you don&apos;t have to sit with it alone.
+            Call or text <span className="text-gold/50">988</span> or
+            text <span className="text-gold/50">HOME</span> to <span className="text-gold/50">741741</span> anytime.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 1.5 }}
+          className="text-center"
         >
           {historyCleared ? (
             <span className="text-[11px] text-[#e8e0d4]/30 font-light">Session history cleared</span>
