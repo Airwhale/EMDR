@@ -2,9 +2,9 @@
  * TranceVoice — Narration engine with ElevenLabs MP3 playback and
  * Web Speech API fallback.
  *
- * New API: callers pass an MP3 file path directly. If the file plays,
- * great. If it fails (404, network error, etc.), falls back to Web
- * Speech synthesis with the provided text.
+ * Callers pass an MP3 file path directly. If the file plays, great.
+ * If it fails (404, network error, etc.), falls back to Web Speech
+ * synthesis with the provided text.
  */
 
 interface VoiceTuning {
@@ -43,6 +43,11 @@ const VOICE_PRIORITY: [string, Partial<VoiceTuning>][] = [
 
 const DEFAULT_TUNING: VoiceTuning = { rate: 0.72, pitch: 0.85, volume: 0.7 };
 
+// Debug logging — set to false to silence
+const DEBUG = true;
+const log = (...args: unknown[]) => { if (DEBUG) console.log("[TranceVoice]", ...args); };
+const warn = (...args: unknown[]) => { if (DEBUG) console.warn("[TranceVoice]", ...args); };
+
 export interface SpeakOptions {
   file?: string;
   rate?: number;
@@ -61,6 +66,7 @@ export class TranceVoice {
   private currentAudio: HTMLAudioElement | null = null;
   private pendingResolve: (() => void) | null = null;
   private pendingDone: (() => void) | null = null;
+  private speakId = 0; // monotonic counter for debugging
 
   init(): void {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -110,41 +116,17 @@ export class TranceVoice {
   }
 
   /**
-   * Load an MP3 file fully into memory, then create an Audio element from
-   * the blob. This prevents mid-playback cutoffs from streaming/buffering.
-   */
-  private async loadAudio(file: string): Promise<HTMLAudioElement | null> {
-    try {
-      const resp = await fetch(file);
-      if (!resp.ok) return null;
-      const blob = await resp.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      // Clean up blob URL when the element is done (played or errored)
-      const revoke = () => URL.revokeObjectURL(url);
-      audio.addEventListener("ended", revoke, { once: true });
-      audio.addEventListener("error", revoke, { once: true });
-      return audio;
-    } catch {
-      return null;
-    }
-  }
-
-  /**
-   * Fire-and-forget playback. If options.file is provided, tries that MP3
-   * first; on failure falls back to Web Speech with the text.
+   * Fire-and-forget playback.
    */
   speak(text: string, options?: SpeakOptions): void {
     if (!this.enabled) return;
     this.stopCurrent();
 
     if (options?.file) {
-      this.loadAudio(options.file).then((audio) => {
-        if (!audio) { this.speakWithSynth(text, options); return; }
-        audio.volume = options?.volume ?? this.tuning.volume;
-        audio.play().catch(() => { this.speakWithSynth(text, options); });
-        this.currentAudio = audio;
-      });
+      const audio = new Audio(options.file);
+      audio.volume = options?.volume ?? this.tuning.volume;
+      audio.play().catch(() => { this.speakWithSynth(text, options); });
+      this.currentAudio = audio;
       return;
     }
 
@@ -153,51 +135,101 @@ export class TranceVoice {
 
   /**
    * Returns a Promise that resolves when the audio finishes.
-   * If options.file is provided, downloads the full MP3 first, then plays.
+   * Downloads the full MP3 first, then plays from memory.
    * If cancel() is called, the promise resolves early.
    */
   speakAsync(text: string, options?: SpeakOptions): Promise<void> {
+    const id = ++this.speakId;
+
     return new Promise<void>((resolve) => {
-      if (!this.enabled) { resolve(); return; }
+      if (!this.enabled) {
+        log(`#${id} SKIP (disabled) "${text.substring(0, 40)}..."`);
+        resolve();
+        return;
+      }
+
+      log(`#${id} speakAsync "${text.substring(0, 40)}..." file=${options?.file ?? "none"}`);
 
       this._resolvePending();
       this.stopCurrent();
       this.pendingResolve = resolve;
 
-      const done = () => {
+      const done = (reason: string) => {
+        log(`#${id} done (${reason}), duration=${this.currentAudio ? this.currentAudio.currentTime.toFixed(1) + "s" : "n/a"}`);
         if (this.pendingResolve === resolve) this.pendingResolve = null;
-        if (this.pendingDone === done) this.pendingDone = null;
+        if (this.pendingDone === wrappedDone) this.pendingDone = null;
         resolve();
       };
-      this.pendingDone = done;
+      const wrappedDone = () => done("ended/error");
+      this.pendingDone = wrappedDone;
 
       if (options?.file) {
-        this.loadAudio(options.file).then((audio) => {
-          // If cancelled while loading, don't start playback
-          if (this.pendingResolve !== resolve) return;
-          if (!audio) {
-            this.speakWithSynthAsync(text, options, done);
-            return;
-          }
-          audio.volume = options?.volume ?? this.tuning.volume;
-          audio.addEventListener("ended", done, { once: true });
-          audio.addEventListener("error", done, { once: true });
-          audio.play().catch(() => {
-            audio.removeEventListener("ended", done);
-            audio.removeEventListener("error", done);
-            this.speakWithSynthAsync(text, options, done);
+        // Fetch full file into memory, then play from blob
+        log(`#${id} fetching ${options.file}...`);
+        fetch(options.file)
+          .then((resp) => {
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return resp.blob();
+          })
+          .then((blob) => {
+            // Check if we were cancelled during download
+            if (this.pendingResolve !== resolve) {
+              warn(`#${id} CANCELLED during fetch`);
+              return;
+            }
+            log(`#${id} loaded ${blob.size} bytes, creating audio...`);
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            audio.volume = options?.volume ?? this.tuning.volume;
+
+            const cleanup = () => URL.revokeObjectURL(url);
+
+            audio.addEventListener("ended", () => {
+              log(`#${id} ENDED event, currentTime=${audio.currentTime.toFixed(1)}, duration=${audio.duration.toFixed(1)}`);
+              cleanup();
+              done("ended");
+            }, { once: true });
+
+            audio.addEventListener("error", (e) => {
+              warn(`#${id} ERROR event:`, e);
+              cleanup();
+              done("error");
+            }, { once: true });
+
+            // Also track unexpected pauses
+            audio.addEventListener("pause", () => {
+              if (!audio.ended) {
+                warn(`#${id} UNEXPECTED PAUSE at ${audio.currentTime.toFixed(1)}s`);
+              }
+            }, { once: true });
+
+            audio.play().then(() => {
+              log(`#${id} play() started, duration=${audio.duration.toFixed(1)}s`);
+            }).catch((err) => {
+              warn(`#${id} play() FAILED:`, err);
+              cleanup();
+              audio.removeEventListener("ended", wrappedDone);
+              audio.removeEventListener("error", wrappedDone);
+              this.speakWithSynthAsync(text, options, () => done("synth-fallback"));
+            });
+            this.currentAudio = audio;
+          })
+          .catch((err) => {
+            warn(`#${id} fetch FAILED:`, err);
+            if (this.pendingResolve === resolve) {
+              this.speakWithSynthAsync(text, options, () => done("synth-fallback-fetch-fail"));
+            }
           });
-          this.currentAudio = audio;
-        });
         return;
       }
 
-      this.speakWithSynthAsync(text, options, done);
+      this.speakWithSynthAsync(text, options, () => done("synth"));
     });
   }
 
   private _resolvePending(): void {
     if (this.pendingResolve) {
+      log("_resolvePending: resolving previous promise");
       const r = this.pendingResolve;
       this.pendingResolve = null;
       r();
@@ -225,6 +257,7 @@ export class TranceVoice {
     if (!this.synth || !this.ready) { onDone(); return; }
     this.synth.cancel();
 
+    log(`synth fallback: "${text.substring(0, 40)}..."`);
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.voice = this.voice;
     utterance.rate = options?.rate ?? this.tuning.rate;
@@ -238,14 +271,14 @@ export class TranceVoice {
 
   private stopCurrent(): void {
     if (this.currentAudio) {
+      log("stopCurrent: pausing audio at", this.currentAudio.currentTime?.toFixed(1) + "s");
       this.currentAudio.pause();
-      // Remove listeners so this discarded element can't call done()
       if (this.pendingDone) {
         this.currentAudio.removeEventListener("ended", this.pendingDone);
         this.currentAudio.removeEventListener("error", this.pendingDone);
         this.pendingDone = null;
       }
-      this.currentAudio.src = "";  // release network resources
+      this.currentAudio.src = "";
       this.currentAudio = null;
     }
     this.synth?.cancel();
@@ -261,6 +294,7 @@ export class TranceVoice {
   }
 
   cancel(): void {
+    log("cancel() called");
     this._resolvePending();
     this.stopCurrent();
   }
@@ -276,6 +310,7 @@ export class TranceVoice {
   getVoiceName(): string { return this.voice?.name ?? "none"; }
 
   stop(): void {
+    log("stop() called");
     this._resolvePending();
     this.cancel();
     this.synth = null;

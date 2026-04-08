@@ -190,6 +190,9 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     if (phase !== "container") return;
     let cancelled = false;
     const run = async () => {
+      // Brief pause after ButterflyHug unmount to let browser settle
+      await delay(800);
+      if (cancelled) return;
       await say("Imagine a strong container...", "/audio/emdr/emdr-container-01.mp3");
       if (cancelled) return;
       await delay(2000);
