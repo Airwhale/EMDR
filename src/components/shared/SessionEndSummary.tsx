@@ -178,8 +178,8 @@ export default function SessionEndSummary({
         >
           <p>
             If anything came up that feels bigger than expected, you don&apos;t have to sit with it alone.
-            Call or text <span className="text-gold/50">988</span> or
-            text <span className="text-gold/50">HOME</span> to <span className="text-gold/50">741741</span> anytime.
+            Call or text <span className="text-gold/50">988</span> <span className="text-[#e8e0d4]/20">(Suicide &amp; Crisis Lifeline)</span> or
+            text <span className="text-gold/50">HOME</span> to <span className="text-gold/50">741741</span> <span className="text-[#e8e0d4]/20">(Crisis Text Line)</span> anytime.
           </p>
         </motion.div>
 
