@@ -111,6 +111,7 @@ const sections: AboutSection[] = [
 
 export default function AboutPage() {
   const [backHref, setBackHref] = useState("/");
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -142,42 +143,80 @@ export default function AboutPage() {
           </p>
         </motion.div>
 
-        <div className="space-y-12">
-          {sections.map((section, index) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 1 }}
-            >
-              <h2 className="narration-text text-2xl text-gold/80 mb-3">
-                {section.title}
-              </h2>
-              <p className="text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
-                {section.content}
-              </p>
-              {section.evidence && (
-                <div className="mt-3">
-                  <p className="text-[#e8e0d4]/35 text-xs font-light mb-2">Further reading</p>
-                  <ul className="space-y-1">
-                    {section.evidence.map((e) => (
-                      <li key={e.href}>
-                        <a
-                          href={e.href}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          className="text-xs text-[#e8e0d4]/45 hover:text-gold/80 underline underline-offset-4"
-                        >
-                          {e.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
+        {/* Quick summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 1 }}
+          className="mb-12"
+        >
+          <h2 className="narration-text text-2xl text-gold/80 mb-4">In 30 seconds</h2>
+          <div className="space-y-3 text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
+            <p>
+              This experience combines bilateral eye movements (from EMDR and ART therapy), binaural audio tones, paced breathing, and hypnotic language patterns to guide you into a deeply relaxed state.
+            </p>
+            <p>
+              Your eyes follow a moving dot, which may help quiet analytical thinking. Binaural tones played through headphones create a subtle rhythmic beat that some research associates with meditative brainwave states. A breathing guide activates your body&apos;s relaxation response. The narration uses permissive, Ericksonian language designed to deepen the experience without forcing it.
+            </p>
+            <p>
+              Some of these techniques have strong clinical evidence (EMDR, progressive relaxation, paced breathing). Others are more preliminary (binaural entrainment, photic driving). Individual responses vary. Together, they create a layered experience that many people find deeply calming.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Expand/collapse for detailed sections */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="mb-8"
+        >
+          <button
+            onClick={() => setShowDetails(!showDetails)}
+            className="ui-text text-xs text-gold/60 hover:text-gold/90 transition-colors duration-300"
+          >
+            {showDetails ? "Hide detailed breakdown" : "Read the detailed breakdown of each technique"}
+          </button>
+        </motion.div>
+
+        {showDetails && (
+          <div className="space-y-12">
+            {sections.map((section, index) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.6 }}
+              >
+                <h2 className="narration-text text-2xl text-gold/80 mb-3">
+                  {section.title}
+                </h2>
+                <p className="text-[#e8e0d4]/60 leading-relaxed text-sm font-light">
+                  {section.content}
+                </p>
+                {section.evidence && (
+                  <div className="mt-3">
+                    <p className="text-[#e8e0d4]/35 text-xs font-light mb-2">Further reading</p>
+                    <ul className="space-y-1">
+                      {section.evidence.map((e) => (
+                        <li key={e.href}>
+                          <a
+                            href={e.href}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="text-xs text-[#e8e0d4]/45 hover:text-gold/80 underline underline-offset-4"
+                          >
+                            {e.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         <motion.div
           initial={{ opacity: 0 }}
