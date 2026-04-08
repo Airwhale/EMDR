@@ -404,7 +404,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
           <motion.div key="post-grounding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}
             className="flex flex-col items-center gap-6 text-center max-w-md">
             <p className="narration-text text-xl text-[#e8e0d4]/70">
-              You can continue to the session, or exit if you&apos;d prefer to stop.
+              It&apos;s okay to feel what you&apos;re feeling. There&apos;s no rush, and no wrong choice here. You can continue when you&apos;re ready, or step away for now.
             </p>
             <div className="flex gap-4">
               <button
