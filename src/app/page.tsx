@@ -312,10 +312,13 @@ export default function App() {
                 >
                   <span className="ui-text text-sm text-gold/80">SILENT</span>
                   <p className="text-xs text-[#e8e0d4]/45 font-light mt-1">
-                    Visual effects and binaural tones only — no voice, no countdown, no text
+                    Visual effects and binaural tones only. No voice, no countdown, no text.
                   </p>
                 </button>
               </div>
+              <p className="ui-text text-[10px] text-[#e8e0d4]/30 text-center max-w-xs">
+                Binaural tones are always on for this experience. The binaural toggle on the previous screen does not apply here. Headphones recommended.
+              </p>
 
               {/* Flickering effects toggle */}
               <div className="flex items-center gap-3">
@@ -366,7 +369,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} binauralEnabled={binauralEnabled} flickerEnabled={flickerEnabled} />
+            <MeditationSession onComplete={handleStartNewSession} onExit={handleStartNewSession} silent={meditationSilent} binauralEnabled={true} flickerEnabled={flickerEnabled} />
           </motion.div>
         )}
 
