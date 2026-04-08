@@ -59,7 +59,6 @@ export class TranceVoice {
   private supported = false;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentAudio: HTMLAudioElement | null = null;
-  private audioCache = new Map<string, HTMLAudioElement>();
   private pendingResolve: (() => void) | null = null;
   private pendingDone: (() => void) | null = null;
 
@@ -119,14 +118,8 @@ export class TranceVoice {
     this.stopCurrent();
 
     if (options?.file) {
-      const audioPath = options.file;
-      let audio = this.audioCache.get(audioPath);
-      if (!audio) {
-        audio = new Audio(audioPath);
-        this.audioCache.set(audioPath, audio);
-      }
+      const audio = new Audio(options.file);
       audio.volume = options?.volume ?? this.tuning.volume;
-      audio.currentTime = 0;
       audio.play().catch(() => { this.speakWithSynth(text, options); });
       this.currentAudio = audio;
       return;
@@ -156,19 +149,13 @@ export class TranceVoice {
       this.pendingDone = done;
 
       if (options?.file) {
-        const audioPath = options.file;
-        let audio = this.audioCache.get(audioPath);
-        if (!audio) {
-          audio = new Audio(audioPath);
-          this.audioCache.set(audioPath, audio);
-        }
+        const audio = new Audio(options.file);
         audio.volume = options?.volume ?? this.tuning.volume;
-        audio.currentTime = 0;
         audio.addEventListener("ended", done, { once: true });
         audio.addEventListener("error", done, { once: true });
         audio.play().catch(() => {
-          audio!.removeEventListener("ended", done);
-          audio!.removeEventListener("error", done);
+          audio.removeEventListener("ended", done);
+          audio.removeEventListener("error", done);
           this.speakWithSynthAsync(text, options, done);
         });
         this.currentAudio = audio;
@@ -221,13 +208,14 @@ export class TranceVoice {
 
   private stopCurrent(): void {
     if (this.currentAudio) {
+      this.currentAudio.pause();
+      // Remove listeners so this discarded element can't call done()
       if (this.pendingDone) {
         this.currentAudio.removeEventListener("ended", this.pendingDone);
         this.currentAudio.removeEventListener("error", this.pendingDone);
         this.pendingDone = null;
       }
-      this.currentAudio.pause();
-      this.currentAudio.currentTime = 0;
+      this.currentAudio.src = "";  // release network resources
       this.currentAudio = null;
     }
     this.synth?.cancel();
@@ -260,7 +248,6 @@ export class TranceVoice {
   stop(): void {
     this._resolvePending();
     this.cancel();
-    this.audioCache.clear();
     this.synth = null;
     this.ready = false;
   }
