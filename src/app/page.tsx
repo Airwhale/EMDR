@@ -323,15 +323,7 @@ export default function App() {
               {/* Flickering effects toggle */}
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => {
-                    const next = !flickerEnabled;
-                    setFlickerEnabled(next);
-                    if (!next) {
-                      sessionStorage.setItem("trance.photosensitive", "true");
-                    } else {
-                      sessionStorage.removeItem("trance.photosensitive");
-                    }
-                  }}
+                  onClick={() => setFlickerEnabled((v) => !v)}
                   className={`w-10 h-5 rounded-full transition-colors duration-300 relative ${
                     flickerEnabled ? "bg-gold/40" : "bg-[#e8e0d4]/15"
                   }`}
