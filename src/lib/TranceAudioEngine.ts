@@ -139,14 +139,18 @@ export class TranceAudioEngine {
   setPingVolume(volume: number): void {
     if (!this.ctx || !this.pingGain) return;
     this.pingVolume = volume;
-    this.pingGain.gain.setValueAtTime(this.pingGain.gain.value, this.ctx.currentTime);
-    this.pingGain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.1);
+    const now = this.ctx.currentTime;
+    try { (this.pingGain.gain as any).cancelAndHoldAtTime(now); }
+    catch { this.pingGain.gain.cancelScheduledValues(now); this.pingGain.gain.setValueAtTime(this.pingGain.gain.value, now); }
+    this.pingGain.gain.linearRampToValueAtTime(volume, now + 0.1);
   }
 
   setPinkNoiseVolume(volume: number): void {
     if (!this.ctx || !this.pinkGain) return;
-    this.pinkGain.gain.setValueAtTime(this.pinkGain.gain.value, this.ctx.currentTime);
-    this.pinkGain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.1);
+    const now = this.ctx.currentTime;
+    try { (this.pinkGain.gain as any).cancelAndHoldAtTime(now); }
+    catch { this.pinkGain.gain.cancelScheduledValues(now); this.pinkGain.gain.setValueAtTime(this.pinkGain.gain.value, now); }
+    this.pinkGain.gain.linearRampToValueAtTime(volume, now + 0.1);
   }
 
   /** Play a breath cue: tonal chime panned L/R + spoken word.
@@ -402,8 +406,10 @@ export class TranceAudioEngine {
 
   setMasterVolume(target: number, duration: number = 4): void {
     if (!this.ctx || !this.masterGain) return;
-    this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
-    this.masterGain.gain.linearRampToValueAtTime(target, this.ctx.currentTime + duration);
+    const now = this.ctx.currentTime;
+    try { (this.masterGain.gain as any).cancelAndHoldAtTime(now); }
+    catch { this.masterGain.gain.cancelScheduledValues(now); this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now); }
+    this.masterGain.gain.linearRampToValueAtTime(target, now + duration);
   }
 
   shiftPitch(targetHz: number, duration: number = 2): void {
@@ -431,12 +437,24 @@ export class TranceAudioEngine {
     if (!this.ctx || !this.droneOscR) return;
     this.binauralBeat = beatHz;
     const now = this.ctx.currentTime;
-    this.droneOscR.frequency.setValueAtTime(this.droneOscR.frequency.value, now);
-    this.droneOscR.frequency.linearRampToValueAtTime(this.baseFreq + beatHz, now + duration);
-    // Second layer tracks the same beat offset
+
+    // cancelAndHoldAtTime inserts a SetValue event at `now` holding the current
+    // interpolated frequency, so a subsequent ramp starts from the right place.
+    // This prevents clicks when called rapidly (e.g. slider drag mid-ramp).
+    // Falls back to cancelScheduledValues for older browsers.
+    const smoothRamp = (param: AudioParam, target: number) => {
+      try {
+        (param as any).cancelAndHoldAtTime(now);
+      } catch {
+        param.cancelScheduledValues(now);
+        param.setValueAtTime(param.value, now);
+      }
+      param.linearRampToValueAtTime(target, now + duration);
+    };
+
+    smoothRamp(this.droneOscR.frequency, this.baseFreq + beatHz);
     if (this.drone2OscR) {
-      this.drone2OscR.frequency.setValueAtTime(this.drone2OscR.frequency.value, now);
-      this.drone2OscR.frequency.linearRampToValueAtTime(this.drone2BaseFreq + beatHz, now + duration);
+      smoothRamp(this.drone2OscR.frequency, this.drone2BaseFreq + beatHz);
     }
   }
 
