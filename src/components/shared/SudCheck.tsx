@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 
 interface SudCheckProps {
@@ -18,6 +18,7 @@ export default function SudCheck({
   prompt = "How much distress are you feeling right now?",
   onRate,
 }: SudCheckProps) {
+  const [selected, setSelected] = useState<number>(5);
   const groupRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number) => {
@@ -28,6 +29,7 @@ export default function SudCheck({
     else if (e.key === "End") { next = 10; e.preventDefault(); }
     else return;
 
+    setSelected(next);
     const buttons = groupRef.current?.querySelectorAll<HTMLButtonElement>("button");
     buttons?.[next]?.focus();
   }, []);
@@ -59,14 +61,18 @@ export default function SudCheck({
         {Array.from({ length: 11 }, (_, i) => (
           <button
             key={i}
-            onClick={() => onRate(i)}
+            onClick={() => { setSelected(i); onRate(i); }}
             onKeyDown={(e) => handleKeyDown(e, i)}
-            tabIndex={i === 0 ? 0 : -1}
+            tabIndex={i === selected ? 0 : -1}
             aria-label={`${i} — ${sudLabels[i]}`}
-            className="w-[28px] h-[28px] sm:w-10 sm:h-10 rounded-full border border-gold/35 text-gold/75 text-xs sm:text-sm
-                       hover:border-gold/70 hover:text-gold hover:bg-gold/5
+            aria-pressed={i === selected}
+            className={`w-[28px] h-[28px] sm:w-10 sm:h-10 rounded-full border text-xs sm:text-sm
                        focus:outline-none focus:ring-2 focus:ring-gold/50
-                       transition-all duration-300 flex items-center justify-center"
+                       transition-all duration-300 flex items-center justify-center
+                       ${i === selected
+                         ? "border-gold/80 text-gold bg-gold/10"
+                         : "border-gold/35 text-gold/75 hover:border-gold/70 hover:text-gold hover:bg-gold/5"
+                       }`}
           >
             {i}
           </button>

@@ -146,8 +146,8 @@ test('SUD scale supports Home and End keys', () => {
   assert.match(sudCheck, /e\.key === "End"/);
 });
 
-test('SUD scale uses roving tabIndex (first button 0, rest -1)', () => {
-  assert.match(sudCheck, /tabIndex=\{i === 0 \? 0 : -1\}/);
+test('SUD scale uses roving tabIndex based on selected value', () => {
+  assert.match(sudCheck, /tabIndex=\{i === selected \? 0 : -1\}/);
 });
 
 test('SUD anchor descriptions are hidden from screen readers', () => {
