@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect, useReducer } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
-import { TranceVoice } from "@/lib/TranceVoice";
+import { useNarration } from "@/hooks/useNarration";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
 import AdverseEventFlow from "../shared/AdverseEventFlow";
 import ButterflyHug from "./ButterflyHug";
+import { preloadAudioBatch, emdrAudio } from "@/lib/audioPreloader";
 
 type EmdrPhase =
   | "centering"
@@ -39,82 +39,139 @@ export interface EmdrSummaryData {
   exercisesCompleted: string[];
 }
 
-// Small pause between sequential narration cues (ms)
-const CUE_PAUSE = 600;
-// Minimum time any narration cue stays visible, even if audio is shorter
-const MIN_CUE_DISPLAY = 3000;
+// ── State machine ────────────────────────────────────────────────
+interface EmdrState {
+  phase: EmdrPhase;
+  blsActive: boolean;
+  showReady: boolean;
+  readyTarget: EmdrPhase | null;
+  showBlsContinue: boolean;
+  groundingAttempted: boolean;
+  showAdverseEvent: boolean;
+  exercises: string[];
+}
 
+type EmdrAction =
+  | { type: "GOTO_PHASE"; phase: EmdrPhase }
+  | { type: "SUD_RATED"; rating: number }
+  | { type: "GROUNDING_COMPLETE" }
+  | { type: "NARRATION_DONE_SHOW_READY"; target: EmdrPhase }
+  | { type: "READY_CONFIRMED" }
+  | { type: "START_BLS" }
+  | { type: "SHOW_BLS_CONTINUE" }
+  | { type: "BLS_CONTINUE"; exercise: string; nextPhase: EmdrPhase }
+  | { type: "BUTTERFLY_COMPLETE" };
+
+const initialState: EmdrState = {
+  phase: "sud-check",
+  blsActive: false,
+  showReady: false,
+  readyTarget: null,
+  showBlsContinue: false,
+  groundingAttempted: false,
+  showAdverseEvent: false,
+  exercises: [],
+};
+
+function emdrReducer(state: EmdrState, action: EmdrAction): EmdrState {
+  switch (action.type) {
+    case "GOTO_PHASE":
+      return { ...state, phase: action.phase, showReady: false, readyTarget: null };
+
+    case "SUD_RATED": {
+      const { rating } = action;
+      if (rating > 6) {
+        if (state.groundingAttempted) {
+          if (rating >= 10) return { ...state, showAdverseEvent: true };
+          return { ...state, phase: "post-grounding" };
+        }
+        return { ...state, phase: "grounding" };
+      }
+      return { ...state, phase: "centering" };
+    }
+
+    case "GROUNDING_COMPLETE":
+      return { ...state, groundingAttempted: true, phase: "sud-check" };
+
+    case "NARRATION_DONE_SHOW_READY":
+      return { ...state, showReady: true, readyTarget: action.target };
+
+    case "READY_CONFIRMED":
+      if (!state.readyTarget) return state;
+      return { ...state, phase: state.readyTarget, showReady: false, readyTarget: null, showBlsContinue: false };
+
+    case "START_BLS":
+      return { ...state, blsActive: true };
+
+    case "SHOW_BLS_CONTINUE":
+      return { ...state, showBlsContinue: true };
+
+    case "BLS_CONTINUE":
+      return {
+        ...state,
+        blsActive: false,
+        showBlsContinue: false,
+        exercises: [...state.exercises, action.exercise],
+        phase: action.nextPhase,
+      };
+
+    case "BUTTERFLY_COMPLETE":
+      return { ...state, exercises: [...state.exercises, "Butterfly Hug"], phase: "container" };
+
+    default:
+      return state;
+  }
+}
+
+// ── Component ────────────────────────────────────────────────────
 export default function EmdrSession({ onComplete, onExit, binauralEnabled = true }: EmdrSessionProps) {
-  const [phase, setPhase] = useState<EmdrPhase>("sud-check");
-  const [narration, setNarration] = useState<string | null>(null);
+  const { narration, setNarration, say, delay, cancelVoice, audioRef, voiceRef, voiceAvailable } = useNarration({ mode: "emdr" });
+
+  const [state, dispatch] = useReducer(emdrReducer, initialState);
+  const { phase, blsActive, showReady, showBlsContinue, showAdverseEvent, exercises } = state;
+
   const [sudStart, setSudStart] = useState<number | null>(null);
   const [sudEnd, setSudEnd] = useState<number | null>(null);
-  const [exercises, setExercises] = useState<string[]>([]);
-  const [blsActive, setBlsActive] = useState(false);
-  const [showReady, setShowReady] = useState(false);
-  const [readyTarget, setReadyTarget] = useState<EmdrPhase | null>(null);
-  const [showBlsContinue, setShowBlsContinue] = useState(false);
-  const [groundingAttempted, setGroundingAttempted] = useState(false);
-  const [showAdverseEvent, setShowAdverseEvent] = useState(false);
-  const [voiceAvailable, setVoiceAvailable] = useState(true);
 
-  const audioRef = useRef<TranceAudioEngine | null>(null);
-  const voiceRef = useRef<TranceVoice | null>(null);
+  // Start audio after hook initializes engine
+  useEffect(() => {
+    audioRef.current?.fadeIn(8, 0.5);
+  }, [audioRef]);
 
   useEffect(() => {
-    const audio = new TranceAudioEngine();
-    audio.init("emdr");
-    audio.fadeIn(8, 0.5);
-    if (!binauralEnabled) audio.muteBinaural();
-    audioRef.current = audio;
-
-    const voice = new TranceVoice();
-    voice.init();
-    voiceRef.current = voice;
-    setVoiceAvailable(voice.isSupported());
-
-    return () => { audio.stop(); voice.stop(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Helpers used inside phase effects
-  const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
-
-  const say = useCallback(async (display: string, file?: string) => {
-    const start = Date.now();
-    setNarration(display);
-    if (voiceRef.current) {
-      if (file) {
-        await voiceRef.current.speakAsync(display, { file });
-      } else {
-        await voiceRef.current.speakAsync(display);
-      }
+    if (!audioRef.current) return;
+    if (binauralEnabled) {
+      audioRef.current.fadeIn(2, 0.5);
+    } else {
+      audioRef.current.muteBinaural();
     }
-    // Ensure the cue stays visible for at least MIN_CUE_DISPLAY ms total
-    const elapsed = Date.now() - start;
-    const remaining = Math.max(CUE_PAUSE, MIN_CUE_DISPLAY - elapsed);
-    await delay(remaining);
-  }, []);
+  }, [binauralEnabled, audioRef]);
 
-  // ---- SUD CHECK (initial) ----
+  // Preload the next phase's audio in the background
+  useEffect(() => {
+    const nextAudio: Record<string, readonly string[]> = {
+      "sud-check": emdrAudio.centering,
+      centering: emdrAudio.safePlace,
+      "safe-place": emdrAudio.safePlace,
+      "safe-place-bls": emdrAudio.butterfly,
+      "butterfly-hug": emdrAudio.container,
+      container: emdrAudio.container,
+      "container-bls": emdrAudio.resource,
+      resource: emdrAudio.resource,
+      "resource-bls": emdrAudio.bodyScan,
+      "body-scan": emdrAudio.closing,
+    };
+    const files = nextAudio[phase];
+    if (files) preloadAudioBatch(files);
+  }, [phase]);
+
+  // ── SUD CHECK (initial) ──
   const handleSudStart = useCallback((rating: number) => {
     setSudStart(rating);
-    if (rating > 5) {
-      if (groundingAttempted) {
-        if (rating >= 10) {
-          setShowAdverseEvent(true);
-        } else {
-          setPhase("post-grounding");
-        }
-      } else {
-        setPhase("grounding");
-      }
-    } else {
-      setPhase("centering");
-    }
-  }, [groundingAttempted]);
+    dispatch({ type: "SUD_RATED", rating });
+  }, []);
 
-  // ---- CENTERING ----
+  // ── CENTERING ──
   useEffect(() => {
     if (phase !== "centering") return;
     let cancelled = false;
@@ -125,13 +182,13 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       if (cancelled) return;
       await say("Feel the surface beneath you...", "/audio/emdr/emdr-centering-02.mp3");
       if (cancelled) return;
-      setPhase("safe-place");
+      dispatch({ type: "GOTO_PHASE", phase: "safe-place" });
     };
     run();
-    return () => { cancelled = true; voiceRef.current?.cancel(); };
-  }, [phase, say]);
+    return () => { cancelled = true; cancelVoice(); };
+  }, [phase, say, delay, cancelVoice]);
 
-  // ---- SAFE PLACE ----
+  // ── SAFE PLACE ──
   useEffect(() => {
     if (phase !== "safe-place") return;
     let cancelled = false;
@@ -150,18 +207,16 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       if (cancelled) return;
       await say("Hold that image and word...", "/audio/emdr/emdr-safeplace-04.mp3");
       if (cancelled) return;
-      setShowReady(true);
-      setReadyTarget("safe-place-bls");
+      dispatch({ type: "NARRATION_DONE_SHOW_READY", target: "safe-place-bls" });
     };
     run();
-    return () => { cancelled = true; voiceRef.current?.cancel(); };
-  }, [phase, say]);
+    return () => { cancelled = true; cancelVoice(); };
+  }, [phase, say, delay, cancelVoice]);
 
-  // ---- SAFE PLACE BLS ----
+  // ── SAFE PLACE BLS ──
   useEffect(() => {
     if (phase !== "safe-place-bls") return;
     let cancelled = false;
-    setShowBlsContinue(false);
     setNarration("Follow the dot... hold your safe place...");
     const run = async () => {
       await voiceRef.current?.speakAsync(
@@ -170,32 +225,23 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       );
       if (cancelled) return;
       setNarration(null);
-      setBlsActive(true);
+      dispatch({ type: "START_BLS" });
     };
     run();
-    const t = setTimeout(() => setShowBlsContinue(true), 25000);
-    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
-  }, [phase]);
+    const t = setTimeout(() => dispatch({ type: "SHOW_BLS_CONTINUE" }), 25000);
+    return () => { cancelled = true; clearTimeout(t); cancelVoice(); };
+  }, [phase, setNarration, cancelVoice, voiceRef]);
 
-  const handleSafePlaceContinue = useCallback(() => {
-    setBlsActive(false);
-    setShowBlsContinue(false);
-    setExercises((prev) => [...prev, "Safe Place"]);
-    setPhase("butterfly-hug");
-  }, []);
-
-  // ---- BUTTERFLY HUG ----
+  // ── BUTTERFLY HUG ──
   const handleButterflyComplete = useCallback(() => {
-    setExercises((prev) => [...prev, "Butterfly Hug"]);
-    setPhase("container");
+    dispatch({ type: "BUTTERFLY_COMPLETE" });
   }, []);
 
-  // ---- CONTAINER ----
+  // ── CONTAINER ──
   useEffect(() => {
     if (phase !== "container") return;
     let cancelled = false;
     const run = async () => {
-      // Brief pause after ButterflyHug unmount to let browser settle
       await delay(800);
       if (cancelled) return;
       await say("Imagine a strong container...", "/audio/emdr/emdr-container-01.mp3");
@@ -210,18 +256,16 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       if (cancelled) return;
       await delay(1500);
       if (cancelled) return;
-      setShowReady(true);
-      setReadyTarget("container-bls");
+      dispatch({ type: "NARRATION_DONE_SHOW_READY", target: "container-bls" });
     };
     run();
-    return () => { cancelled = true; voiceRef.current?.cancel(); };
-  }, [phase, say]);
+    return () => { cancelled = true; cancelVoice(); };
+  }, [phase, say, delay, cancelVoice]);
 
-  // ---- CONTAINER BLS ----
+  // ── CONTAINER BLS ──
   useEffect(() => {
     if (phase !== "container-bls") return;
     let cancelled = false;
-    setShowBlsContinue(false);
     setNarration("Follow the dot... feel it sealing...");
     const run = async () => {
       await voiceRef.current?.speakAsync(
@@ -230,21 +274,14 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       );
       if (cancelled) return;
       setNarration(null);
-      setBlsActive(true);
+      dispatch({ type: "START_BLS" });
     };
     run();
-    const t = setTimeout(() => setShowBlsContinue(true), 20000);
-    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
-  }, [phase]);
+    const t = setTimeout(() => dispatch({ type: "SHOW_BLS_CONTINUE" }), 20000);
+    return () => { cancelled = true; clearTimeout(t); cancelVoice(); };
+  }, [phase, setNarration, cancelVoice, voiceRef]);
 
-  const handleContainerContinue = useCallback(() => {
-    setBlsActive(false);
-    setShowBlsContinue(false);
-    setExercises((prev) => [...prev, "Container"]);
-    setPhase("resource");
-  }, []);
-
-  // ---- RESOURCE INSTALLATION ----
+  // ── RESOURCE INSTALLATION ──
   useEffect(() => {
     if (phase !== "resource") return;
     let cancelled = false;
@@ -259,18 +296,16 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       if (cancelled) return;
       await say("Where do you feel it? Let it expand...", "/audio/emdr/emdr-resource-03.mp3");
       if (cancelled) return;
-      setShowReady(true);
-      setReadyTarget("resource-bls");
+      dispatch({ type: "NARRATION_DONE_SHOW_READY", target: "resource-bls" });
     };
     run();
-    return () => { cancelled = true; voiceRef.current?.cancel(); };
-  }, [phase, say]);
+    return () => { cancelled = true; cancelVoice(); };
+  }, [phase, say, delay, cancelVoice]);
 
-  // ---- RESOURCE BLS ----
+  // ── RESOURCE BLS ──
   useEffect(() => {
     if (phase !== "resource-bls") return;
     let cancelled = false;
-    setShowBlsContinue(false);
     setNarration("Follow the dot... strengthen this feeling...");
     const run = async () => {
       await voiceRef.current?.speakAsync(
@@ -279,21 +314,14 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       );
       if (cancelled) return;
       setNarration(null);
-      setBlsActive(true);
+      dispatch({ type: "START_BLS" });
     };
     run();
-    const t = setTimeout(() => setShowBlsContinue(true), 30000);
-    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
-  }, [phase]);
+    const t = setTimeout(() => dispatch({ type: "SHOW_BLS_CONTINUE" }), 30000);
+    return () => { cancelled = true; clearTimeout(t); cancelVoice(); };
+  }, [phase, setNarration, cancelVoice, voiceRef]);
 
-  const handleResourceContinue = useCallback(() => {
-    setBlsActive(false);
-    setShowBlsContinue(false);
-    setExercises((prev) => [...prev, "Resource Installation"]);
-    setPhase("body-scan");
-  }, []);
-
-  // ---- BODY SCAN ----
+  // ── BODY SCAN ──
   useEffect(() => {
     if (phase !== "body-scan") return;
     let cancelled = false;
@@ -302,13 +330,13 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       if (cancelled) return;
       await say("Observe without judgment...", "/audio/emdr/emdr-bodyscan-02.mp3");
       if (cancelled) return;
-      setPhase("closing");
+      dispatch({ type: "GOTO_PHASE", phase: "closing" });
     };
     run();
-    return () => { cancelled = true; voiceRef.current?.cancel(); };
-  }, [phase, say]);
+    return () => { cancelled = true; cancelVoice(); };
+  }, [phase, say, cancelVoice]);
 
-  // ---- CLOSING ----
+  // ── CLOSING ──
   useEffect(() => {
     if (phase !== "closing") return;
     let cancelled = false;
@@ -319,34 +347,25 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
       setSudEnd(-1);
     };
     run();
-    return () => { cancelled = true; voiceRef.current?.cancel(); };
-  }, [phase, say]);
+    return () => { cancelled = true; cancelVoice(); };
+  }, [phase, say, setNarration, cancelVoice]);
 
   const handleSudEnd = useCallback((rating: number) => {
     setSudEnd(rating);
     audioRef.current?.fadeOut(8);
     onComplete({ sudStart, sudEnd: rating, exercisesCompleted: exercises });
-  }, [sudStart, exercises, onComplete]);
-
-  const handleReady = useCallback(() => {
-    if (readyTarget) {
-      setShowReady(false);
-      setPhase(readyTarget);
-      setReadyTarget(null);
-    }
-  }, [readyTarget]);
+  }, [sudStart, exercises, onComplete, audioRef]);
 
   const handleGroundingComplete = useCallback(() => {
-    setGroundingAttempted(true);
-    setPhase("sud-check");
+    dispatch({ type: "GROUNDING_COMPLETE" });
     setSudStart(null);
   }, []);
 
-  const blsContinueHandler =
-    phase === "safe-place-bls" ? handleSafePlaceContinue
-    : phase === "container-bls" ? handleContainerContinue
-    : phase === "resource-bls" ? handleResourceContinue
-    : undefined;
+  const blsContinueHandler = useCallback(() => {
+    if (phase === "safe-place-bls") dispatch({ type: "BLS_CONTINUE", exercise: "Safe Place", nextPhase: "butterfly-hug" });
+    else if (phase === "container-bls") dispatch({ type: "BLS_CONTINUE", exercise: "Container", nextPhase: "resource" });
+    else if (phase === "resource-bls") dispatch({ type: "BLS_CONTINUE", exercise: "Resource Installation", nextPhase: "body-scan" });
+  }, [phase]);
 
   if (showAdverseEvent) {
     return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
@@ -408,7 +427,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
             </p>
             <div className="flex gap-4">
               <button
-                onClick={() => setPhase("centering")}
+                onClick={() => dispatch({ type: "GOTO_PHASE", phase: "centering" })}
                 className="px-6 py-3 border border-gold/45 rounded-full text-gold/85
                            hover:border-gold/75 hover:text-gold transition-all duration-700 ui-text"
               >
@@ -440,7 +459,7 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
-                onClick={handleReady}
+                onClick={() => dispatch({ type: "READY_CONFIRMED" })}
                 className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
                            hover:border-gold/70 hover:text-gold hover:bg-gold/5
                            transition-all duration-500 ui-text"

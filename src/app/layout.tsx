@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hypno1.vercel.app";
 
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
   title: "EMDR / ART Self-Administered Experience",
   description:
     "A browser-based guided EMDR, ART, and hypnotic meditation experience using bilateral stimulation, binaural tones, and evidence-based therapeutic techniques.",
+  manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
   },
@@ -42,6 +44,7 @@ export default function RootLayout({
             <p>This experience requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
           </div>
         </noscript>
+        <ServiceWorkerRegistrar />
         {children}
       </body>
     </html>

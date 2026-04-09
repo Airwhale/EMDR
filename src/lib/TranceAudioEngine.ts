@@ -53,10 +53,17 @@ export class TranceAudioEngine {
   private pingGain: GainNode | null = null;
   private pingVolume = 0.25;
 
+  // Pre-allocated reusable ping chain
+  private pingOsc: OscillatorNode | null = null;
+  private pingEnv: GainNode | null = null;
+  private pingPan: StereoPannerNode | null = null;
+  private pingFilter: BiquadFilterNode | null = null;
+
   private isRunning = false;
   private baseFreq = 100;
   private binauralBeat = 4;
   private mode: AudioMode = "trance";
+  private resumeHandler: (() => void) | null = null;
 
   getContext(): AudioContext | null {
     return this.ctx;
@@ -90,7 +97,23 @@ export class TranceAudioEngine {
       this.binauralBeat = 10; // Alpha (alert processing)
     }
 
+    // iOS Safari: AudioContext may start suspended. Register a one-time
+    // interaction listener to resume it on the first user gesture.
+    if (this.ctx.state === "suspended" && typeof document !== "undefined") {
+      this.resumeHandler = () => {
+        this.ctx?.resume();
+        if (this.resumeHandler) {
+          document.removeEventListener("touchstart", this.resumeHandler);
+          document.removeEventListener("click", this.resumeHandler);
+          this.resumeHandler = null;
+        }
+      };
+      document.addEventListener("touchstart", this.resumeHandler, { once: true });
+      document.addEventListener("click", this.resumeHandler, { once: true });
+    }
+
     this.setupBinauralDrone();
+    this.setupPingChain();
 
     if (mode === "trance") {
       this.setupSecondBinauralLayer();
@@ -108,37 +131,46 @@ export class TranceAudioEngine {
     this.isRunning = true;
   }
 
+  private setupPingChain(): void {
+    if (!this.ctx || !this.pingGain) return;
+
+    this.pingFilter = this.ctx.createBiquadFilter();
+    this.pingFilter.type = "bandpass";
+    this.pingFilter.frequency.value = this.mode === "art" ? 900 : 700;
+    this.pingFilter.Q.value = 2;
+
+    this.pingEnv = this.ctx.createGain();
+    this.pingEnv.gain.value = 0;
+
+    this.pingPan = this.ctx.createStereoPanner();
+
+    // Persistent oscillator runs silently; envelope shapes each ping
+    this.pingOsc = this.ctx.createOscillator();
+    this.pingOsc.type = "sine";
+    this.pingOsc.frequency.value = this.mode === "art" ? 880 : 660;
+
+    this.pingOsc.connect(this.pingFilter);
+    this.pingFilter.connect(this.pingEnv);
+    this.pingEnv.connect(this.pingPan);
+    this.pingPan.connect(this.pingGain);
+
+    this.pingOsc.start();
+  }
+
   /** Play a bilateral ping/tap sound panned to one side. */
   playPing(side: "left" | "right"): void {
-    if (!this.ctx || !this.pingGain) return;
+    if (!this.ctx || !this.pingEnv || !this.pingPan) return;
 
     const now = this.ctx.currentTime;
 
-    // Short sine burst — soft woodblock-like tap
-    const osc = this.ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.value = this.mode === "art" ? 880 : 660;
+    // Pan to the correct side
+    this.pingPan.pan.value = side === "left" ? -0.85 : 0.85;
 
-    const env = this.ctx.createGain();
-    env.gain.setValueAtTime(0, now);
-    env.gain.linearRampToValueAtTime(0.25, now + 0.005); // Fast attack
-    env.gain.exponentialRampToValueAtTime(0.001, now + 0.12); // Quick decay
-
-    const pan = this.ctx.createStereoPanner();
-    pan.pan.value = side === "left" ? -0.85 : 0.85;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = this.mode === "art" ? 900 : 700;
-    filter.Q.value = 2;
-
-    osc.connect(filter);
-    filter.connect(env);
-    env.connect(pan);
-    pan.connect(this.pingGain);
-
-    osc.start(now);
-    osc.stop(now + 0.15);
+    // Shape the envelope — fast attack, quick decay
+    this.pingEnv.gain.cancelScheduledValues(now);
+    this.pingEnv.gain.setValueAtTime(0, now);
+    this.pingEnv.gain.linearRampToValueAtTime(0.25, now + 0.005);
+    this.pingEnv.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
   }
 
   setPingVolume(volume: number): void {
@@ -397,6 +429,9 @@ export class TranceAudioEngine {
 
   fadeIn(duration: number = 20, target: number = 0.5): void {
     if (!this.ctx || !this.masterGain) return;
+    // iOS Safari: context starts suspended when created outside a user gesture.
+    // Resume it here — fadeIn is always called early in the session lifecycle.
+    this.resume();
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
     this.masterGain.gain.linearRampToValueAtTime(target, this.ctx.currentTime + duration);
   }
@@ -506,6 +541,13 @@ export class TranceAudioEngine {
 
   stop(): void {
     if (!this.isRunning) return;
+    this.isRunning = false;
+    // Clean up iOS resume listener
+    if (this.resumeHandler) {
+      document.removeEventListener("touchstart", this.resumeHandler);
+      document.removeEventListener("click", this.resumeHandler);
+      this.resumeHandler = null;
+    }
     this.fadeOut(3);
     setTimeout(() => {
       try {
@@ -518,11 +560,11 @@ export class TranceAudioEngine {
         this.drone2OscR?.stop();
         this.heartbeatOsc?.stop();
         this.heartbeatLfo?.stop();
+        this.pingOsc?.stop();
         this.ctx?.close();
       } catch {
         // Nodes may already be stopped
       }
-      this.isRunning = false;
       this.ctx = null;
     }, 3500);
   }

@@ -11,6 +11,7 @@ import EmdrSession, { EmdrSummaryData } from "@/components/emdr/EmdrSession";
 import ArtSession, { ArtSummaryData } from "@/components/art/ArtSession";
 import SessionEndSummary from "@/components/shared/SessionEndSummary";
 import SafetyGate from "@/components/shared/SafetyGate";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import {
   appendSummaryToHistory,
   clearAppSnapshot,
@@ -60,10 +61,15 @@ export default function App() {
     }
 
     const saved = loadAppSnapshot();
-    if (saved && saved.appState === "end-summary" && saved.endSummary) {
-      setSelectedMode(saved.selectedMode);
-      setEndSummary(saved.endSummary);
-      setAppState("end-summary");
+    if (saved) {
+      if (saved.appState === "end-summary" && saved.endSummary) {
+        setSelectedMode(saved.selectedMode);
+        setEndSummary(saved.endSummary);
+        setAppState("end-summary");
+      } else if (saved.appState === "session") {
+        // Internal phase state is lost on refresh — return to mode select
+        setAppState("mode-select");
+      }
     }
     setIsHydrated(true);
   }, []);
@@ -104,9 +110,6 @@ export default function App() {
   const startSession = useCallback((mode: SessionMode) => {
     setSelectedMode(mode);
     setAppState("session");
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
   }, []);
 
   const handleModeSelect = useCallback((mode: SessionMode) => {
@@ -162,6 +165,7 @@ export default function App() {
   }
 
   return (
+    <ErrorBoundary>
     <div className="w-screen min-h-screen bg-trance-dark">
       <AnimatePresence mode="wait">
         {/* =================== ENTRY =================== */}
@@ -460,5 +464,6 @@ export default function App() {
         )}
       </AnimatePresence>
     </div>
+    </ErrorBoundary>
   );
 }
