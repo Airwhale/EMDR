@@ -87,7 +87,7 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
         {/* Mode info link — below toggle, clearly about the modes not binaural */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="ui-text text-[10px] text-[#e8e0d4]/25 hover:text-[#e8e0d4]/55 transition-colors duration-300"
+          className="ui-text text-[10px] text-[#e8e0d4]/45 hover:text-[#e8e0d4]/65 transition-colors duration-300"
         >
           {expanded ? "hide details" : "not sure which to choose? click to find out more"}
         </button>
