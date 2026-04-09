@@ -127,39 +127,39 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
       </motion.button>
 
       {/* Timer */}
-      <span className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 ui-text text-[10px] text-[#e8e0d4]/20">
+      <span className="fixed top-4 right-4 z-40 ui-text text-[10px] text-[#e8e0d4]/20">
         {formatTime(elapsed)}
       </span>
 
-      {/* Control drawer — slides in from right, tab is attached */}
+      {/* Control drawer — slides up from bottom, tab is attached */}
       <motion.div
-        className="fixed top-0 right-0 h-full z-50 flex items-center"
+        className="fixed bottom-0 left-0 w-full z-50 flex flex-col items-center"
         initial={false}
-        animate={{ x: showControls ? 0 : "calc(100% - 28px)" }}
+        animate={{ y: showControls ? 0 : "calc(100% - 28px)" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {/* Tab — attached to left edge of panel */}
+        {/* Tab — attached to top edge of panel */}
         <button
           onClick={() => setShowControls(!showControls)}
           aria-label={showControls ? "Hide controls" : "Show controls"}
           className="flex-shrink-0 flex items-center justify-center
-                     w-7 h-16 rounded-l-lg
-                     border border-r-0 border-gold/25
+                     h-7 w-16 rounded-t-lg
+                     border border-b-0 border-gold/25
                      hover:border-gold/45 hover:bg-gold/5
                      transition-colors duration-300"
           style={{ background: "rgba(10, 10, 15, 0.8)" }}
         >
           <span className="text-gold/50 text-xs select-none">
-            {showControls ? "›" : "‹"}
+            {showControls ? "ˇ" : "ˆ"}
           </span>
         </button>
 
         {/* Panel */}
         <div
-          className="flex-shrink-0 border border-r-0 border-gold/20 rounded-l-2xl p-5 h-auto max-h-[80vh] overflow-y-auto"
-          style={{ background: "rgba(10, 10, 15, 0.92)", width: 520 }}
+          className="w-full border-t border-gold/20 p-5 overflow-y-auto"
+          style={{ background: "rgba(10, 10, 15, 0.92)", maxHeight: "50vh" }}
         >
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4 max-w-2xl mx-auto">
 
             {/* Speed */}
             <div>
