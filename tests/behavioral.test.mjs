@@ -406,21 +406,9 @@ describe('Audio file coverage', () => {
 
 describe('Session persistence edge cases', () => {
 
-  // ---- snapshot with appState "session" should NOT be restored to "session" ----
+  // ---- snapshot with appState "session" should NOT be restored ----
 
-  it('page.tsx does not restore appState "session" directly (falls back to mode-select)', () => {
-    // The pattern in page.tsx:
-    //   } else if (saved.appState === "session") {
-    //     setAppState("mode-select");
-    const sessionBlock = pageSrc.match(
-      /saved\.appState\s*===\s*"session"[\s\S]*?setAppState\("([^"]+)"\)/
-    );
-    assert.ok(sessionBlock, 'should have a handler for appState === "session"');
-    assert.equal(sessionBlock[1], 'mode-select',
-      'appState "session" should be restored as "mode-select", not "session"');
-  });
-
-  it('page.tsx never calls setAppState("session") inside the loadAppSnapshot block', () => {
+  it('page.tsx only restores end-summary, not session or other states', () => {
     // Find the restore block between loadAppSnapshot() and setIsHydrated(true)
     const loadIdx = pageSrc.indexOf('loadAppSnapshot()');
     const hydratedIdx = pageSrc.indexOf('setIsHydrated(true)', loadIdx);
@@ -428,8 +416,13 @@ describe('Session persistence edge cases', () => {
     const restoreBlock = pageSrc.slice(loadIdx, hydratedIdx);
     const appStateSettings = [...restoreBlock.matchAll(/setAppState\("([^"]+)"\)/g)]
       .map(m => m[1]);
+    // Only "end-summary" should be restored
     assert.ok(!appStateSettings.includes('session'),
       `Restore block should not set appState to "session", found: [${appStateSettings.join(', ')}]`);
+    assert.ok(!appStateSettings.includes('mode-select'),
+      `Restore block should not set appState to "mode-select", found: [${appStateSettings.join(', ')}]`);
+    assert.ok(appStateSettings.includes('end-summary'),
+      'Restore block should restore end-summary');
   });
 
   // ---- snapshot with appState "end-summary" SHOULD be restored ----
