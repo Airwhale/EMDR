@@ -87,6 +87,26 @@ body {
   animation: drift linear infinite;
 }
 
+/* Dark scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 224, 212, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 224, 212, 0.25);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 224, 212, 0.15) transparent;
+}
+
 /* Selection styling */
 ::selection {
   background: rgba(201, 169, 110, 0.2);
