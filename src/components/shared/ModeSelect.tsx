@@ -118,9 +118,9 @@ export default function ModeSelect({ onSelect, binauralEnabled, onBinauralToggle
         {modes.map((mode, i) => (
           <motion.button
             key={mode.id}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 + i * 0.2, duration: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 + i * 0.15, duration: 0.8 }}
             onClick={() => onSelect(mode.id)}
             className="text-left px-6 py-5 border border-gold/40 rounded-2xl
                        hover:border-gold/60 hover:bg-gold/[0.02] transition-all duration-700
