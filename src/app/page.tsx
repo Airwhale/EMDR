@@ -198,6 +198,7 @@ export default function App() {
               </motion.div>
 
               <motion.p
+                initial={{ opacity: 0 }}
                 animate={{ opacity: entryTextVisible ? 0.7 : 0 }}
                 transition={{ duration: 0.8 }}
                 className="narration-text text-lg md:text-xl text-center max-w-lg text-[#e8e0d4]/60"
@@ -207,6 +208,7 @@ export default function App() {
               </motion.p>
 
               <motion.div
+                initial={{ opacity: 0 }}
                 animate={{ opacity: showReady ? 1 : 0 }}
                 transition={{ duration: 0.8 }}
                 className="flex flex-col items-center gap-5"
@@ -250,6 +252,7 @@ export default function App() {
 
               {!audioSupported && (
                 <motion.div
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: showReady ? 1 : 0 }}
                   transition={{ duration: 0.8 }}
                   className="text-xs text-[#e8e0d4]/60 text-center max-w-sm border border-[#e8e0d4]/20 rounded-xl px-4 py-3"
@@ -261,6 +264,7 @@ export default function App() {
               )}
 
               <motion.p
+                initial={{ opacity: 0 }}
                 animate={{ opacity: showReady ? 1 : 0 }}
                 transition={{ duration: 0.8 }}
                 className="text-[10px] text-[#e8e0d4]/25 font-light text-center max-w-sm leading-relaxed"
