@@ -113,23 +113,6 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
         />
       </div>
 
-      {/* Toggle controls — tab on right edge */}
-      <button
-        onClick={() => setShowControls(!showControls)}
-        aria-label={showControls ? "Hide controls" : "Show controls"}
-        className="fixed top-1/2 -translate-y-1/2 right-0 z-50
-                   flex items-center justify-center
-                   w-7 h-16 rounded-l-lg
-                   border border-r-0 border-gold/25
-                   hover:border-gold/45 hover:bg-gold/5
-                   transition-all duration-300"
-        style={{ background: "rgba(10, 10, 15, 0.8)" }}
-      >
-        <span className="text-gold/50 text-xs select-none">
-          {showControls ? "›" : "‹"}
-        </span>
-      </button>
-
       {/* Exit */}
       <motion.button
         initial={{ opacity: 0 }}
@@ -148,117 +131,132 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
         {formatTime(elapsed)}
       </span>
 
-      {/* Control panel */}
-      {showControls && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed bottom-12 inset-x-0 z-50 px-4"
+      {/* Control drawer — slides in from right, tab is attached */}
+      <motion.div
+        className="fixed top-0 right-0 h-full z-50 flex items-center"
+        initial={false}
+        animate={{ x: showControls ? 0 : "calc(100% - 28px)" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
+        {/* Tab — attached to left edge of panel */}
+        <button
+          onClick={() => setShowControls(!showControls)}
+          aria-label={showControls ? "Hide controls" : "Show controls"}
+          className="flex-shrink-0 flex items-center justify-center
+                     w-7 h-16 rounded-l-lg
+                     border border-r-0 border-gold/25
+                     hover:border-gold/45 hover:bg-gold/5
+                     transition-colors duration-300"
+          style={{ background: "rgba(10, 10, 15, 0.8)" }}
         >
-          <div className="border border-gold/20 rounded-2xl p-5 max-w-xl mx-auto"
-               style={{ background: "rgba(10, 10, 15, 0.9)" }}>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <span className="text-gold/50 text-xs select-none">
+            {showControls ? "›" : "‹"}
+          </span>
+        </button>
 
-              {/* Left column */}
+        {/* Panel */}
+        <div
+          className="flex-shrink-0 border border-r-0 border-gold/20 rounded-l-2xl p-5 h-auto max-h-[80vh] overflow-y-auto"
+          style={{ background: "rgba(10, 10, 15, 0.92)", width: 520 }}
+        >
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
 
-              {/* Speed */}
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="ui-text text-[10px] text-[#e8e0d4]/50">dot speed</span>
-                  <span className="ui-text text-[10px] text-gold/60">{speedLabel}</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.2"
-                  max="1.0"
-                  step="0.05"
-                  value={1.2 - speed}
-                  onChange={(e) => setSpeed(1.2 - parseFloat(e.target.value))}
-                  aria-label={`Dot speed: ${speedLabel}`}
-                  className="w-full accent-gold"
-                />
+            {/* Speed */}
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">dot speed</span>
+                <span className="ui-text text-[10px] text-gold/60">{speedLabel}</span>
               </div>
-
-              {/* Binaural Hz */}
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="ui-text text-[10px] text-[#e8e0d4]/50">binaural frequency</span>
-                  <span className="ui-text text-[10px] text-gold/60">{binauralLabel}</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="40"
-                  step="0.1"
-                  value={binauralHz}
-                  onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
-                  aria-label={`Binaural frequency: ${binauralLabel}`}
-                  className="w-full accent-gold"
-                />
-                {binauralWarning && (
-                  <p className="ui-text text-[9px] text-blue-300/70 mt-1">{binauralWarning}</p>
-                )}
-              </div>
-
-              {/* Drone volume */}
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="ui-text text-[10px] text-[#e8e0d4]/50">binaural volume</span>
-                  <span className="ui-text text-[10px] text-gold/60">{Math.round(droneVol * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="2"
-                  step="0.05"
-                  value={droneVol}
-                  onChange={(e) => setDroneVol(parseFloat(e.target.value))}
-                  aria-label={`Binaural volume: ${Math.round(droneVol * 100)}%`}
-                  className="w-full accent-gold"
-                />
-              </div>
-
-              {/* Ping sound volume */}
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="ui-text text-[10px] text-[#e8e0d4]/50">ping sound</span>
-                  <span className="ui-text text-[10px] text-gold/60">{Math.round(soundVol * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={soundVol}
-                  onChange={(e) => setSoundVol(parseFloat(e.target.value))}
-                  aria-label={`Ping sound volume: ${Math.round(soundVol * 100)}%`}
-                  className="w-full accent-gold"
-                />
-              </div>
-
-              {/* Pink noise volume */}
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="ui-text text-[10px] text-[#e8e0d4]/50">pink noise</span>
-                  <span className="ui-text text-[10px] text-gold/60">{Math.round(pinkVol * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="0.15"
-                  step="0.01"
-                  value={pinkVol}
-                  onChange={(e) => setPinkVol(parseFloat(e.target.value))}
-                  aria-label={`Pink noise volume: ${Math.round(pinkVol * 100)}%`}
-                  className="w-full accent-gold"
-                />
-              </div>
-
+              <input
+                type="range"
+                min="0.2"
+                max="1.0"
+                step="0.05"
+                value={1.2 - speed}
+                onChange={(e) => setSpeed(1.2 - parseFloat(e.target.value))}
+                aria-label={`Dot speed: ${speedLabel}`}
+                className="w-full accent-gold"
+              />
             </div>
+
+            {/* Binaural Hz */}
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">binaural frequency</span>
+                <span className="ui-text text-[10px] text-gold/60">{binauralLabel}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="40"
+                step="0.1"
+                value={binauralHz}
+                onChange={(e) => setBinauralHz(parseFloat(e.target.value))}
+                aria-label={`Binaural frequency: ${binauralLabel}`}
+                className="w-full accent-gold"
+              />
+              {binauralWarning && (
+                <p className="ui-text text-[9px] text-blue-300/70 mt-1">{binauralWarning}</p>
+              )}
+            </div>
+
+            {/* Drone volume */}
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">binaural volume</span>
+                <span className="ui-text text-[10px] text-gold/60">{Math.round(droneVol * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2"
+                step="0.05"
+                value={droneVol}
+                onChange={(e) => setDroneVol(parseFloat(e.target.value))}
+                aria-label={`Binaural volume: ${Math.round(droneVol * 100)}%`}
+                className="w-full accent-gold"
+              />
+            </div>
+
+            {/* Ping sound volume */}
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">ping sound</span>
+                <span className="ui-text text-[10px] text-gold/60">{Math.round(soundVol * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={soundVol}
+                onChange={(e) => setSoundVol(parseFloat(e.target.value))}
+                aria-label={`Ping sound volume: ${Math.round(soundVol * 100)}%`}
+                className="w-full accent-gold"
+              />
+            </div>
+
+            {/* Pink noise volume */}
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="ui-text text-[10px] text-[#e8e0d4]/50">pink noise</span>
+                <span className="ui-text text-[10px] text-gold/60">{Math.round(pinkVol * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="0.15"
+                step="0.01"
+                value={pinkVol}
+                onChange={(e) => setPinkVol(parseFloat(e.target.value))}
+                aria-label={`Pink noise volume: ${Math.round(pinkVol * 100)}%`}
+                className="w-full accent-gold"
+              />
+            </div>
+
           </div>
-        </motion.div>
-      )}
+        </div>
+      </motion.div>
     </main>
   );
 }
