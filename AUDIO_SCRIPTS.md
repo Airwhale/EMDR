@@ -82,7 +82,7 @@ emdr-butterfly-02.mp3: "Your fingertips should be pointing up toward your neck, 
 emdr-butterfly-03.mp3: "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings..."
 emdr-butterfly-04.mp3: "Keep tapping steadily on your upper chest... each tap light and rhythmic..."
 emdr-butterfly-05.mp3: "Notice any sensations in your body as you tap... just observe them..."
-emdr-butterfly-06.mp3: "Continue tapping for a few more moments... feeling calmer with each tap..."
+emdr-butterfly-06.mp3: "Continue for a few more moments... feeling calmer with each gentle touch..."
 
 emdr-container-01.mp3: "In your mind... imagine a strong container... a box... a vault... anything that locks securely..."
 emdr-container-02.mp3: "Place anything that's been bothering you inside... close the lid firmly..."
