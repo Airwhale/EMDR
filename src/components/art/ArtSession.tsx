@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useCallback, useEffect, useReducer } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNarration } from "@/hooks/useNarration";
+import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
+import { TranceVoice } from "@/lib/TranceVoice";
 import BilateralDot from "../shared/BilateralDot";
 import SudCheck from "../shared/SudCheck";
 import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
 import AdverseEventFlow from "../shared/AdverseEventFlow";
-import { preloadAudioBatch, artAudio } from "@/lib/audioPreloader";
 
 type ArtPhase =
   | "centering"
@@ -42,146 +42,63 @@ export interface ArtSummaryData {
 // Add buffer so user has time to settle — 35s before continue appears
 const ART_SET_DURATION = 35000;
 
-// ── State machine ────────────────────────────────────────────────
-interface ArtState {
-  phase: ArtPhase;
-  round: number;
-  blsActive: boolean;
-  showBlsContinue: boolean;
-  showReady: boolean;
-  readyTarget: ArtPhase | null;
-  showSudRecheck: boolean;
-  showSudFinal: boolean;
-  groundingAttempted: boolean;
-  showAdverseEvent: boolean;
-}
+// Small pause between sequential narration cues (ms)
+const CUE_PAUSE = 600;
+// Minimum time any narration cue stays visible, even if audio is shorter
+const MIN_CUE_DISPLAY = 3000;
 
-type ArtAction =
-  | { type: "GOTO_PHASE"; phase: ArtPhase }
-  | { type: "SUD_INITIAL_RATED"; rating: number }
-  | { type: "GROUNDING_COMPLETE" }
-  | { type: "START_PROCESSING" }
-  | { type: "NARRATION_DONE_SHOW_READY"; target: ArtPhase }
-  | { type: "READY_CONFIRMED" }
-  | { type: "START_BLS" }
-  | { type: "SHOW_BLS_CONTINUE" }
-  | { type: "BLS_CONTINUE"; nextPhase: ArtPhase }
-  | { type: "SHOW_SUD_RECHECK" }
-  | { type: "SUD_RECHECK_RATED"; rating: number }
-  | { type: "SHOW_SUD_FINAL" };
-
-const initialState: ArtState = {
-  phase: "centering",
-  round: 0,
-  blsActive: false,
-  showBlsContinue: false,
-  showReady: false,
-  readyTarget: null,
-  showSudRecheck: false,
-  showSudFinal: false,
-  groundingAttempted: false,
-  showAdverseEvent: false,
-};
-
-function artReducer(state: ArtState, action: ArtAction): ArtState {
-  switch (action.type) {
-    case "GOTO_PHASE":
-      return { ...state, phase: action.phase, showReady: false, readyTarget: null };
-
-    case "SUD_INITIAL_RATED": {
-      const { rating } = action;
-      if (rating > 6) {
-        if (state.groundingAttempted) {
-          if (rating >= 10) return { ...state, showAdverseEvent: true };
-          return { ...state, phase: "post-grounding" };
-        }
-        return { ...state, phase: "grounding" };
-      }
-      return { ...state, round: 1, phase: "processing" };
-    }
-
-    case "GROUNDING_COMPLETE":
-      return { ...state, groundingAttempted: true, phase: "sud-initial" };
-
-    case "START_PROCESSING":
-      return { ...state, round: 1, phase: "processing" };
-
-    case "NARRATION_DONE_SHOW_READY":
-      return { ...state, showReady: true, readyTarget: action.target };
-
-    case "READY_CONFIRMED":
-      if (!state.readyTarget) return state;
-      return { ...state, phase: state.readyTarget, showReady: false, readyTarget: null, showBlsContinue: false };
-
-    case "START_BLS":
-      return { ...state, blsActive: true };
-
-    case "SHOW_BLS_CONTINUE":
-      return { ...state, showBlsContinue: true };
-
-    case "BLS_CONTINUE":
-      return { ...state, blsActive: false, showBlsContinue: false, phase: action.nextPhase };
-
-    case "SHOW_SUD_RECHECK":
-      return { ...state, showSudRecheck: true };
-
-    case "SUD_RECHECK_RATED": {
-      if (action.rating > 2) {
-        return { ...state, showSudRecheck: false, round: state.round + 1, phase: "processing" };
-      }
-      return { ...state, showSudRecheck: false, phase: "body-scan" };
-    }
-
-    case "SHOW_SUD_FINAL":
-      return { ...state, showSudFinal: true };
-
-    default:
-      return state;
-  }
-}
-
-// ── Component ────────────────────────────────────────────────────
 export default function ArtSession({ onComplete, onExit, binauralEnabled = true }: ArtSessionProps) {
-  const { narration, setNarration, say, delay, cancelVoice, audioRef, voiceRef, voiceAvailable } = useNarration({ mode: "art" });
-
-  const [state, dispatch] = useReducer(artReducer, initialState);
-  const { phase, round, blsActive, showBlsContinue, showReady, showSudRecheck, showSudFinal, showAdverseEvent } = state;
-
+  const [phase, setPhase] = useState<ArtPhase>("centering");
+  const [narration, setNarration] = useState<string | null>(null);
   const [sudStart, setSudStart] = useState<number | null>(null);
+  const [round, setRound] = useState(0);
+  const [blsActive, setBlsActive] = useState(false);
+  const [showBlsContinue, setShowBlsContinue] = useState(false);
+  const [showReady, setShowReady] = useState(false);
+  const [readyTarget, setReadyTarget] = useState<ArtPhase | null>(null);
+  const [showSudRecheck, setShowSudRecheck] = useState(false);
+  const [showSudFinal, setShowSudFinal] = useState(false);
+  const [groundingAttempted, setGroundingAttempted] = useState(false);
+  const [showAdverseEvent, setShowAdverseEvent] = useState(false);
+  const [voiceAvailable, setVoiceAvailable] = useState(true);
 
-  // Start audio after hook initializes engine
-  useEffect(() => {
-    audioRef.current?.fadeIn(6, 0.5);
-  }, [audioRef]);
+  const audioRef = useRef<TranceAudioEngine | null>(null);
+  const voiceRef = useRef<TranceVoice | null>(null);
 
   useEffect(() => {
-    if (!audioRef.current) return;
-    if (binauralEnabled) {
-      audioRef.current.fadeIn(2, 0.5);
-    } else {
-      audioRef.current.muteBinaural();
+    const audio = new TranceAudioEngine();
+    audio.init("art");
+    audio.fadeIn(6, 0.5);
+    if (!binauralEnabled) audio.muteBinaural();
+    audioRef.current = audio;
+
+    const voice = new TranceVoice();
+    voice.init();
+    voiceRef.current = voice;
+    setVoiceAvailable(voice.isSupported());
+
+    return () => { audio.stop(); voice.stop(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+  const say = useCallback(async (display: string, file?: string) => {
+    const start = Date.now();
+    setNarration(display);
+    if (voiceRef.current) {
+      if (file) {
+        await voiceRef.current.speakAsync(display, { file });
+      } else {
+        await voiceRef.current.speakAsync(display);
+      }
     }
-  }, [binauralEnabled, audioRef]);
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(CUE_PAUSE, MIN_CUE_DISPLAY - elapsed);
+    await delay(remaining);
+  }, []);
 
-  // Preload the next phase's audio in the background
-  useEffect(() => {
-    const nextAudio: Record<string, readonly string[]> = {
-      centering: artAudio.scene,
-      "scene-select": artAudio.scene,
-      "sud-initial": artAudio.processing,
-      processing: artAudio.sensation,
-      "sensation-check": artAudio.sensation,
-      "sensation-bls": artAudio.vir,
-      "vir-prompt": artAudio.vir,
-      "vir-bls": artAudio.processing, // may loop back
-      "sud-recheck": artAudio.bodyScan,
-      "body-scan": artAudio.closing,
-    };
-    const files = nextAudio[phase];
-    if (files) preloadAudioBatch(files);
-  }, [phase]);
-
-  // ── CENTERING ──
+  // ---- CENTERING ----
   useEffect(() => {
     if (phase !== "centering") return;
     let cancelled = false;
@@ -192,46 +109,75 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
       if (cancelled) return;
       await say("Let your body relax...", "/audio/art/art-centering-02.mp3");
       if (cancelled) return;
-      dispatch({ type: "GOTO_PHASE", phase: "scene-select" });
+      setPhase("scene-select");
     };
     run();
-    return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, delay, cancelVoice]);
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ── SCENE SELECT ──
+  // ---- SCENE SELECT ----
   useEffect(() => {
     if (phase !== "scene-select") return;
     let cancelled = false;
     const run = async () => {
-      await say("Choose a specific moment...", "/audio/art/art-scene-01.mp3");
+      await say(
+        "Choose a specific moment...",
+        "/audio/art/art-scene-01.mp3"
+      );
       if (cancelled) return;
       await delay(3000);
       if (cancelled) return;
-      await say("See it like a movie scene...", "/audio/art/art-scene-02.mp3");
+      await say(
+        "See it like a movie scene...",
+        "/audio/art/art-scene-02.mp3"
+      );
       if (cancelled) return;
       await delay(2000);
       if (cancelled) return;
-      dispatch({ type: "GOTO_PHASE", phase: "sud-initial" });
+      setPhase("sud-initial");
     };
     run();
-    return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, delay, cancelVoice]);
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ── INITIAL SUD ──
+  // ---- INITIAL SUD ----
   const handleSudInitial = useCallback((rating: number) => {
     setSudStart(rating);
     setNarration(null);
-    dispatch({ type: "SUD_INITIAL_RATED", rating });
-  }, [setNarration]);
+    if (rating > 6) {
+      if (groundingAttempted) {
+        if (rating >= 10) {
+          setShowAdverseEvent(true);
+        } else {
+          setPhase("post-grounding");
+        }
+      } else {
+        setPhase("grounding");
+      }
+    } else {
+      setRound(1);
+      setPhase("processing");
+    }
+  }, [groundingAttempted]);
+
+  const handleReady = useCallback(() => {
+    if (readyTarget) {
+      setShowReady(false);
+      setPhase(readyTarget);
+      setReadyTarget(null);
+    }
+  }, [readyTarget]);
 
   const handleGroundingComplete = useCallback(() => {
-    dispatch({ type: "GROUNDING_COMPLETE" });
+    setGroundingAttempted(true);
+    setPhase("sud-initial");
     setSudStart(null);
   }, []);
 
-  // ── PROCESSING ──
+  // ---- PROCESSING ----
   useEffect(() => {
     if (phase !== "processing") return;
+    setShowBlsContinue(false);
 
     const run = async () => {
       if (round > 1) {
@@ -249,34 +195,45 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
         );
         await voiceRef.current?.speakAsync("Keep following...", { file: "/audio/art/art-processing-02.mp3" });
       }
+      // Voice done — now start the dot
       setNarration(null);
-      dispatch({ type: "START_BLS" });
+      setBlsActive(true);
     };
     run();
 
-    const t = setTimeout(() => dispatch({ type: "SHOW_BLS_CONTINUE" }), ART_SET_DURATION);
-    return () => { clearTimeout(t); cancelVoice(); };
-  // round is read inside but we only want to re-run on phase change
+    const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
+    return () => { clearTimeout(t); voiceRef.current?.cancel(); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  // ── SENSATION CHECK ──
+  const handleProcessingContinue = useCallback(() => {
+    setBlsActive(false);
+    setShowBlsContinue(false);
+    setPhase("sensation-check");
+  }, []);
+
+  // ---- SENSATION CHECK ----
   useEffect(() => {
     if (phase !== "sensation-check") return;
     let cancelled = false;
     const run = async () => {
-      await say("Where do you feel it in your body?", "/audio/art/art-sensation-01.mp3");
+      await say(
+        "Where do you feel it in your body?",
+        "/audio/art/art-sensation-01.mp3"
+      );
       if (cancelled) return;
-      dispatch({ type: "NARRATION_DONE_SHOW_READY", target: "sensation-bls" });
+      setShowReady(true);
+      setReadyTarget("sensation-bls");
     };
     run();
-    return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, cancelVoice]);
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ── SENSATION BLS ──
+  // ---- SENSATION BLS ----
   useEffect(() => {
     if (phase !== "sensation-bls") return;
     let cancelled = false;
+    setShowBlsContinue(false);
     setNarration("Follow the dot... let it soften...");
     const run = async () => {
       await voiceRef.current?.speakAsync(
@@ -285,34 +242,48 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
       );
       if (cancelled) return;
       setNarration(null);
-      dispatch({ type: "START_BLS" });
+      setBlsActive(true);
     };
     run();
-    const t = setTimeout(() => dispatch({ type: "SHOW_BLS_CONTINUE" }), ART_SET_DURATION);
-    return () => { cancelled = true; clearTimeout(t); cancelVoice(); };
-  }, [phase, setNarration, cancelVoice, voiceRef]);
+    const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
+  }, [phase]);
 
-  // ── VOLUNTARY IMAGE REPLACEMENT prompt ──
+  const handleSensationContinue = useCallback(() => {
+    setBlsActive(false);
+    setShowBlsContinue(false);
+    setPhase("vir-prompt");
+  }, []);
+
+  // ---- VOLUNTARY IMAGE REPLACEMENT prompt ----
   useEffect(() => {
     if (phase !== "vir-prompt") return;
     let cancelled = false;
     const run = async () => {
-      await say("Create a new version of this moment...", "/audio/art/art-vir-01.mp3");
+      await say(
+        "Create a new version of this moment...",
+        "/audio/art/art-vir-01.mp3"
+      );
       if (cancelled) return;
       await delay(2500);
       if (cancelled) return;
-      await say("Change what happens... make it yours...", "/audio/art/art-vir-02.mp3");
+      await say(
+        "Change what happens... make it yours...",
+        "/audio/art/art-vir-02.mp3"
+      );
       if (cancelled) return;
-      dispatch({ type: "NARRATION_DONE_SHOW_READY", target: "vir-bls" });
+      setShowReady(true);
+      setReadyTarget("vir-bls");
     };
     run();
-    return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, delay, cancelVoice]);
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ── VIR BLS ──
+  // ---- VIR BLS ----
   useEffect(() => {
     if (phase !== "vir-bls") return;
     let cancelled = false;
+    setShowBlsContinue(false);
     setNarration("Hold the new scene... follow the dot...");
     const run = async () => {
       await voiceRef.current?.speakAsync(
@@ -321,20 +292,36 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
       );
       if (cancelled) return;
       setNarration(null);
-      dispatch({ type: "START_BLS" });
+      setBlsActive(true);
     };
     run();
-    const t = setTimeout(() => dispatch({ type: "SHOW_BLS_CONTINUE" }), ART_SET_DURATION);
-    return () => { cancelled = true; clearTimeout(t); cancelVoice(); };
-  }, [phase, setNarration, cancelVoice, voiceRef]);
-
-  // ── SUD RECHECK ──
-  useEffect(() => {
-    if (phase !== "sud-recheck") return;
-    dispatch({ type: "SHOW_SUD_RECHECK" });
+    const t = setTimeout(() => setShowBlsContinue(true), ART_SET_DURATION);
+    return () => { cancelled = true; clearTimeout(t); voiceRef.current?.cancel(); };
   }, [phase]);
 
-  // ── BODY SCAN ──
+  const handleVirContinue = useCallback(() => {
+    setBlsActive(false);
+    setShowBlsContinue(false);
+    setPhase("sud-recheck");
+  }, []);
+
+  // ---- SUD RECHECK ----
+  useEffect(() => {
+    if (phase !== "sud-recheck") return;
+    setShowSudRecheck(true);
+  }, [phase]);
+
+  const handleSudRecheck = useCallback((rating: number) => {
+    setShowSudRecheck(false);
+    if (rating > 2) {
+      setRound((r) => r + 1);
+      setPhase("processing");
+    } else {
+      setPhase("body-scan");
+    }
+  }, []);
+
+  // ---- BODY SCAN ----
   useEffect(() => {
     if (phase !== "body-scan") return;
     let cancelled = false;
@@ -343,35 +330,40 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
       if (cancelled) return;
       await say("Observe without judgment...", "/audio/art/art-bodyscan-02.mp3");
       if (cancelled) return;
-      dispatch({ type: "GOTO_PHASE", phase: "closing" });
+      setPhase("closing");
     };
     run();
-    return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, cancelVoice]);
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
-  // ── CLOSING ──
+  // ---- CLOSING ----
   useEffect(() => {
     if (phase !== "closing") return;
     let cancelled = false;
     const run = async () => {
-      await say("Think back to the original memory...", "/audio/art/art-closing-01.mp3");
+      await say(
+        "Think back to the original memory...",
+        "/audio/art/art-closing-01.mp3"
+      );
       if (cancelled) return;
-      dispatch({ type: "SHOW_SUD_FINAL" });
+      setShowSudFinal(true);
     };
     run();
-    return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, cancelVoice]);
+    return () => { cancelled = true; voiceRef.current?.cancel(); };
+  }, [phase, say]);
 
   const handleSudFinal = useCallback((rating: number) => {
     audioRef.current?.fadeOut(8);
     onComplete({ sudStart, sudEnd: rating, rounds: round });
-  }, [sudStart, round, onComplete, audioRef]);
+  }, [sudStart, round, onComplete]);
 
-  const blsContinueHandler = useCallback(() => {
-    if (phase === "processing") dispatch({ type: "BLS_CONTINUE", nextPhase: "sensation-check" });
-    else if (phase === "sensation-bls") dispatch({ type: "BLS_CONTINUE", nextPhase: "vir-prompt" });
-    else if (phase === "vir-bls") dispatch({ type: "BLS_CONTINUE", nextPhase: "sud-recheck" });
-  }, [phase]);
+  const blsContinueHandler =
+    phase === "processing" ? handleProcessingContinue
+    : phase === "sensation-bls" ? handleSensationContinue
+    : phase === "vir-bls" ? handleVirContinue
+    : undefined;
+
+  const isBls = blsActive;
 
   if (showAdverseEvent) {
     return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
@@ -379,7 +371,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {blsActive && (
+      {isBls && (
         <div className="absolute top-[30%] w-full">
           <BilateralDot
             halfCycleSec={0.35}
@@ -427,7 +419,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
             </p>
             <div className="flex gap-4">
               <button
-                onClick={() => dispatch({ type: "START_PROCESSING" })}
+                onClick={() => { setRound(1); setPhase("processing"); }}
                 className="px-6 py-3 border border-gold/45 rounded-full text-gold/85
                            hover:border-gold/75 hover:text-gold transition-all duration-700 ui-text"
               >
@@ -455,7 +447,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
           </motion.div>
         )}
 
-        {narration && !showSudRecheck && !showSudFinal && !blsActive && (
+        {narration && !showSudRecheck && !showSudFinal && !isBls && (
           <motion.div key={`art-narr-${phase}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.2 }}
             className="flex flex-col items-center gap-6">
             <NarrationDisplay text={narration} size="large" />
@@ -464,7 +456,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
-                onClick={() => dispatch({ type: "READY_CONFIRMED" })}
+                onClick={handleReady}
                 className="px-8 py-3 border border-gold/40 rounded-full text-gold/80
                            hover:border-gold/70 hover:text-gold hover:bg-gold/5
                            transition-all duration-500 ui-text"
@@ -477,7 +469,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
 
         {showSudRecheck && (
           <motion.div key="art-sud-re" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-            <SudCheck prompt="What's the number now?" onRate={(rating) => dispatch({ type: "SUD_RECHECK_RATED", rating })} />
+            <SudCheck prompt="What's the number now?" onRate={handleSudRecheck} />
           </motion.div>
         )}
 

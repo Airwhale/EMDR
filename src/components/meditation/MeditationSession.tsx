@@ -100,6 +100,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
   useEffect(() => {
     const audio = new TranceAudioEngine();
     audio.init("trance");
+    if (!binauralEnabled) audio.muteBinaural();
     audioRef.current = audio;
 
     if (silent) {
@@ -121,15 +122,6 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     return () => { audio.stop(); voice.stop(); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    if (binauralEnabled) {
-      audioRef.current.fadeIn(2, 0.5);
-    } else {
-      audioRef.current.muteBinaural();
-    }
-  }, [binauralEnabled]);
 
   // Elapsed time tracker
   useEffect(() => {

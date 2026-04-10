@@ -17,8 +17,6 @@ export default function NarrationDisplay({
     <div
       className="flex items-center justify-center px-8 w-full"
       style={{ minHeight: 80 }}
-      aria-live="polite"
-      aria-atomic="true"
     >
       <AnimatePresence mode="wait">
         {text && (
