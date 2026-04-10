@@ -201,11 +201,11 @@ test('PhoticFlicker respects prefers-reduced-motion', () => {
 
 test('globals.css has :focus-visible outline for keyboard users', () => {
   assert.match(css, /:focus-visible\s*\{/);
-  assert.match(css, /outline:\s*1px solid/);
+  assert.match(css, /outline:\s*2px solid/);
 });
 
 test('SUD buttons have focus ring styles', () => {
-  assert.match(sudCheck, /focus-visible:outline-none focus-visible:ring-1/);
+  assert.match(sudCheck, /focus:outline-none focus:ring-2/);
 });
 
 // =====================================================================
