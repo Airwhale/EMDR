@@ -82,7 +82,7 @@ export default function SudCheck({
                        focus:outline-none focus:ring-2 focus:ring-gold/50
                        transition-all duration-300 flex items-center justify-center
                        ${i === selected
-                         ? "border-gold/80 text-gold bg-gold/10"
+                         ? "border-gold/50 text-gold/80 bg-gold/5"
                          : "border-gold/35 text-gold/75 hover:border-gold/70 hover:text-gold hover:bg-gold/5"
                        }`}
           >
