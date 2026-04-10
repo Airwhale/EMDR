@@ -206,12 +206,12 @@ export default function App() {
                 experience.
               </motion.p>
 
-              {showReady && (
               <motion.div
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: showReady ? 1 : 0 }}
                 transition={{ duration: 0.8 }}
                 className="flex flex-col items-center gap-5"
+                style={{ pointerEvents: showReady ? "auto" : "none" }}
               >
                 <div className="flex gap-4 items-center">
                   <button
@@ -241,7 +241,6 @@ export default function App() {
                       document.documentElement.requestFullscreen().catch(() => {});
                     }
                   }}
-                  aria-label="Toggle full screen mode"
                   className="px-5 py-2 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/40
                              hover:border-[#e8e0d4]/40 hover:text-[#e8e0d4]/70
                              transition-all duration-700 ui-text text-[10px]"
@@ -249,12 +248,11 @@ export default function App() {
                   full screen
                 </button>
               </motion.div>
-              )}
 
-              {showReady && !audioSupported && (
+              {!audioSupported && (
                 <motion.div
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  animate={{ opacity: showReady ? 1 : 0 }}
                   transition={{ duration: 0.8 }}
                   className="text-xs text-[#e8e0d4]/60 text-center max-w-sm border border-[#e8e0d4]/20 rounded-xl px-4 py-3"
                   role="alert"
@@ -264,21 +262,19 @@ export default function App() {
                 </motion.div>
               )}
 
-              {showReady && (
               <motion.p
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: showReady ? 1 : 0 }}
                 transition={{ duration: 0.8 }}
                 className="text-[10px] text-[#e8e0d4]/25 font-light text-center max-w-sm leading-relaxed"
               >
                 This experience draws on select techniques from EMDR and ART.
                 The full clinical therapies are far more comprehensive and are designed
                 to be guided by a trained professional. Find a certified EMDR therapist at{" "}
-                <a href="https://www.emdria.org/find-an-emdr-therapist/" target="_blank" rel="noopener noreferrer" aria-label="EMDRIA - find an EMDR therapist (opens in new tab)" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdria.org</a>
+                <a href="https://www.emdria.org/find-an-emdr-therapist/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdria.org</a>
                 {" "}or connect with pro bono EMDR therapists through{" "}
-                <a href="https://www.emdrhap.org/" target="_blank" rel="noopener noreferrer" aria-label="EMDR HAP - pro bono EMDR therapy (opens in new tab)" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdrhap.org</a>
+                <a href="https://www.emdrhap.org/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdrhap.org</a>
               </motion.p>
-              )}
             </div>
           </motion.main>
         )}
