@@ -79,7 +79,7 @@ export default function SudCheck({
             aria-label={`${i} — ${sudLabels[i]}`}
             aria-pressed={i === selected}
             className={`w-[28px] h-[28px] sm:w-10 sm:h-10 rounded-full border text-xs sm:text-sm
-                       focus:outline-none focus:ring-1 focus:ring-gold/30
+                       focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold/30
                        transition-all duration-300 flex items-center justify-center
                        ${i === selected
                          ? "border-gold/50 text-gold/80 bg-gold/5"
