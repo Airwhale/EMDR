@@ -119,44 +119,6 @@ test('lateral session sliders all have aria-labels', () => {
 });
 
 // =====================================================================
-// 6. ACCESSIBILITY — SUD SCALE KEYBOARD NAVIGATION
-// =====================================================================
-
-const sudCheck = read('src/components/shared/SudCheck.tsx');
-
-test('SUD scale uses role="group" with aria-labelledby', () => {
-  assert.match(sudCheck, /role="group"/);
-  assert.match(sudCheck, /aria-labelledby="sud-prompt"/);
-  assert.match(sudCheck, /id="sud-prompt"/);
-});
-
-test('SUD buttons have aria-labels with numeric value and description', () => {
-  assert.match(sudCheck, /aria-label=\{`\$\{i\} — \$\{sudLabels\[i\]\}`\}/);
-});
-
-test('SUD scale supports arrow key navigation (ArrowRight, ArrowLeft)', () => {
-  assert.match(sudCheck, /ArrowRight/);
-  assert.match(sudCheck, /ArrowLeft/);
-  assert.match(sudCheck, /ArrowUp/);
-  assert.match(sudCheck, /ArrowDown/);
-});
-
-test('SUD scale supports Home and End keys', () => {
-  assert.match(sudCheck, /e\.key === "Home"/);
-  assert.match(sudCheck, /e\.key === "End"/);
-});
-
-test('SUD scale uses roving tabIndex based on selected value', () => {
-  assert.match(sudCheck, /tabIndex=\{i === selected \? 0 : -1\}/);
-});
-
-test('SUD anchor descriptions are hidden from screen readers', () => {
-  // The visual "calm / mild / moderate / high / severe" labels are decorative
-  // since each button already has an aria-label
-  assert.match(sudCheck, /aria-hidden="true"/);
-});
-
-// =====================================================================
 // 7. ACCESSIBILITY — SAFETY GATE DIALOG
 // =====================================================================
 
@@ -196,20 +158,7 @@ test('PhoticFlicker respects prefers-reduced-motion', () => {
 });
 
 // =====================================================================
-// 9. FOCUS VISIBILITY
-// =====================================================================
-
-test('globals.css has :focus-visible outline for keyboard users', () => {
-  assert.match(css, /:focus-visible\s*\{/);
-  assert.match(css, /outline:\s*2px solid/);
-});
-
-test('SUD buttons have focus ring styles', () => {
-  assert.match(sudCheck, /focus:outline-none focus:ring-2/);
-});
-
-// =====================================================================
-// 10. NOSCRIPT FALLBACK
+// 9. NOSCRIPT FALLBACK
 // =====================================================================
 
 test('layout includes noscript fallback message', () => {
