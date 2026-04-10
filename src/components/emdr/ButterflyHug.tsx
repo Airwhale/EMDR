@@ -18,7 +18,7 @@ const cues = [
   { text: "Now gently tap with your fingertips — alternating left, right, left, right — like a butterfly's wings...", file: "/audio/emdr/emdr-butterfly-03.mp3" },
   { text: "Keep tapping steadily on your upper chest... each tap light and rhythmic...", file: "/audio/emdr/emdr-butterfly-04.mp3" },
   { text: "Notice any sensations in your body as you tap... just observe them...", file: "/audio/emdr/emdr-butterfly-05.mp3" },
-  { text: "Continue for a few more moments... feeling calmer with each gentle touch...", file: "/audio/emdr/emdr-butterfly-06.mp3" },
+  { text: "Continue tapping for a few more moments... feeling calmer with each tap...", file: "/audio/emdr/emdr-butterfly-06.mp3" },
 ];
 
 export default function ButterflyHug({ voice, audio, onComplete }: ButterflyHugProps) {
