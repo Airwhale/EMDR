@@ -1,5 +1,5 @@
 // Service Worker for EMDR / ART Self-Administered Experience
-const CACHE_NAME = "emdr-v1";
+const CACHE_NAME = "emdr-v2";
 
 // Minimal app shell to precache on install.
 // Audio files are cached on-demand (there are 140+), not at install time.
@@ -40,35 +40,11 @@ self.addEventListener("fetch", (event) => {
   // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // Audio files: cache-first (they never change)
-  if (url.pathname.startsWith("/audio/")) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-
-  // Everything else (navigations, JS, CSS, images): network-first
+  // All same-origin requests: network-first with cache fallback
   event.respondWith(networkFirst(request));
 });
 
-// --- Strategy: cache-first (audio) ---
-async function cacheFirst(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    // Audio unavailable offline and not yet cached
-    return new Response(null, { status: 503, statusText: "Service Unavailable" });
-  }
-}
-
-// --- Strategy: network-first (pages & assets) ---
+// --- Strategy: network-first with cache fallback ---
 async function networkFirst(request) {
   try {
     const response = await fetch(request);
