@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useState, useEffect } from "react";
+import { useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 
 interface SudCheckProps {
@@ -20,18 +20,6 @@ export default function SudCheck({
 }: SudCheckProps) {
   const [selected, setSelected] = useState<number>(5);
   const groupRef = useRef<HTMLDivElement>(null);
-
-  // Auto-focus the pre-selected button so arrow keys work immediately.
-  // Small delay lets the Framer Motion fade-in begin first.
-  useEffect(() => {
-    const t = setTimeout(() => {
-      const buttons = groupRef.current?.querySelectorAll<HTMLButtonElement>("button");
-      buttons?.[selected]?.focus();
-    }, 100);
-    return () => clearTimeout(t);
-  // Only on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number) => {
     let next = index;
