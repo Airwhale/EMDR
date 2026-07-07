@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     locale: "en_US",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "EMDR / ART Self-Administered Experience",
     description:
       "Guided EMDR, ART, and hypnotic meditation using bilateral stimulation, binaural tones, and evidence-based techniques. Free, private, runs entirely in your browser.",

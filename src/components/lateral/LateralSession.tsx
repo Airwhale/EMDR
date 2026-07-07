@@ -5,12 +5,16 @@ import { motion } from "framer-motion";
 import { TranceAudioEngine } from "@/lib/TranceAudioEngine";
 import BilateralDot from "@/components/shared/BilateralDot";
 import Vignette from "@/components/Vignette";
+import { useWakeLock } from "@/lib/useWakeLock";
 
 interface LateralSessionProps {
   onExit: () => void;
 }
 
 export default function LateralSession({ onExit }: LateralSessionProps) {
+  // Keep the screen awake — sessions are long and touch-free
+  useWakeLock();
+
   const [speed, setSpeed] = useState(0.5);       // half-cycle seconds (0.2 = fast, 1.0 = slow)
   const [soundVol, setSoundVol] = useState(0.25);  // 0-1 ping volume
   const [binauralHz, setBinauralHz] = useState(4); // 0 = off, 1-12 Hz

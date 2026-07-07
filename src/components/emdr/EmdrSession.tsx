@@ -10,6 +10,7 @@ import NarrationDisplay from "../NarrationDisplay";
 import AdverseEventFlow from "../shared/AdverseEventFlow";
 import ButterflyHug from "./ButterflyHug";
 import { preloadAudioBatch, emdrAudio } from "@/lib/audioPreloader";
+import { useWakeLock } from "@/lib/useWakeLock";
 
 type EmdrPhase =
   | "centering"
@@ -125,6 +126,9 @@ function emdrReducer(state: EmdrState, action: EmdrAction): EmdrState {
 
 // ── Component ────────────────────────────────────────────────────
 export default function EmdrSession({ onComplete, onExit, binauralEnabled = true }: EmdrSessionProps) {
+  // Keep the screen awake — sessions are long and touch-free
+  useWakeLock();
+
   const { narration, setNarration, say, delay, cancelVoice, audioRef, voiceRef, voiceAvailable } = useNarration({ mode: "emdr" });
 
   const [state, dispatch] = useReducer(emdrReducer, initialState);

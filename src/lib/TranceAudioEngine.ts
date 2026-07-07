@@ -64,6 +64,7 @@ export class TranceAudioEngine {
   private binauralBeat = 4;
   private mode: AudioMode = "trance";
   private resumeHandler: (() => void) | null = null;
+  private visibilityHandler: (() => void) | null = null;
 
   getContext(): AudioContext | null {
     return this.ctx;
@@ -110,6 +111,18 @@ export class TranceAudioEngine {
       };
       document.addEventListener("touchstart", this.resumeHandler, { once: true });
       document.addEventListener("click", this.resumeHandler, { once: true });
+    }
+
+    // Mobile browsers (especially iOS Safari) suspend the context when the
+    // tab is hidden or the screen locks, and don't reliably resume it.
+    // Resume whenever the tab becomes visible again.
+    if (typeof document !== "undefined") {
+      this.visibilityHandler = () => {
+        if (document.visibilityState === "visible" && this.ctx?.state === "suspended") {
+          this.ctx.resume().catch(() => {});
+        }
+      };
+      document.addEventListener("visibilitychange", this.visibilityHandler);
     }
 
     this.setupBinauralDrone();
@@ -547,6 +560,10 @@ export class TranceAudioEngine {
       document.removeEventListener("touchstart", this.resumeHandler);
       document.removeEventListener("click", this.resumeHandler);
       this.resumeHandler = null;
+    }
+    if (this.visibilityHandler) {
+      document.removeEventListener("visibilitychange", this.visibilityHandler);
+      this.visibilityHandler = null;
     }
     this.fadeOut(3);
     setTimeout(() => {

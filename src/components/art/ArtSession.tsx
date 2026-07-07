@@ -9,6 +9,7 @@ import GroundingExercise from "../shared/GroundingExercise";
 import NarrationDisplay from "../NarrationDisplay";
 import AdverseEventFlow from "../shared/AdverseEventFlow";
 import { preloadAudioBatch, artAudio } from "@/lib/audioPreloader";
+import { useWakeLock } from "@/lib/useWakeLock";
 
 type ArtPhase =
   | "centering"
@@ -142,6 +143,9 @@ function artReducer(state: ArtState, action: ArtAction): ArtState {
 
 // ── Component ────────────────────────────────────────────────────
 export default function ArtSession({ onComplete, onExit, binauralEnabled = true }: ArtSessionProps) {
+  // Keep the screen awake — sessions are long and touch-free
+  useWakeLock();
+
   const { narration, setNarration, say, delay, cancelVoice, audioRef, voiceRef, voiceAvailable } = useNarration({ mode: "art" });
 
   const [state, dispatch] = useReducer(artReducer, initialState);

@@ -187,6 +187,15 @@ export default function SessionEndSummary({
             {" "}or connect with pro bono EMDR therapists through{" "}
             <a href="https://www.emdrhap.org/" target="_blank" rel="noopener noreferrer" className="text-gold/40 hover:text-gold/70 transition-colors duration-300">emdrhap.org</a>
           </p>
+          <p className="mt-3 text-[#e8e0d4]/20">
+            Thoughts on this experience?{" "}
+            <a
+              href="mailto:shauncgeer@gmail.com?subject=EMDR%20%2F%20ART%20experience%20feedback"
+              className="text-gold/40 hover:text-gold/70 transition-colors duration-300"
+            >
+              Send feedback
+            </a>
+          </p>
         </motion.div>
 
         <motion.div

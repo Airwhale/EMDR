@@ -25,7 +25,7 @@ test('layout exports openGraph metadata with title, description, and type', () =
 
 test('layout exports twitter card metadata', () => {
   assert.match(layout, /twitter:\s*\{/);
-  assert.match(layout, /card:\s*"summary"/);
+  assert.match(layout, /card:\s*"summary_large_image"/);
 });
 
 test('layout has metadataBase for absolute URL resolution', () => {

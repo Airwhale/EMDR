@@ -13,6 +13,7 @@ import HypnoticSpiral from "@/components/HypnoticSpiral";
 import PhoticFlicker from "@/components/PhoticFlicker";
 import Vignette from "@/components/Vignette";
 import Staircase from "@/components/Staircase";
+import { useWakeLock } from "@/lib/useWakeLock";
 
 type MedPhase = "centering" | "fixation" | "deepening" | "staircase" | "sustain" | "emergence" | "complete";
 
@@ -83,6 +84,9 @@ const emergenceCues: NarrationCue[] = [
 ];
 
 export default function MeditationSession({ onComplete, onExit, silent = false, binauralEnabled = true, flickerEnabled = false }: MeditationSessionProps) {
+  // Keep the screen awake — sessions are long and touch-free
+  useWakeLock();
+
   const [phase, setPhase] = useState<MedPhase>(silent ? "sustain" : "centering");
   const [currentNarration, setCurrentNarration] = useState<string | null>(null);
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
