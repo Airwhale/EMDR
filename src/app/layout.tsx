@@ -1,6 +1,24 @@
 import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+
+// Self-hosted via next/font: fonts are bundled at build time and served
+// from our own origin — no runtime requests to Google (privacy claim in
+// the README depends on this).
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hypno1-amber.vercel.app";
 
@@ -20,6 +38,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "EMDR / ART Self-Administered Experience",
@@ -45,7 +64,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="bg-trance-dark text-foreground min-h-screen">
         <noscript>
           <div style={{ padding: "2rem", textAlign: "center", color: "#e8e0d4" }}>
