@@ -98,15 +98,15 @@ describe('SUD gating logic', () => {
 
   // ---- threshold values ----
 
-  it('EMDR outer threshold is 6 (rating > 6 triggers grounding path)', () => {
-    assert.equal(emdrGating.outerThreshold, 6);
+  it('EMDR outer threshold is 5 (rating > 5 triggers grounding path, per README)', () => {
+    assert.equal(emdrGating.outerThreshold, 5);
   });
 
   it('EMDR adverse-event threshold is 10 (rating >= 10)', () => {
     assert.equal(emdrGating.adverseThreshold, 10);
   });
 
-  it('ART outer threshold matches EMDR (both use > 6)', () => {
+  it('ART outer threshold matches EMDR (both use > 5)', () => {
     assert.equal(artGating.outerThreshold, emdrGating.outerThreshold);
   });
 
@@ -144,26 +144,26 @@ describe('SUD gating logic', () => {
     return src.slice(fnIdx, fnIdx + 600);
   }
 
-  it('EMDR proceeds to centering when SUD <= 6', () => {
+  it('EMDR proceeds to centering when SUD <= 5', () => {
     const block = findSudBlock(emdrSrc, 'handleSudStart');
     // In reducer: phase: "centering"
     assert.ok(block.includes('"centering"'),
-      'SUD <= 6 should proceed to centering phase');
+      'SUD <= 5 should proceed to centering phase');
     const elseIdx = block.lastIndexOf('return {');
     const centeringIdx = block.lastIndexOf('"centering"');
     assert.ok(centeringIdx > 0,
       'centering should appear in the SUD gating block');
   });
 
-  it('ART proceeds to processing when SUD <= 6', () => {
+  it('ART proceeds to processing when SUD <= 5', () => {
     const block = findSudBlock(artSrc, 'handleSudInitial');
     assert.ok(block.includes('"processing"'),
-      'SUD <= 6 should proceed to processing phase');
+      'SUD <= 5 should proceed to processing phase');
   });
 
-  // ---- SUD 7-9 without grounding triggers grounding ----
+  // ---- SUD 6-9 without grounding triggers grounding ----
 
-  it('EMDR: SUD 7-9 without prior grounding goes to grounding phase', () => {
+  it('EMDR: SUD 6-9 without prior grounding goes to grounding phase', () => {
     const block = findSudBlock(emdrSrc, 'handleSudStart');
     const gaIdx = block.indexOf('groundingAttempted');
     const groundingIdx = block.indexOf('"grounding"');
@@ -171,9 +171,9 @@ describe('SUD gating logic', () => {
       'grounding phase should appear after groundingAttempted check');
   });
 
-  // ---- SUD 7-9 after grounding goes to post-grounding ----
+  // ---- SUD 6-9 after grounding goes to post-grounding ----
 
-  it('EMDR: SUD 7-9 after grounding attempted goes to post-grounding', () => {
+  it('EMDR: SUD 6-9 after grounding attempted goes to post-grounding', () => {
     const block = findSudBlock(emdrSrc, 'handleSudStart');
     const pgIdx = block.indexOf('"post-grounding"');
     const gaIdx = block.indexOf('groundingAttempted');
@@ -181,9 +181,9 @@ describe('SUD gating logic', () => {
       'post-grounding should be inside groundingAttempted check');
   });
 
-  // ---- SUD 10 after grounding triggers adverse event ----
+  // ---- SUD 10 triggers adverse event immediately ----
 
-  it('EMDR: SUD 10 after grounding triggers adverse event', () => {
+  it('EMDR: SUD 10 triggers adverse event', () => {
     const block = findSudBlock(emdrSrc, 'handleSudStart');
     const aeIdx = block.indexOf('showAdverseEvent');
     const ratingCheck = block.indexOf('rating >= 10') !== -1
@@ -194,7 +194,7 @@ describe('SUD gating logic', () => {
       'adverse event should follow the rating >= 10 check');
   });
 
-  it('ART: SUD 10 after grounding triggers adverse event', () => {
+  it('ART: SUD 10 triggers adverse event', () => {
     const block = findSudBlock(artSrc, 'handleSudInitial');
     const aeIdx = block.indexOf('showAdverseEvent');
     const ratingCheck = block.indexOf('rating >= 10') !== -1

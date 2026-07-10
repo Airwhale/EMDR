@@ -28,8 +28,20 @@ const END_SUMMARY_HISTORY_KEY = "trance.endSummary.history.v1";
 const TRANCE_PREFS_KEY = "trance.user.prefs.v1";
 const SAFETY_ACK_KEY = "trance.safety.ack.v1";
 
+// Even reading window.localStorage throws SecurityError when the browser
+// blocks site data (Chrome "block all cookies", Firefox storage off, locked
+// WebViews) — probe once inside try/catch and cache the answer.
+let storageOk: boolean | null = null;
 function hasStorage(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  if (storageOk !== null) return storageOk;
+  try {
+    if (typeof window === "undefined") return false; // SSR — don't cache
+    window.localStorage.getItem("__storage_probe__");
+    storageOk = true;
+  } catch {
+    storageOk = false;
+  }
+  return storageOk;
 }
 
 export function loadAppSnapshot(): AppSnapshot | null {

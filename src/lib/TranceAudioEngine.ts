@@ -7,9 +7,17 @@
 
 export type AudioMode = "trance" | "emdr" | "art";
 
-/** Cancel in-flight automation without a value jump. */
+/** Cancel in-flight automation without a value jump.
+ *  Firefox has never implemented cancelAndHoldAtTime (bugzil.la/1308431),
+ *  so fall back to pinning the current interpolated value before ramping. */
 function smoothCancel(param: AudioParam, now: number): void {
-  param.cancelAndHoldAtTime(now);
+  if (typeof param.cancelAndHoldAtTime === "function") {
+    param.cancelAndHoldAtTime(now);
+  } else {
+    const current = param.value;
+    param.cancelScheduledValues(now);
+    param.setValueAtTime(current, now);
+  }
 }
 
 export class TranceAudioEngine {

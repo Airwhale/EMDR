@@ -81,11 +81,11 @@ function emdrReducer(state: EmdrState, action: EmdrAction): EmdrState {
 
     case "SUD_RATED": {
       const { rating } = action;
-      if (rating > 6) {
-        if (state.groundingAttempted) {
-          if (rating >= 10) return { ...state, showAdverseEvent: true };
-          return { ...state, phase: "post-grounding" };
-        }
+      // Maximum distress goes straight to the adverse event protocol —
+      // never into an ordinary grounding loop
+      if (rating >= 10) return { ...state, showAdverseEvent: true };
+      if (rating > 5) {
+        if (state.groundingAttempted) return { ...state, phase: "post-grounding" };
         return { ...state, phase: "grounding" };
       }
       return { ...state, phase: "centering" };
@@ -371,6 +371,13 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
     else if (phase === "resource-bls") dispatch({ type: "BLS_CONTINUE", exercise: "Resource Installation", nextPhase: "body-scan" });
   }, [phase]);
 
+  // The adverse-event protocol takes over the screen — fade out the
+  // binaural/pink-noise bed so it doesn't keep droning under the crisis
+  // resources. (The voice object stays alive; the flow narrates with it.)
+  useEffect(() => {
+    if (showAdverseEvent) audioRef.current?.stop();
+  }, [showAdverseEvent]);
+
   if (showAdverseEvent) {
     return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
   }
@@ -450,6 +457,11 @@ export default function EmdrSession({ onComplete, onExit, binauralEnabled = true
                 Exit
               </button>
             </div>
+            <p className="text-[11px] text-[#e8e0d4]/35 font-light leading-relaxed max-w-xs">
+              If you&apos;re feeling overwhelmed, support is available anytime: call or text{" "}
+              <span className="text-gold/60">988</span>, or text{" "}
+              <span className="text-gold/60">HOME</span> to <span className="text-gold/60">741741</span>.
+            </p>
           </motion.div>
         )}
 

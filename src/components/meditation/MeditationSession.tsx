@@ -371,25 +371,31 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       }, 920000),  // ~15 min 20s (just after the 15min binaural shift)
     ];
 
+    // Every generation of the self-rescheduling cue loop registers its
+    // timers here, so cleanup can stop the loop no matter how many cycles
+    // deep it is. (Capturing only the first call's return value leaks all
+    // later timers — narration would keep playing after the user exits.)
+    const cueTimers = new Set<ReturnType<typeof setTimeout>>();
+    let stopped = false;
+
     const runNextCue = () => {
+      if (stopped) return;
       const idx = sustainIndexRef.current % sustainCues.length;
       const cue = sustainCues[idx];
       sustainIndexRef.current++;
 
-      const showTimer = setTimeout(() => {
+      cueTimers.add(setTimeout(() => {
         if (!silent) {
           setCurrentNarration(cue.text);
           speakNarration(cue.text, cue.spoken, cue.file);
         }
-      }, cue.delay);
+      }, cue.delay));
 
-      const hideTimer = setTimeout(() => {
+      cueTimers.add(setTimeout(() => {
         if (!silent) setCurrentNarration(null);
-      }, cue.delay + cue.duration);
+      }, cue.delay + cue.duration));
 
-      const nextTimer = setTimeout(runNextCue, cue.delay + cue.duration + 2000);
-
-      return [showTimer, hideTimer, nextTimer];
+      cueTimers.add(setTimeout(runNextCue, cue.delay + cue.duration + 2000));
     };
 
     // 2-hour session cap — auto-emerge
@@ -397,9 +403,10 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       setPhase("emergence");
     }, 7200000); // 2 hours
 
-    const timers = runNextCue();
+    runNextCue();
     return () => {
-      timers.forEach(clearTimeout);
+      stopped = true;
+      cueTimers.forEach(clearTimeout);
       binauralTimers.forEach(clearTimeout);
       anchoringTimers.forEach(clearTimeout);
       clearTimeout(sessionCapTimer);
