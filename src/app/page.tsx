@@ -44,10 +44,25 @@ export default function App() {
     return !!(window.AudioContext || (window as unknown as Record<string, unknown>).webkitAudioContext);
   }, []);
 
+  // iPhone Safari has no element fullscreen API — hide the button there.
+  // (Entry UI only renders post-hydration, so no SSR mismatch.)
+  const fullscreenSupported = useMemo(() => {
+    if (typeof document === "undefined") return false;
+    return typeof document.documentElement.requestFullscreen === "function";
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const shouldReturnSummary = params.get("return") === "summary";
+
+    // Consume the param so a later reload in this tab doesn't resurrect
+    // a stale "Session Complete" screen
+    if (shouldReturnSummary) {
+      params.delete("return");
+      const rest = params.toString();
+      window.history.replaceState(null, "", window.location.pathname + (rest ? `?${rest}` : ""));
+    }
 
     if (shouldReturnSummary) {
       const latestSummary = loadLatestEndSummary();
@@ -233,20 +248,22 @@ export default function App() {
                     What is this?
                   </button>
                 </div>
-                <button
-                  onClick={() => {
-                    if (document.fullscreenElement) {
-                      document.exitFullscreen();
-                    } else {
-                      document.documentElement.requestFullscreen().catch(() => {});
-                    }
-                  }}
-                  className="px-5 py-2 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/40
-                             hover:border-[#e8e0d4]/40 hover:text-[#e8e0d4]/70
-                             transition-all duration-700 ui-text text-[10px]"
-                >
-                  full screen
-                </button>
+                {fullscreenSupported && (
+                  <button
+                    onClick={() => {
+                      if (document.fullscreenElement) {
+                        document.exitFullscreen?.().catch(() => {});
+                      } else {
+                        document.documentElement.requestFullscreen?.()?.catch(() => {});
+                      }
+                    }}
+                    className="px-5 py-2 border border-[#e8e0d4]/20 rounded-full text-[#e8e0d4]/40
+                               hover:border-[#e8e0d4]/40 hover:text-[#e8e0d4]/70
+                               transition-all duration-700 ui-text text-[10px]"
+                  >
+                    full screen
+                  </button>
+                )}
               </motion.div>
 
               {!audioSupported && (

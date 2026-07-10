@@ -20,22 +20,31 @@ export function useWakeLock(): void {
 
     let sentinel: WakeLockSentinel | null = null;
     let cancelled = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
     const acquire = async () => {
       try {
         const lock = await navigator.wakeLock.request("screen");
         if (cancelled) {
           await lock.release();
-        } else {
-          sentinel = lock;
+          return;
         }
+        sentinel = lock;
+        // The UA may release the lock at any time without a visibility
+        // change (battery saver, thermal pressure). Re-acquire after a
+        // short backoff so a persistent denial can't spin.
+        lock.addEventListener("release", () => {
+          sentinel = null;
+          if (cancelled || document.visibilityState !== "visible") return;
+          retryTimer = setTimeout(acquire, 3000);
+        });
       } catch {
         // Request can be denied (low battery, browser policy) — fine
       }
     };
 
     const onVisibility = () => {
-      if (document.visibilityState === "visible") acquire();
+      if (document.visibilityState === "visible" && !sentinel) acquire();
     };
 
     acquire();
@@ -43,6 +52,7 @@ export function useWakeLock(): void {
 
     return () => {
       cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
       document.removeEventListener("visibilitychange", onVisibility);
       sentinel?.release().catch(() => {});
     };

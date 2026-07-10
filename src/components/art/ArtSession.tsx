@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useReducer } from "react";
+import { useState, useCallback, useEffect, useReducer, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNarration } from "@/hooks/useNarration";
 import BilateralDot from "../shared/BilateralDot";
@@ -162,8 +162,17 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
     audioRef.current?.fadeIn(6, 0.5);
   }, [audioRef]);
 
+  const binauralFirstRun = useRef(true);
   useEffect(() => {
     if (!audioRef.current) return;
+    // Skip on mount: the init effect already started the designed slow
+    // fade-in — re-fading here would cut it to a 2s ramp. Only mute if
+    // binaural is off from the start.
+    if (binauralFirstRun.current) {
+      binauralFirstRun.current = false;
+      if (!binauralEnabled) audioRef.current.muteBinaural();
+      return;
+    }
     if (binauralEnabled) {
       audioRef.current.fadeIn(2, 0.5);
     } else {
@@ -219,11 +228,12 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
       if (cancelled) return;
       await delay(2000);
       if (cancelled) return;
+      setNarration(null); // clear before the SUD scale renders — AnimatePresence mode="wait" can't host both
       dispatch({ type: "GOTO_PHASE", phase: "sud-initial" });
     };
     run();
     return () => { cancelled = true; cancelVoice(); };
-  }, [phase, say, delay, cancelVoice]);
+  }, [phase, say, delay, cancelVoice, setNarration]);
 
   // ── INITIAL SUD ──
   const handleSudInitial = useCallback((rating: number) => {
@@ -386,7 +396,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
   // resources. (The voice object stays alive; the flow narrates with it.)
   useEffect(() => {
     if (showAdverseEvent) audioRef.current?.stop();
-  }, [showAdverseEvent]);
+  }, [showAdverseEvent, audioRef]);
 
   if (showAdverseEvent) {
     return <AdverseEventFlow voice={voiceRef.current} onComplete={() => onExit?.()} />;
@@ -421,7 +431,7 @@ export default function ArtSession({ onComplete, onExit, binauralEnabled = true 
             onExit();
           }}
           className="fixed top-4 left-4 z-50 ui-text text-[11px] text-[#e8e0d4]/50
-                     hover:text-[#e8e0d4]/80 transition-colors duration-300"
+                     hover:text-[#e8e0d4]/80 transition-colors duration-300 p-3 -m-3"
         >
           ← exit
         </motion.button>

@@ -48,9 +48,16 @@ export default function Staircase({ isActive, onComplete, onStep }: StaircasePro
 
   useEffect(() => {
     if (!isActive) return;
-    // Start after narration cues finish (~55s total for staircase narration)
-    const timer = setTimeout(runStaircase, 55000);
-    return () => clearTimeout(timer);
+    // Start after narration cues finish (~55s total for staircase narration).
+    // Keep the inner cleanup so unmounting mid-countdown also clears the
+    // step timers — otherwise numbers keep being spoken after exit, and the
+    // completion timer can fire into a phase the user already left.
+    let innerCleanup: (() => void) | null = null;
+    const timer = setTimeout(() => { innerCleanup = runStaircase(); }, 55000);
+    return () => {
+      clearTimeout(timer);
+      innerCleanup?.();
+    };
   }, [isActive, runStaircase]);
 
   return (

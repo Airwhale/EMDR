@@ -87,6 +87,14 @@ body {
   animation: drift linear infinite;
 }
 
+/* iOS Safari: 100vh is the LARGE viewport (toolbar hidden), so full-height
+   layouts push bottom content behind the browser chrome. Prefer the dynamic
+   viewport height where supported — overrides Tailwind's h-screen/min-h-screen. */
+@supports (height: 100dvh) {
+  .h-screen { height: 100dvh; }
+  .min-h-screen { min-height: 100dvh; }
+}
+
 /* Dark scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

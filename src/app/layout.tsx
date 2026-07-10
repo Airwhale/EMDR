@@ -1,8 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hypno1.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hypno1-amber.vercel.app";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Extend under the notch/home indicator so env(safe-area-inset-*) works
+  // in standalone/PWA mode; fixed-bottom controls pad themselves with it.
+  viewportFit: "cover",
+  themeColor: "#0a0a0f",
+};
 
 export const metadata: Metadata = {
   title: "EMDR / ART Self-Administered Experience",

@@ -92,6 +92,11 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
   const [vignetteIntensity, setVignetteIntensity] = useState(0);
   const [breathSlowdown, setBreathSlowdown] = useState(1.0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  // Mirror for long-running effect closures: reading state directly would
+  // put voiceEnabled in their deps, and toggling voice mid-phase would
+  // tear down and restart the whole phase's timer schedule.
+  const voiceEnabledRef = useRef(true);
+  useEffect(() => { voiceEnabledRef.current = voiceEnabled; }, [voiceEnabled]);
   const [elapsed, setElapsed] = useState(0);
   const [currentBeatFreq, setCurrentBeatFreq] = useState(3);
 
@@ -126,8 +131,17 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const binauralFirstRun = useRef(true);
   useEffect(() => {
     if (!audioRef.current) return;
+    // Skip on mount: the init effect already started the designed slow
+    // fade-in — re-fading here would cut it to a 2s ramp. Only mute if
+    // binaural is off from the start.
+    if (binauralFirstRun.current) {
+      binauralFirstRun.current = false;
+      if (!binauralEnabled) audioRef.current.muteBinaural();
+      return;
+    }
     if (binauralEnabled) {
       audioRef.current.fadeIn(2, 0.5);
     } else {
@@ -145,10 +159,10 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
 
   const speakNarration = useCallback(
     (text: string, spoken?: string, file?: string) => {
-      if (!voiceEnabled || silent) return;
+      if (!voiceEnabledRef.current || silent) return;
       voiceRef.current?.speak(spoken || text, { file });
     },
-    [voiceEnabled, silent]
+    [silent]
   );
 
   const scheduleNarrationCues = useCallback(
@@ -332,7 +346,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
     const anchoringTimers = [
       // Right after staircase (~30s into sustain) — first anchor
       setTimeout(() => {
-        if (voiceEnabled && !silent) {
+        if (voiceEnabledRef.current && !silent) {
           voiceRef.current?.speak(
             "Gently press your thumb and forefinger together... feel this deep contentment lock into place... this feeling is yours... whenever you press these fingers together... this peace returns...",
             { file: "/audio/meditation/meditation-anchor-01.mp3", volume: 0.95 }
@@ -345,7 +359,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       }, 30000),
       // ~10 min — reinforcement at deepening wave
       setTimeout(() => {
-        if (voiceEnabled && !silent) {
+        if (voiceEnabledRef.current && !silent) {
           voiceRef.current?.speak(
             "Press your thumb and forefinger together again now... notice how much deeper this feeling has become... your anchor grows stronger each time... this profound peace... this contentment... stored in this simple touch...",
             { file: "/audio/meditation/meditation-anchor-02.mp3", volume: 0.95 }
@@ -358,7 +372,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       }, 620000),  // ~10 min 20s (just after the 10min binaural shift)
       // ~15 min — final reinforcement at deepest point
       setTimeout(() => {
-        if (voiceEnabled && !silent) {
+        if (voiceEnabledRef.current && !silent) {
           voiceRef.current?.speak(
             "One last time... press your thumb and forefinger together... at this deepest point... seal this feeling in... this is the deepest peace you have felt... and it is always here for you... always available... with this simple touch...",
             { file: "/audio/meditation/meditation-anchor-03.mp3", volume: 0.95 }
@@ -563,7 +577,7 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
           transition={{ duration: 0.8 }}
           onClick={handleEndMeditation}
           className="fixed top-4 left-4 z-50 ui-text text-[10px] text-[#e8e0d4]/50
-                     hover:text-[#e8e0d4]/90 transition-colors duration-500"
+                     hover:text-[#e8e0d4]/90 transition-colors duration-500 p-3 -m-3"
         >
           ← end meditation
         </motion.button>
@@ -572,8 +586,8 @@ export default function MeditationSession({ onComplete, onExit, silent = false, 
       {/* Bottom controls */}
       <div className="fixed bottom-4 left-0 right-0 flex justify-between items-end px-4 z-50">
         {/* Voice toggle */}
-        <motion.button initial={{ opacity: 0 }} animate={{ opacity: 0.25 }} whileHover={{ opacity: 0.5 }} transition={{ duration: 0.8 }} onClick={toggleVoice}
-          className="ui-text text-[10px] text-[#e8e0d4]/30 hover:text-[#e8e0d4]/50 transition-colors duration-500">
+        <motion.button initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} whileHover={{ opacity: 0.8 }} transition={{ duration: 0.8 }} onClick={toggleVoice}
+          className="ui-text text-[10px] text-[#e8e0d4]/40 hover:text-[#e8e0d4]/60 transition-colors duration-500 p-3 -m-3">
           voice {voiceEnabled ? "on" : "off"}
         </motion.button>
 

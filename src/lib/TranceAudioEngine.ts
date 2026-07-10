@@ -83,7 +83,16 @@ export class TranceAudioEngine {
 
     this.mode = mode;
     try {
-      this.ctx = new AudioContext();
+      // Older Safari (<= 14) only exposes the webkit-prefixed constructor —
+      // matches the capability check on the entry screen
+      const AC =
+        window.AudioContext ??
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AC) {
+        console.warn("Web Audio not supported in this browser");
+        return;
+      }
+      this.ctx = new AC();
     } catch (e) {
       console.warn("AudioContext initialization failed:", e);
       return;

@@ -125,7 +125,7 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
         transition={{ duration: 0.8 }}
         onClick={handleExit}
         className="fixed top-4 left-4 z-50 ui-text text-[11px] text-[#e8e0d4]/50
-                   hover:text-[#e8e0d4]/80 transition-colors duration-300"
+                   hover:text-[#e8e0d4]/80 transition-colors duration-300 p-3 -m-3"
       >
         ← exit
       </motion.button>
@@ -158,10 +158,15 @@ export default function LateralSession({ onExit }: LateralSessionProps) {
           </span>
         </button>
 
-        {/* Panel */}
+        {/* Panel — bottom padding keeps the last slider clear of the iPhone
+            home-indicator gesture zone in standalone/PWA mode */}
         <div
           className="w-full border-t border-gold/20 p-5 overflow-y-auto"
-          style={{ background: "rgba(10, 10, 15, 0.92)", maxHeight: "50vh" }}
+          style={{
+            background: "rgba(10, 10, 15, 0.92)",
+            maxHeight: "50vh",
+            paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
+          }}
         >
           <div className="grid grid-cols-2 gap-x-8 gap-y-4 max-w-2xl mx-auto">
 

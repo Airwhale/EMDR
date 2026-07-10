@@ -82,7 +82,8 @@ test('audio fallback uses role="alert" for screen readers', () => {
 
 test('TranceAudioEngine handles AudioContext construction failure gracefully', () => {
   const engine = read('src/lib/TranceAudioEngine.ts');
-  assert.match(engine, /try\s*\{[\s\S]*?new AudioContext/);
+  assert.match(engine, /try\s*\{[\s\S]*?new AC\(\)/);
+  assert.match(engine, /webkitAudioContext/); // legacy Safari fallback
   assert.match(engine, /catch/);
   assert.match(engine, /AudioContext initialization failed/);
 });

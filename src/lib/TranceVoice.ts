@@ -167,12 +167,25 @@ export class TranceVoice {
         audio.preload = "auto";
         audio.volume = options?.volume ?? this.tuning.volume;
 
+        // A stalled download fires 'stalled'/'suspend', never 'error', so
+        // without a watchdog the promise never settles and the session's
+        // await chain freezes. If buffering hasn't finished in time, give
+        // up on this cue and keep the session moving.
+        const loadWatchdog = setTimeout(() => {
+          if (this.pendingResolve !== resolve) return; // superseded/cancelled
+          warn(`#${id} LOAD STALLED for ${options.file} — skipping cue to keep session moving`);
+          try { audio.pause(); } catch { /* not started */ }
+          done("load-timeout");
+        }, 12000);
+
         audio.addEventListener("ended", () => {
+          clearTimeout(loadWatchdog);
           log(`#${id} ENDED at ${audio.currentTime.toFixed(1)}/${audio.duration.toFixed(1)}s`);
           done("ended");
         }, { once: true });
 
         audio.addEventListener("error", () => {
+          clearTimeout(loadWatchdog);
           const code = audio.error?.code;
           const msg = audio.error?.message;
           warn(`#${id} ERROR code=${code} msg=${msg}`);
@@ -181,6 +194,7 @@ export class TranceVoice {
 
         // Wait for enough data to play through, then start
         audio.addEventListener("canplaythrough", () => {
+          clearTimeout(loadWatchdog);
           // Check if cancelled while loading
           if (this.pendingResolve !== resolve) {
             warn(`#${id} CANCELLED during load`);
