@@ -151,7 +151,7 @@ stateDiagram-v2
     Grounding --> SUD_Check_Pre : Complete (re-check)
     PostGrounding --> Centering : Continue
     PostGrounding --> Exit : Exit
-    AdverseEvent --> Exit
+    AdverseEvent --> CrisisResources : terminal — no exit button
 
     Centering --> SafePlace
     SafePlace --> SafePlace_BLS : "I'm ready"
@@ -180,15 +180,15 @@ stateDiagram-v2
     Centering --> SceneSelect
     SceneSelect --> SUD_Initial
 
-    SUD_Initial --> Grounding : SUD > 6 (first time)
-    SUD_Initial --> PostGrounding : SUD > 6 (already grounded)
+    SUD_Initial --> Grounding : SUD > 5 (first time)
+    SUD_Initial --> PostGrounding : SUD > 5 (already grounded)
     SUD_Initial --> AdverseEvent : SUD = 10
     SUD_Initial --> Processing : SUD <= 6
 
     Grounding --> SUD_Initial : Complete (re-check)
     PostGrounding --> Processing : Continue
     PostGrounding --> Exit : Exit
-    AdverseEvent --> Exit
+    AdverseEvent --> CrisisResources : terminal — no exit button
 
     Processing --> SensationCheck : Continue (after ~35s BLS)
     SensationCheck --> SensationBLS : "I'm ready"
@@ -196,8 +196,9 @@ stateDiagram-v2
     VIR_Prompt --> VIR_BLS : "I'm ready"
     VIR_BLS --> SUD_Recheck : Continue
 
-    SUD_Recheck --> Processing : SUD > 2 (next round)
+    SUD_Recheck --> Processing : SUD 3-9 (next round)
     SUD_Recheck --> BodyScan : SUD <= 2
+    SUD_Recheck --> AdverseEvent : SUD = 10
 
     BodyScan --> Closing
     Closing --> SUD_Final
@@ -309,7 +310,7 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TD
-    A[SUD Check] -->|"SUD > 5 / > 6"| B{Grounded before?}
+    A[SUD Check] -->|"SUD > 5"| B{Grounded before?}
     B -->|No| C[Grounding Exercise]
     C --> A
     B -->|Yes| D[Post-Grounding Message]

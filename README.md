@@ -45,7 +45,7 @@ It is not a replacement for working with a therapist. It implements a simplified
 |------|----------|-------------|
 | **EMDR** | 10-15 min | Safe place visualization, butterfly hug, container exercise, resource installation, each paired with bilateral eye movements |
 | **ART** | 10-20 min | Select a stressful scene, process it with fast bilateral eye movements, then rescript it into something better. Loops until distress drops |
-| **Meditation** | Up to 30 min | Guided or silent. Hypnotic induction, breathing sync, binaural tones deepening from theta to delta, positive suggestion cues, anchoring. End whenever you're ready |
+| **Meditation** | User-paced (up to 2 hours) | Guided or silent. Hypnotic induction, breathing sync, binaural tones deepening from theta to delta, positive suggestion cues, anchoring. End whenever you're ready |
 | **Lateral** | Open-ended | Adjustable bilateral dot with sliders for speed, binaural frequency (0-40 Hz), binaural volume, ping sound, and pink noise |
 
 ### Safety and consent
@@ -53,7 +53,7 @@ It is not a replacement for working with a therapist. It implements a simplified
 Every session begins with a safety gate explaining what the tool is and isn't. EMDR and ART sessions monitor distress throughout using the SUD (Subjective Units of Distress) scale:
 
 - **Before starting:** If distress is above 5, the user is routed through a grounding exercise before proceeding
-- **During ART:** Distress is rechecked after each processing round. The loop continues until it drops below 2
+- **During ART:** Distress is rechecked after each processing round. The loop continues until it drops to 2 or below; a rating of 10 exits to the adverse event protocol
 - **If distress hits 10:** An adverse event protocol exits the session immediately
 - **After every session:** Crisis resources are shown (988 Suicide & Crisis Lifeline, Crisis Text Line)
 - **At any point:** The exit button is always visible in the top-left corner
@@ -70,7 +70,7 @@ Completed EMDR and ART sessions are stored locally with before/after distress sc
 
 The app layers 40 techniques across audio, visual, language, breathing, bilateral stimulation, and body-based categories. All audio is synthesized in real-time with the Web Audio API, with no pre-recorded sound files for the sound engine. Voice narration uses pre-generated ElevenLabs MP3s with Web Speech API fallback.
 
-The guided meditation uses a rotating logarithmic spiral synced to a breathing guide, while binaural tones deepen from theta toward delta over 30 minutes:
+The guided meditation uses a rotating logarithmic spiral synced to a breathing guide, while binaural tones deepen from theta toward delta over the first ~15 minutes:
 
 ![Guided meditation](docs/screenshots/meditation.png)
 
@@ -181,7 +181,7 @@ This tool is not therapy. It should be understood clearly as a self-guided relax
 - **Framer Motion** for animations and page transitions
 - **Web Audio API**: binaural tones, pink noise, heartbeat, isochronic pulses, all synthesized in-browser
 - **Web Speech API**: voice narration with smart voice selection (ElevenLabs MP3 fallback)
-- **No backend**: all state in localStorage, no network requests after page load
+- **No backend**: all state in localStorage; the only network activity is same-origin (narration audio loads on demand). Fonts are self-hosted — no third-party requests at all
 
 ## Local development
 
@@ -198,7 +198,7 @@ Open `http://localhost:3000`. Headphones recommended.
 node --test tests/
 ```
 
-57 tests covering audio system integrity, session persistence, accessibility attributes, keyboard navigation, reduced motion support, OG metadata, and browser fallbacks.
+139 tests covering audio system integrity, session persistence, SUD safety gating, accessibility attributes, keyboard navigation, reduced motion support, service worker behavior, browser fallbacks, and OG metadata.
 
 ## Data and privacy
 
